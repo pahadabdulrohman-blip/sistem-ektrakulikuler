@@ -1,0 +1,499 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #edf6fb;
+    color: #064d78;
+}
+
+.app {
+    width: 390px;
+    min-height: 100vh;
+    margin: auto;
+    background: white;
+    position: relative;
+    overflow: hidden;
+}
+
+
+/* HEADER */
+
+.header {
+    height: 65px;
+    background: #0879b3;
+    color: white;
+
+    display: flex;
+    align-items: center;
+
+    padding: 0 18px;
+}
+
+.header a {
+    color: white;
+    text-decoration: none;
+}
+
+.back {
+    font-size: 22px;
+    width: 40px;
+}
+
+.header-title {
+    flex: 1;
+    text-align: center;
+    font-size: 17px;
+    font-weight: bold;
+}
+
+.header-icon {
+    width: 40px;
+    text-align: right;
+    font-size: 25px;
+}
+
+
+/* CONTENT */
+
+.content {
+    padding: 25px 22px 100px;
+}
+
+.small-title {
+    color: #6187a0;
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+
+.page-title {
+    color: #064d78;
+    font-size: 27px;
+    margin-bottom: 6px;
+}
+
+.subtitle {
+    color: #6c91a8;
+    font-size: 15px;
+}
+
+
+/* CARD */
+
+.card {
+    border: 1px solid #dceaf2;
+    border-radius: 15px;
+    padding: 15px;
+    margin-top: 15px;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0,0,0,.04);
+}
+
+
+/* BOTTOM NAV */
+
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+
+    width: 390px;
+    height: 70px;
+
+    background: white;
+    border-top: 1px solid #dbe9f0;
+
+    display: flex;
+    justify-content: space-around;
+
+    z-index: 20;
+}
+
+.bottom-nav a {
+    flex: 1;
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 4px;
+
+    text-decoration: none;
+    color: #7895a7;
+
+    font-size: 11px;
+}
+
+.bottom-nav i {
+    font-size: 20px;
+}
+
+.bottom-nav .active {
+    color: #0879b3;
+}
+
+
+/* STAT */
+
+.stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 25px;
+}
+
+.stat {
+    background: #e8f6fd;
+    padding: 20px 10px;
+    border-radius: 15px;
+    text-align: center;
+}
+
+.stat i {
+    font-size: 28px;
+    margin-bottom: 8px;
+}
+
+.stat h2 {
+    font-size: 30px;
+}
+
+.stat p {
+    color: #5d849d;
+    margin-top: 5px;
+}
+
+
+/* EXTRAKUL */
+
+.extra-card {
+    display: flex;
+    align-items: center;
+
+    padding: 13px;
+
+    border: 1px solid #dfebf2;
+
+    border-radius: 15px;
+
+    margin-bottom: 10px;
+}
+
+.extra-icon {
+    width: 55px;
+    height: 55px;
+
+    border-radius: 50%;
+
+    background: #e5f1f7;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 25px;
+
+    color: #155d87;
+}
+
+.extra-info {
+    flex: 1;
+    margin-left: 12px;
+}
+
+.extra-info h3 {
+    color: #064d78;
+    margin-bottom: 4px;
+}
+
+.extra-info p {
+    color: #6b91a8;
+    font-size: 13px;
+}
+
+.arrow {
+    color: #17709e;
+}
+
+
+/* SEARCH */
+
+.search {
+    margin: 20px 0;
+    position: relative;
+}
+
+.search input {
+    width: 100%;
+    height: 42px;
+
+    border: 1px solid #d5e5ee;
+    border-radius: 10px;
+
+    padding: 0 15px 0 40px;
+    outline: none;
+}
+
+.search i {
+    position: absolute;
+    left: 14px;
+    top: 13px;
+    color: #7190a4;
+}
+
+
+/* BUTTON */
+
+.btn {
+    display: block;
+
+    width: 100%;
+
+    padding: 13px;
+
+    background: #0879b3;
+
+    color: white;
+
+    border: none;
+
+    border-radius: 9px;
+
+    text-align: center;
+
+    text-decoration: none;
+
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+
+/* PROFILE */
+
+.profile-head {
+    text-align: center;
+    padding: 25px 0;
+}
+
+.profile-head i {
+    font-size: 90px;
+    color: #0879b3;
+}
+
+.profile-head h2 {
+    margin-top: 10px;
+}
+
+
+/* NILAI */
+
+.nilai-box {
+    background: #e8f6fd;
+    padding: 20px;
+    border-radius: 15px;
+    text-align: center;
+    margin-top: 20px;
+}
+
+.nilai-box h1 {
+    font-size: 45px;
+    color: #064d78;
+}
+
+.grade {
+    display: inline-block;
+
+    background: #ccefdc;
+
+    color: #158044;
+
+    padding: 7px 14px;
+
+    border-radius: 8px;
+
+    font-weight: bold;
+}
+
+
+/* TABLE */
+
+.table-container {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-size: 12px;
+}
+
+th {
+    background: #0879b3;
+    color: white;
+    padding: 10px;
+}
+
+td {
+    padding: 10px;
+    border-bottom: 1px solid #e2edf2;
+    text-align: center;
+}
+
+
+/* LOGIN */
+
+.login {
+    min-height: 100vh;
+    padding: 55px 25px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.login-logo {
+    width: 105px;
+    height: 105px;
+
+    border-radius: 50%;
+
+    background: #e5f3fa;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #0879b3;
+
+    font-size: 50px;
+
+    margin-bottom: 20px;
+}
+
+.login h1 {
+    text-align: center;
+    color: #064d78;
+    font-size: 24px;
+}
+
+.login-school {
+    color: #6b8da2;
+    margin-top: 6px;
+    margin-bottom: 35px;
+}
+
+.form-group {
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    color: #315f79;
+}
+
+.form-group input {
+    width: 100%;
+    height: 48px;
+
+    border: 1px solid #d3e5ef;
+    border-radius: 10px;
+
+    padding: 0 15px;
+
+    outline: none;
+}
+
+
+@media (max-width: 450px) {
+    body {
+        background: white;
+    }
+
+    .app {
+        width: 100%;
+    }
+
+    .bottom-nav {
+        width: 100%;
+    }
+}
+
+/* INPUT SELECT */
+.input-box select {
+    width: 100%;
+    padding: 13px 15px 13px 45px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    outline: none;
+    font-family: 'Poppins', sans-serif;
+    font-size: 15px;
+    background: white;
+}
+
+.input-box select:focus {
+    border-color: #0d6efd;
+}
+
+/* TOMBOL TAMBAH */
+.add-btn {
+    display: inline-block;
+    background: #2563eb;
+    color: white;
+    padding: 13px 20px;
+    border-radius: 9px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: .2s;
+}
+
+.add-btn:hover {
+    background: #1d4ed8;
+    transform: translateY(-1px);
+}
+
+/* TOMBOL KUNCI DAN BATAL */
+.aksi-pilihan {
+    margin-top: 28px;
+    padding: 22px;
+    background: white;
+    border: 1px solid #d7eaf2;
+    border-radius: 15px;
+}
+
+.aksi-pilihan button {
+    padding: 12px 18px;
+    margin: 5px 8px 5px 0;
+    border: none;
+    border-radius: 9px;
+    color: white;
+    font-family: inherit;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+#btnKunci {
+    background: #16a34a;
+}
+
+#btnBatal {
+    background: #dc2626;
+}
+
+.aksi-pilihan button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+#statusPilihan {
+    margin-top: 12px;
+    color: #075985;
+    font-size: 14px;
+}

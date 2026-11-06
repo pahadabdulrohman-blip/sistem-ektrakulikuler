@@ -1,0 +1,385 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #eef6fc;
+    min-height: 100vh;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    color: #14527a;
+}
+
+
+/* CONTAINER */
+
+.login-container {
+    position: relative;
+
+    width: 390px;
+    min-height: 720px;
+
+    background: #ffffff;
+
+    border: 2px solid #8dbbd8;
+    border-radius: 22px;
+
+    overflow: hidden;
+
+    box-shadow: 0 8px 25px rgba(22, 86, 125, 0.15);
+}
+
+
+/* CONTENT */
+
+.login-content {
+    position: relative;
+
+    z-index: 5;
+
+    padding: 70px 32px 180px;
+
+    text-align: center;
+}
+
+
+/* LOGO */
+
+.logo {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 25px;
+}
+
+.shield {
+    width: 115px;
+    height: 130px;
+
+    background: linear-gradient(
+        180deg,
+        #12618c,
+        #0c4c70
+    );
+
+    clip-path: polygon(
+        50% 0%,
+        92% 18%,
+        92% 62%,
+        82% 78%,
+        50% 100%,
+        18% 78%,
+        8% 62%,
+        8% 18%
+    );
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    position: relative;
+}
+
+
+/* GARIS SHIELD */
+
+.shield::before {
+    content: "";
+
+    position: absolute;
+
+    width: 96px;
+    height: 111px;
+
+    border: 3px solid white;
+
+    clip-path: polygon(
+        50% 0%,
+        92% 18%,
+        92% 62%,
+        82% 78%,
+        50% 100%,
+        18% 78%,
+        8% 62%,
+        8% 18%
+    );
+}
+
+
+/* ICON BUKU */
+
+.book-icon {
+    color: #ffffff;
+
+    font-size: 48px;
+
+    z-index: 2;
+}
+
+
+/* JUDUL */
+
+h1 {
+    font-size: 28px;
+
+    color: #07517e;
+
+    margin-bottom: 7px;
+
+    font-weight: 700;
+}
+
+
+.school-name {
+    color: #4d83a5;
+
+    font-size: 20px;
+
+    margin-bottom: 55px;
+}
+
+
+/* INPUT */
+
+.input-box {
+    width: 100%;
+
+    height: 65px;
+
+    border: 2px solid #d9e9f4;
+
+    border-radius: 14px;
+
+    margin-bottom: 17px;
+
+    display: flex;
+
+    align-items: center;
+
+    padding: 0 18px;
+
+    background: #ffffff;
+
+    transition: 0.3s;
+}
+
+.input-box:focus-within {
+    border-color: #1676ad;
+
+    box-shadow:
+        0 0 0 3px rgba(22, 118, 173, 0.08);
+}
+
+
+.input-box > i:first-child {
+    font-size: 24px;
+
+    color: #5b83a0;
+
+    width: 32px;
+}
+
+
+.input-box input {
+    flex: 1;
+
+    border: none;
+
+    outline: none;
+
+    font-size: 18px;
+
+    color: #305f7d;
+
+    padding-left: 10px;
+
+    background: transparent;
+}
+
+
+.input-box input::placeholder {
+    color: #7194ac;
+}
+
+
+.password-icon {
+    color: #5b83a0 !important;
+
+    cursor: pointer;
+
+    width: auto !important;
+
+    font-size: 20px !important;
+}
+
+
+/* ERROR */
+
+.error {
+    display: block;
+
+    color: #dc3545;
+
+    text-align: left;
+
+    margin-top: -10px;
+
+    margin-bottom: 10px;
+
+    padding-left: 5px;
+}
+
+
+/* BUTTON */
+
+.login-button {
+    width: 100%;
+
+    height: 65px;
+
+    margin-top: 35px;
+
+    border: none;
+
+    border-radius: 14px;
+
+    background: #0879b3;
+
+    color: white;
+
+    font-size: 21px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition: 0.3s;
+}
+
+
+.login-button:hover {
+    background: #075f8c;
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 5px 15px rgba(8, 121, 179, 0.25);
+}
+
+
+.login-button:active {
+    transform: translateY(0);
+}
+
+
+/* CONTACT */
+
+.contact {
+    margin-top: 50px;
+
+    font-size: 16px;
+
+    color: #6590ac;
+}
+
+
+.contact span {
+    color: #14638e;
+
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+
+/* WAVES */
+
+.waves {
+    position: absolute;
+
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    height: 230px;
+
+    overflow: hidden;
+}
+
+
+/* WAVE 1 */
+
+.wave {
+    position: absolute;
+
+    width: 150%;
+
+    height: 150px;
+
+    left: -25%;
+
+    border-radius: 50% 50% 0 0;
+}
+
+
+.wave1 {
+    bottom: -70px;
+
+    background: #d9eaf7;
+
+    transform: rotate(-3deg);
+}
+
+
+/* WAVE 2 */
+
+.wave2 {
+    bottom: -105px;
+
+    background: #c4dced;
+
+    transform: rotate(7deg);
+}
+
+
+/* WAVE 3 */
+
+.wave3 {
+    bottom: -145px;
+
+    background: #afd0e6;
+
+    transform: rotate(-5deg);
+}
+
+
+/* RESPONSIVE */
+
+@media (max-width: 450px) {
+
+    body {
+        background: white;
+    }
+
+    .login-container {
+        width: 100%;
+
+        min-height: 100vh;
+
+        border-radius: 0;
+
+        border: none;
+
+        box-shadow: none;
+    }
+
+    .login-content {
+        padding-left: 28px;
+        padding-right: 28px;
+    }
+}
