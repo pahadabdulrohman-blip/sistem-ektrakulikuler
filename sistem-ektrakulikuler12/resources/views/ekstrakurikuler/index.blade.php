@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -296,6 +297,15 @@
             color: #6590a8;
         }
 
+        .data-kosong {
+            grid-column: 1 / -1;
+            background: white;
+            padding: 40px 20px;
+            border-radius: 15px;
+            text-align: center;
+            color: #6590a8;
+        }
+
         @media (max-width: 1100px) {
             .sidebar {
                 width: 220px;
@@ -388,22 +398,23 @@
         <a href="{{ route('dashboard.siswa') }}">🏠 &nbsp; Dashboard</a>
         <a href="{{ route('ekstrakurikuler') }}" class="active">👥 &nbsp; Ekstrakurikuler</a>
         <a href="{{ route('penilaian') }}">⭐ &nbsp; Penilaian</a>
-        <a href="{{ route('laporan') }}">📄 &nbsp; Laporan</a>
         <a href="{{ route('profil') }}">👤 &nbsp; Profil</a>
     </nav>
 </aside>
 
 <main class="main">
+
     <header class="topbar">
         <div class="top-title">← &nbsp; Daftar Ekstrakurikuler</div>
 
         <div class="user">
-            <strong>Fahad Abdul Rohman</strong><br>
-            Siswa - XI RPL 1
+            <strong>{{ session('username') }}</strong><br>
+            Siswa
         </div>
     </header>
 
     <section class="content">
+
         <div class="heading">
             <div>
                 <h1>Ekstrakurikuler</h1>
@@ -418,7 +429,8 @@
         </div>
 
         <div class="info">
-            ℹ️ Kamu hanya dapat memilih <strong>maksimal 2 ekstrakurikuler</strong>.
+            ℹ️ Kamu hanya dapat memilih
+            <strong>maksimal 2 ekstrakurikuler</strong>.
             Setelah memilih 2, pilihan lainnya akan dinonaktifkan.
         </div>
 
@@ -432,89 +444,53 @@
 
         <div class="grid" id="daftarEkskul">
 
-            <div class="card" data-name="futsal">
-                <div class="icon">⚽</div>
-                <div class="info-ekskul">
-                    <h2>Futsal</h2>
-                    <p>
-                        Olahraga<br>
-                        Jadwal: Senin &amp; Kamis, 15.00<br>
-                        Pembina: Pak A
-                    </p>
-                </div>
-                <button type="button" class="btn-pilih"
-                    onclick="pilihEkskul(this, 'Futsal')">Pilih</button>
-            </div>
+            {{-- DATA DIAMBIL LANGSUNG DARI DATABASE --}}
+            @forelse($ekskul as $item)
 
-            <div class="card" data-name="seni">
-                <div class="icon">🎨</div>
-                <div class="info-ekskul">
-                    <h2>Seni</h2>
-                    <p>
-                        Seni &amp; Budaya<br>
-                        Jadwal: Selasa, 15.00<br>
-                        Pembina: Bu B
-                    </p>
-                </div>
-                <button type="button" class="btn-pilih"
-                    onclick="pilihEkskul(this, 'Seni')">Pilih</button>
-            </div>
+                <div class="card"
+                     data-id="{{ $item->id }}"
+                     data-name="{{ strtolower($item->nama_ekstrakurikuler) }}">
 
-            <div class="card" data-name="coding">
-                <div class="icon">💻</div>
-                <div class="info-ekskul">
-                    <h2>Coding</h2>
-                    <p>
-                        Teknologi<br>
-                        Jadwal: Rabu &amp; Jumat, 15.00<br>
-                        Pembina: Pak C
-                    </p>
-                </div>
-                <button type="button" class="btn-pilih"
-                    onclick="pilihEkskul(this, 'Coding')">Pilih</button>
-            </div>
+                    <div class="icon">
+                        {{ $item->ikon ?: '⭐' }}
+                    </div>
 
-            <div class="card" data-name="pencak silat">
-                <div class="icon">🥋</div>
-                <div class="info-ekskul">
-                    <h2>Pencak Silat</h2>
-                    <p>
-                        Olahraga<br>
-                        Jadwal: Senin &amp; Rabu, 15.00<br>
-                        Pembina: Pak D
-                    </p>
-                </div>
-                <button type="button" class="btn-pilih"
-                    onclick="pilihEkskul(this, 'Pencak Silat')">Pilih</button>
-            </div>
+                    <div class="info-ekskul">
 
-            <div class="card" data-name="basket">
-                <div class="icon">🏀</div>
-                <div class="info-ekskul">
-                    <h2>Basket</h2>
-                    <p>
-                        Olahraga<br>
-                        Jadwal: Selasa &amp; Kamis, 15.00<br>
-                        Pembina: Pak E
-                    </p>
-                </div>
-                <button type="button" class="btn-pilih"
-                    onclick="pilihEkskul(this, 'Basket')">Pilih</button>
-            </div>
+                        <h2>{{ $item->nama_ekstrakurikuler }}</h2>
 
-            <div class="card" data-name="voli">
-                <div class="icon">🏐</div>
-                <div class="info-ekskul">
-                    <h2>Voli</h2>
-                    <p>
-                        Olahraga<br>
-                        Jadwal: Rabu &amp; Jumat, 15.00<br>
-                        Pembina: Bu F
-                    </p>
+                        <p>
+                            {{ $item->deskripsi ?: 'Tidak ada deskripsi' }}<br>
+
+                            Jadwal:
+                            {{ $item->jadwal ?: 'Belum ditentukan' }}<br>
+
+                            Pembina:
+                            {{ $item->pembina ?: 'Belum ditentukan' }}<br>
+
+                            Tempat:
+                            {{ $item->tempat ?: 'Belum ditentukan' }}
+                        </p>
+
+                    </div>
+
+                    <button
+                        type="button"
+                        class="btn-pilih"
+                        onclick="pilihEkskul(this)">
+                        Pilih
+                    </button>
+
                 </div>
-                <button type="button" class="btn-pilih"
-                    onclick="pilihEkskul(this, 'Voli')">Pilih</button>
-            </div>
+
+            @empty
+
+                <div class="data-kosong">
+                    <h3>Belum Ada Ekstrakurikuler</h3>
+                    <p>Admin belum menambahkan data ekstrakurikuler.</p>
+                </div>
+
+            @endforelse
 
         </div>
 
@@ -523,20 +499,29 @@
         </div>
 
         <div class="aksi-pilihan">
-            <button type="button" id="btnKunci"
-                onclick="kunciPilihan()" disabled>
+
+            <button
+                type="button"
+                id="btnKunci"
+                onclick="kunciPilihan()"
+                disabled>
                 🔒 Kunci Pilihan
             </button>
 
-            <button type="button" id="btnBatal"
-                onclick="batalkanSemua()" disabled>
+            <button
+                type="button"
+                id="btnBatal"
+                onclick="batalkanSemua()"
+                disabled>
                 ↩ Batalkan Semua
             </button>
 
             <p id="statusPilihan" aria-live="polite">
                 Status: Belum dikunci
             </p>
+
         </div>
+
     </section>
 </main>
 
@@ -544,43 +529,56 @@
     let pilihan = [];
     let terkunci = false;
 
-    function pilihEkskul(button, nama) {
+    // MEMILIH EKSTRAKURIKULER BERDASARKAN ID DATABASE
+    function pilihEkskul(button) {
+
         if (terkunci) {
             alert('Pilihan sudah dikunci.');
             return;
         }
 
-        if (pilihan.includes(nama)) {
-            pilihan = pilihan.filter(item => item !== nama);
+        const card = button.closest('.card');
+        const id = card.dataset.id;
+
+        if (pilihan.includes(id)) {
+
+            pilihan = pilihan.filter(item => item !== id);
+
         } else {
+
             if (pilihan.length >= 2) {
                 alert('Maksimal memilih 2 ekstrakurikuler.');
                 return;
             }
 
-            pilihan.push(nama);
+            pilihan.push(id);
         }
 
         updateButton();
     }
 
+    // MEMPERBARUI TAMPILAN PILIHAN
     function updateButton() {
+
         document.getElementById('jumlahDipilih').textContent =
             pilihan.length;
 
-        document.querySelectorAll('.btn-pilih').forEach(button => {
-            const card = button.closest('.card');
-            const nama = card.querySelector('h2').textContent.trim();
-            const sudahDipilih = pilihan.includes(nama);
+        document.querySelectorAll('#daftarEkskul .card').forEach(card => {
+
+            const id = card.dataset.id;
+            const sudahDipilih = pilihan.includes(id);
+            const button = card.querySelector('.btn-pilih');
 
             card.classList.toggle('selected', sudahDipilih);
+
             button.classList.toggle('selected', sudahDipilih);
-            button.textContent = sudahDipilih ? '✓ Dipilih' : 'Pilih';
 
-            const nonaktif = terkunci ||
+            button.textContent = sudahDipilih
+                ? '✓ Dipilih'
+                : 'Pilih';
+
+            button.disabled = terkunci ||
                 (pilihan.length >= 2 && !sudahDipilih);
-
-            button.disabled = nonaktif;
         });
 
         document.getElementById('btnKunci').disabled =
@@ -595,26 +593,40 @@
                 : 'Status: Belum dikunci';
     }
 
+    // MENGUNCI PILIHAN
     function kunciPilihan() {
+
         if (pilihan.length === 0) {
             alert('Pilih minimal satu ekstrakurikuler.');
             return;
         }
 
+        const namaPilihan = pilihan.map(id => {
+
+            const card = document.querySelector(
+                `.card[data-id="${id}"]`
+            );
+
+            return card.querySelector('h2').textContent.trim();
+        });
+
         const yakin = confirm(
             'Yakin ingin mengunci pilihan ' +
-            pilihan.join(' dan ') + '?'
+            namaPilihan.join(' dan ') + '?'
         );
 
         if (!yakin) return;
 
         terkunci = true;
+
         updateButton();
 
         alert('Pilihan berhasil dikunci pada halaman ini.');
     }
 
+    // MEMBATALKAN SEMUA PILIHAN
     function batalkanSemua() {
+
         if (terkunci) {
             alert('Pilihan sudah dikunci dan tidak dapat dibatalkan.');
             return;
@@ -627,26 +639,38 @@
         }
 
         pilihan = [];
+
         updateButton();
     }
 
+    // FITUR PENCARIAN
     document.getElementById('search').addEventListener('input', function () {
+
         const keyword = this.value.trim().toLowerCase();
+
         let jumlahTampil = 0;
 
-        document.querySelectorAll('.card').forEach(card => {
+        document.querySelectorAll('#daftarEkskul .card').forEach(card => {
+
             const nama = card.dataset.name;
-            const cocok = nama.includes(keyword);
+
+            const deskripsi = card.textContent.toLowerCase();
+
+            const cocok = nama.includes(keyword) ||
+                          deskripsi.includes(keyword);
 
             card.style.display = cocok ? 'flex' : 'none';
 
-            if (cocok) jumlahTampil++;
+            if (cocok) {
+                jumlahTampil++;
+            }
         });
 
         document.getElementById('pesanKosong').style.display =
             jumlahTampil === 0 ? 'block' : 'none';
     });
 
+    // TAMPILAN AWAL
     updateButton();
 </script>
 

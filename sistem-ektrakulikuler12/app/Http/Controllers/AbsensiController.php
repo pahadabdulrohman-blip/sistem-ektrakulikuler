@@ -4,52 +4,42 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\AbsensiSiswa;
+use App\Models\User;
 
 class AbsensiController extends Controller
 {
-    // Memeriksa hak akses Admin dan Guru
-    private function cekAkses()
-    {
-        if (!session('login')) {
-            return redirect()->route('login');
-        }
-
-        if (!in_array(session('role'), ['admin', 'guru'], true)) {
-            abort(403, 'Kamu tidak memiliki akses ke halaman absensi.');
-        }
-
-        return null;
-    }
-
-    // Menampilkan data absensi
     public function index()
     {
-        $akses = $this->cekAkses();
+        $siswa = User::where('role', 'siswa')
+            ->whereNotNull('username')
+            ->orderBy('name')
+            ->get();
 
-        if ($akses) {
-            return $akses;
-        }
+        $absensi = AbsensiSiswa::latest('tanggal')
+            ->latest()
+            ->get();
 
-        $absensi = AbsensiSiswa::latest('tanggal')->get();
-
-        return view('absensi.index', compact('absensi'));
+        return view('absensi.index', compact('siswa', 'absensi'));
     }
 
-    // Menyimpan data absensi
     public function simpan(Request $request)
     {
-        $akses = $this->cekAkses();
-
-        if ($akses) {
-            return $akses;
-        }
-
         $data = $request->validate([
-            'username' => 'required|string|max:255',
-            'nama_kegiatan' => 'required|string|max:255',
+            'username' => 'required|exists:users,username',
+            'nama_kegiatan' => 'required|string|max:100',
             'tanggal' => 'required|date',
             'status' => 'required|in:hadir,izin,sakit,alpa',
         ]);
+
+        $siswa = User::where('username', $data['username'])
+            ->where('role', 'siswa')
+            ->first();
+
+        if (!$siswa) {
+            return back()->withErrors([
+                'username' => 'Akun yang dipilih bukan akun siswa.'
+            ])->withInput();
+        }
 
         AbsensiSiswa::updateOrCreate(
             [
@@ -63,6 +53,8 @@ class AbsensiController extends Controller
             ]
         );
 
-        return back()->with('success', 'Absensi berhasil disimpan!');
+        return redirect()
+            ->route('guru.absensi')
+            ->with('success', 'Absensi siswa berhasil disimpan.');
     }
 }

@@ -354,7 +354,19 @@
 <body>
 
 @php
-    $totalSiswa = count($siswa ?? []);
+    // Normalisasi $siswa agar count() dan perulangan selalu aman:
+    // terima array, Collection, satu objek User, atau null.
+    $siswaList = match (true) {
+        ($siswa ?? null) instanceof \App\Models\User => [$siswa],
+        ($siswa ?? null) instanceof \Illuminate\Support\Collection => $siswa->all(),
+        is_array($siswa ?? null) => $siswa,
+        default => [],
+    };
+
+    // Statistik dikirim controller (query count() dari database).
+    $totalSiswa = $totalSiswa ?? count($siswaList);
+    $totalKegiatan = $totalKegiatan ?? 0;
+    $totalPenilaian = $totalPenilaian ?? 0;
 @endphp
 
 <!-- SIDEBAR GURU -->
@@ -436,7 +448,7 @@
         <div class="summary-card">
             <div class="summary-icon">👥</div>
             <div>
-                <h2>—</h2>
+                <h2>{{ $totalKegiatan }}</h2>
                 <p>Data Kegiatan</p>
             </div>
         </div>
@@ -444,7 +456,7 @@
         <div class="summary-card">
             <div class="summary-icon">📊</div>
             <div>
-                <h2>—</h2>
+                <h2>{{ $totalPenilaian }}</h2>
                 <p>Data Penilaian</p>
             </div>
         </div>
@@ -477,7 +489,7 @@
                 </thead>
 
                 <tbody>
-                    @forelse ($siswa ?? [] as $index => $item)
+                    @forelse ($siswaList as $index => $item)
                         <tr>
                             <td>{{ $index + 1 }}</td>
                             <td>

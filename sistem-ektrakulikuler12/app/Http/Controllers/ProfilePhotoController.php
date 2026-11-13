@@ -8,57 +8,53 @@ use Illuminate\Support\Facades\Storage;
 
 class ProfilePhotoController extends Controller
 {
-    public function update(Request $request)
+    public function upload(Request $request)
     {
-        // Pastikan pengguna sudah login
-        if (
-            !session('login') ||
-            !in_array(session('role'), ['admin', 'guru', 'siswa'])
-        ) {
-            return redirect()->route('login');
-        }
-
-        // Validasi foto
         $request->validate([
             'foto' => 'required|image|mimes:jpg,jpeg,png,webp|max:2048',
         ], [
             'foto.required' => 'Silakan pilih foto terlebih dahulu.',
             'foto.image' => 'File harus berupa gambar.',
-            'foto.mimes' => 'Foto harus JPG, JPEG, PNG, atau WEBP.',
+            'foto.mimes' => 'Format foto harus JPG, JPEG, PNG, atau WEBP.',
             'foto.max' => 'Ukuran foto maksimal 2 MB.',
         ]);
 
-        $username = session('username');
-        $role = session('role');
+        $username = session('username', session('name'));
 
-        // Cari foto berdasarkan akun dan role
-        $profil = ProfilePhoto::where('username', $username)
-            ->where('role', $role)
+        if (!$username) {
+            return back()->withErrors([
+                'foto' => 'Username tidak ditemukan. Silakan login kembali.'
+            ]);
+        }
+
+        // Cari foto profil siswa sebelumnya
+        $fotoLama = ProfilePhoto::where('username', $username)
+            ->where('role', 'siswa')
             ->first();
 
-        // Simpan foto baru
-        $path = $request->file('foto')
+        // Simpan foto baru ke storage/app/public/foto-profil
+        $pathBaru = $request->file('foto')
             ->store('foto-profil', 'public');
 
-        // Simpan atau perbarui data foto
+        // Ambil lokasi foto lama
+        $pathLama = $fotoLama?->photo_path;
+
+        // Simpan atau perbarui data menggunakan kolom photo_path
         ProfilePhoto::updateOrCreate(
             [
                 'username' => $username,
-                'role' => $role,
+                'role' => 'siswa',
             ],
             [
-                'photo_path' => $path,
+                'photo_path' => $pathBaru,
             ]
         );
 
-        // Hapus foto lama setelah data baru berhasil disimpan
-        if ($profil && $profil->photo_path) {
-            Storage::disk('public')->delete($profil->photo_path);
+        // Hapus foto lama setelah data berhasil diperbarui
+        if ($pathLama && Storage::disk('public')->exists($pathLama)) {
+            Storage::disk('public')->delete($pathLama);
         }
 
-        return back()->with(
-            'success',
-            'Foto profil berhasil diperbarui.'
-        );
+        return back()->with('success', 'Foto profil berhasil diperbarui!');
     }
 }

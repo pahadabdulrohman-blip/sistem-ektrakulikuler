@@ -119,10 +119,6 @@
             ⭐ Penilaian
         </a>
 
-        <a href="{{ route('laporan') }}" class="menu">
-            📄 Laporan
-        </a>
-
         <a href="{{ route('profil') }}" class="menu">
             👤 Profil
         </a>

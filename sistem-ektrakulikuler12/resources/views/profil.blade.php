@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profil Guru - Sistem Ekstrakurikuler</title>
+    <title>Profil Siswa - Sistem Ekstrakurikuler</title>
 
     <style>
         * {
@@ -24,15 +25,16 @@
             left: 0;
             bottom: 0;
             width: 324px;
-            background: linear-gradient(180deg, #11945f, #087747);
+            background: linear-gradient(180deg, #034aa0, #2023b2);
             color: white;
             padding: 35px 24px;
             overflow-y: auto;
         }
 
+        /* LOGO SIDEBAR */
         .logo {
-            width: 94px;
-            height: 94px;
+            width: 104px;
+            height: 104px;
             border-radius: 25px;
             background: rgba(255,255,255,.17);
             display: flex;
@@ -41,6 +43,15 @@
             font-size: 58px;
             font-weight: bold;
             margin: 0 auto 25px;
+            overflow: hidden;
+            color: white;
+        }
+
+        .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
         }
 
         .sidebar h2 {
@@ -97,7 +108,7 @@
         }
 
         .topbar h1 {
-            color: #087b52;
+            color: #0703e6;
             font-size: 32px;
             margin-bottom: 10px;
         }
@@ -107,7 +118,7 @@
         }
 
         .top-user {
-            color: #087b52;
+            color: #272a76;
             font-weight: bold;
             text-align: right;
         }
@@ -140,7 +151,7 @@
             align-items: center;
             justify-content: center;
             overflow: hidden;
-            color: #087b52;
+            color: #3351d7;
             font-size: 65px;
             font-weight: bold;
             border: 5px solid #e5f8ee;
@@ -150,10 +161,11 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            display: block;
         }
 
         .profile-card h2 {
-            color: #087b52;
+            color: #363ecf;
             margin-bottom: 8px;
         }
 
@@ -162,14 +174,14 @@
             padding: 8px 18px;
             border-radius: 30px;
             background: #d8f5e7;
-            color: #078653;
+            color: #3249c9;
             font-size: 14px;
             font-weight: bold;
             margin-top: 10px;
         }
 
         .card-title {
-            color: #087b52;
+            color: #1945c7;
             font-size: 23px;
             margin-bottom: 25px;
         }
@@ -195,7 +207,7 @@
         }
 
         .info strong {
-            color: #087b52;
+            color: #1954ca;
             overflow-wrap: anywhere;
         }
 
@@ -223,7 +235,7 @@
             border: none;
             border-radius: 10px;
             padding: 14px 22px;
-            background: #10945f;
+            background: #1b48dd;
             color: white;
             font-size: 15px;
             font-weight: bold;
@@ -232,7 +244,7 @@
         }
 
         .btn:hover {
-            background: #087747;
+            background: #1c6cce;
         }
 
         .btn-secondary {
@@ -291,6 +303,10 @@
                 align-items: flex-start;
                 flex-direction: column;
             }
+
+            .top-user {
+                text-align: left;
+            }
         }
     </style>
 </head>
@@ -298,67 +314,83 @@
 <body>
 
 @php
-    $username = session('username', 'guru');
+    $username = session('username', 'siswa');
 
     $fotoProfil = \App\Models\ProfilePhoto::where('username', $username)
-        ->where('role', 'guru')
+        ->where('role', 'siswa')
         ->first();
+
+    $fotoUrl = ($fotoProfil && $fotoProfil->photo_path)
+        ? asset('storage/' . $fotoProfil->photo_path)
+        : null;
 @endphp
 
+<!-- SIDEBAR SISWA -->
 <aside class="sidebar">
 
-    <div class="logo">G</div>
+    <div class="logo">
+        @if ($fotoUrl)
+            <img
+                src="{{ $fotoUrl }}?v={{ $fotoProfil->updated_at ? $fotoProfil->updated_at->timestamp : time() }}"
+                alt="Logo Foto Profil Siswa"
+            >
+        @else
+            S
+        @endif
+    </div>
 
-    <h2>GURU</h2>
+    <h2>SISWA</h2>
     <p class="subtitle">Sistem Ekstrakurikuler</p>
 
-    <div class="menu-title">MENU GURU</div>
+    <div class="menu-title">MENU SISWA</div>
 
-    <a href="/dashboard-guru">🏠 &nbsp; Dashboard Guru</a>
-    <a href="/guru/kegiatan">👥 &nbsp; Data Kegiatan</a>
-    <a href="/guru/penilaian">⭐ &nbsp; Penilaian Siswa</a>
-    <a href="/guru/laporan">📄 &nbsp; Laporan</a>
-    <a href="/guru/profil" class="active">👤 &nbsp; Profil Guru</a>
+    <a href="/dashboard-siswa">🏠 &nbsp; Dashboard Siswa</a>
+    <a href="/ekstrakurikuler">👥 &nbsp; Daftar Ekstrakurikuler</a>
+    <a href="/jadwal-ekstrakurikuler">📅 &nbsp; Jadwal Kegiatan</a>
+    <a href="/penilaian">⭐ &nbsp; Penilaian Saya</a>
+    <a href="/profil" class="active">👤 &nbsp; Profil Siswa</a>
     <a href="/logout">🚪 &nbsp; Logout</a>
 
 </aside>
 
+<!-- KONTEN UTAMA -->
 <main class="main">
 
     <header class="topbar">
         <div>
-            <h1>Profil Guru</h1>
+            <h1>Profil Siswa</h1>
             <p>Kelola informasi akun dan foto profil kamu.</p>
         </div>
 
         <div class="top-user">
-            Guru Pembimbing<br>
+            Siswa AKTIVIA<br>
             <small>Sistem Ekstrakurikuler</small>
         </div>
     </header>
 
     <div class="profile-layout">
 
+        <!-- KARTU PROFIL -->
         <section class="card profile-card">
 
             <div class="avatar">
-                @if ($fotoProfil && $fotoProfil->photo_path)
+                @if ($fotoUrl)
                     <img
-                        src="{{ asset('storage/' . $fotoProfil->photo_path) }}"
-                        alt="Foto Profil Guru"
+                        src="{{ $fotoUrl }}?v={{ $fotoProfil->updated_at ? $fotoProfil->updated_at->timestamp : time() }}"
+                        alt="Foto Profil Siswa"
                     >
                 @else
-                    G
+                    S
                 @endif
             </div>
 
             <h2>{{ $username }}</h2>
 
-            <span class="role">Guru Aktif</span>
+            <span class="role">Siswa Aktif</span>
 
             <br>
 
-            <a href="/dashboard-guru" class="btn btn-secondary">
+            <a href="/dashboard-siswa" class="btn btn-secondary">
                 ← Kembali ke Dashboard
             </a>
 
@@ -366,6 +398,7 @@
 
         <div>
 
+            <!-- INFORMASI AKUN -->
             <section class="card">
 
                 <h2 class="card-title">Informasi Akun</h2>
@@ -379,20 +412,21 @@
 
                     <div class="info">
                         <small>Role Pengguna</small>
-                        <strong>Guru</strong>
+                        <strong>Siswa</strong>
                     </div>
 
                 </div>
 
             </section>
 
+            <!-- UPLOAD FOTO -->
             <section class="card upload-card">
 
                 <h2 class="card-title">Foto Profil</h2>
 
                 <p>
                     Pilih foto profil baru untuk memperbarui
-                    tampilan akun Guru kamu.
+                    tampilan akun siswa kamu.
                 </p>
 
                 @if (session('success'))

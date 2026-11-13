@@ -1,10 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="id">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Ekstrakurikuler Admin</title>
 
     <style>
@@ -20,23 +20,15 @@
             color: #111827;
         }
 
-        /* =========================
-           SIDEBAR
-        ========================= */
-
         .sidebar {
             position: fixed;
             left: 0;
             top: 0;
-
             width: 270px;
             height: 100vh;
-
             background: #111827;
             color: white;
-
             padding: 25px 15px;
-
             overflow-y: auto;
         }
 
@@ -55,22 +47,15 @@
             font-size: 14px;
         }
 
-        /* MENU */
-
         .menu a {
             display: flex;
             align-items: center;
-
             color: #e5e7eb;
             text-decoration: none;
-
             padding: 14px 18px;
             margin-bottom: 8px;
-
             border-radius: 9px;
-
             font-size: 16px;
-
             transition: .2s;
         }
 
@@ -80,58 +65,37 @@
             color: white;
         }
 
-        /* ICON */
-
         .menu-icon {
             width: 30px;
             font-size: 18px;
         }
 
-        /* BADGE PERMINTAAN PASSWORD */
-
         .badge {
             margin-left: auto;
-
             min-width: 24px;
             height: 24px;
-
             padding: 0 7px;
-
             display: flex;
             align-items: center;
             justify-content: center;
-
             background: #ef4444;
             color: white;
-
             border-radius: 50%;
-
             font-size: 12px;
             font-weight: bold;
         }
-
-
-        /* =========================
-           CONTENT
-        ========================= */
 
         .content {
             margin-left: 270px;
             padding: 35px;
         }
 
-
-        /* =========================
-           HEADER
-        ========================= */
-
         .header {
             display: flex;
-
             justify-content: space-between;
             align-items: center;
-
             margin-bottom: 30px;
+            gap: 20px;
         }
 
         .header h1 {
@@ -144,45 +108,28 @@
             font-size: 17px;
         }
 
-
-        /* =========================
-           TAMBAH EKSKUL
-        ========================= */
-
         .add-btn {
             background: #2563eb;
             color: white;
-
             padding: 13px 20px;
-
             text-decoration: none;
-
             border-radius: 8px;
-
             font-weight: bold;
+            white-space: nowrap;
         }
 
-        .add-btn:hover {
+        .add-btn:hover,
+        .kelola:hover {
             background: #1d4ed8;
         }
 
-
-        /* =========================
-           DASHBOARD BUTTON
-        ========================= */
-
         .dashboard-btn {
             display: inline-block;
-
             background: #111827;
             color: white;
-
             text-decoration: none;
-
             padding: 12px 18px;
-
             border-radius: 8px;
-
             margin-bottom: 25px;
         }
 
@@ -190,528 +137,301 @@
             background: #1f2937;
         }
 
+        .stats {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 22px;
+            box-shadow: 0 5px 18px rgba(0, 0, 0, .05);
+            color: #64748b;
+        }
 
-        /* =========================
-           GRID
-        ========================= */
+        .stats strong {
+            color: #2563eb;
+            font-size: 25px;
+            margin: 0 5px;
+        }
 
         .grid {
             display: grid;
-
-            grid-template-columns:
-                repeat(3, 1fr);
-
+            grid-template-columns: repeat(3, 1fr);
             gap: 22px;
         }
 
-
-        /* =========================
-           CARD
-        ========================= */
-
         .card {
             background: white;
-
             border-radius: 15px;
-
             padding: 27px;
-
             min-height: 245px;
+            box-shadow: 0 5px 18px rgba(0, 0, 0, .07);
+            transition: .2s;
+        }
 
-            box-shadow:
-                0 5px 18px rgba(0, 0, 0, .07);
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 9px 22px rgba(0, 0, 0, .10);
         }
 
         .icon {
             font-size: 42px;
-
             margin-bottom: 15px;
         }
 
         .card h2 {
             font-size: 22px;
-
-            margin-bottom: 8px;
+            margin-bottom: 12px;
+            overflow-wrap: anywhere;
         }
 
         .card p {
             color: #64748b;
-
             line-height: 1.5;
-
-            min-height: 45px;
+            margin-bottom: 8px;
+            overflow-wrap: anywhere;
         }
-
-
-        /* =========================
-           KELOLA
-        ========================= */
 
         .kelola {
             display: inline-block;
-
             background: #2563eb;
             color: white;
-
             text-decoration: none;
-
             padding: 10px 18px;
-
             border-radius: 8px;
-
-            margin-top: 20px;
+            margin-top: 15px;
         }
 
-        .kelola:hover {
-            background: #1d4ed8;
+        .empty {
+            background: white;
+            padding: 35px;
+            border-radius: 12px;
+            color: #64748b;
+            text-align: center;
+            grid-column: 1 / -1;
         }
 
+        .empty h3 {
+            color: #111827;
+            margin-bottom: 10px;
+        }
 
-        /* =========================
-           TABLET
-        ========================= */
+        .success-message {
+            background: #dcfce7;
+            color: #166534;
+            padding: 13px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
 
-        @media(max-width: 1000px) {
+        .error-message {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 13px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
 
+        .error-message ul {
+            margin: 8px 0 0 20px;
+        }
+
+        @media(max-width: 1100px) {
             .grid {
-                grid-template-columns:
-                    repeat(2, 1fr);
+                grid-template-columns: repeat(2, 1fr);
             }
-
         }
-
-
-        /* =========================
-           MOBILE
-        ========================= */
 
         @media(max-width: 700px) {
-
             .sidebar {
                 position: relative;
-
                 width: 100%;
                 height: auto;
             }
 
             .content {
                 margin-left: 0;
-
-                padding: 25px;
+                padding: 25px 18px;
             }
 
             .header {
                 flex-direction: column;
-
                 align-items: flex-start;
+            }
 
-                gap: 20px;
+            .header h1 {
+                font-size: 28px;
             }
 
             .grid {
                 grid-template-columns: 1fr;
             }
-
         }
-
     </style>
-
 </head>
-
 
 <body>
 
+    <div class="sidebar">
 
-<!-- =====================================================
-     SIDEBAR ADMIN
-===================================================== -->
+        <div class="logo">
+            <h2>ADMIN PANEL</h2>
+            <p>Sistem Ekstrakurikuler</p>
+        </div>
 
-<div class="sidebar">
+        <div class="menu">
 
+            <a href="{{ route('dashboard.admin') }}">
+                <span class="menu-icon">🏠</span>
+                Dashboard
+            </a>
 
-    <!-- LOGO -->
+            <a href="{{ route('admin.ekstrakurikuler') }}" class="active">
+                <span class="menu-icon">⚽</span>
+                Ekstrakurikuler
+            </a>
 
-    <div class="logo">
+            <a href="{{ route('admin.penilaian') }}">
+                <span class="menu-icon">⭐</span>
+                Penilaian
+            </a>
 
-        <h2>
-            ADMIN PANEL
-        </h2>
+            <a href="{{ route('admin.laporan') }}">
+                <span class="menu-icon">📄</span>
+                Laporan
+            </a>
 
-        <p>
-            Sistem Ekstrakurikuler
-        </p>
+            <a href="{{ route('admin.profil') }}">
+                <span class="menu-icon">👤</span>
+                Profil
+            </a>
 
-    </div>
+            <a href="{{ route('admin.password.requests') }}">
+                <span class="menu-icon">🔔</span>
+                <span>Permintaan Password</span>
 
-
-    <!-- MENU -->
-
-    <div class="menu">
-
-
-        <!-- DASHBOARD -->
-
-        <a href="{{ route('dashboard.admin') }}">
-
-            <span class="menu-icon">
-                🏠
-            </span>
-
-            Dashboard
-
-        </a>
-
-
-        <!-- EKSTRAKURIKULER -->
-
-        <a
-            href="{{ route('admin.ekstrakurikuler') }}"
-            class="active"
-        >
-
-            <span class="menu-icon">
-                ⚽
-            </span>
-
-            Ekstrakurikuler
-
-        </a>
-
-
-        <!-- PENILAIAN -->
-
-        <a href="{{ route('admin.penilaian') }}">
-
-            <span class="menu-icon">
-                ⭐
-            </span>
-
-            Penilaian
-
-        </a>
-
-
-        <!-- LAPORAN -->
-
-        <a href="{{ route('admin.laporan') }}">
-
-            <span class="menu-icon">
-                📄
-            </span>
-
-            Laporan
-
-        </a>
-
-
-        <!-- PROFIL -->
-
-        <a href="{{ route('admin.profil') }}">
-
-            <span class="menu-icon">
-                👤
-            </span>
-
-            Profil
-
-        </a>
-
-
-        <!-- =================================================
-             PERMINTAAN PASSWORD
-        ================================================== -->
-
-        <a href="{{route('admin.password.requests') }}">
-
-            <span class="menu-icon">
-                🔔
-            </span>
-
-            <span>
-                Permintaan Password
-            </span>
-
-
-            @php
-
-                $jumlahPermintaan =
-                    \App\Models\PasswordRequest::where(
+                @php
+                    $jumlahPermintaan = \App\Models\PasswordRequest::where(
                         'status',
                         'menunggu'
                     )->count();
+                @endphp
 
-            @endphp
+                @if($jumlahPermintaan > 0)
+                    <span class="badge">{{ $jumlahPermintaan }}</span>
+                @endif
+            </a>
 
+            <a href="{{ route('logout') }}">
+                <span class="menu-icon">🚪</span>
+                Logout
+            </a>
 
-            @if($jumlahPermintaan > 0)
-
-                <span class="badge">
-                    {{ $jumlahPermintaan }}
-                </span>
-
-            @endif
-
-        </a>
-
-
-        <!-- LOGOUT -->
-
-        <a href="{{ route('logout') }}">
-
-            <span class="menu-icon">
-                🚪
-            </span>
-
-            Logout
-
-        </a>
-
-
+        </div>
     </div>
 
-</div>
+    <div class="content">
 
+        <div class="header">
+            <div>
+                <h1>Ekstrakurikuler</h1>
+                <p>Kelola data ekstrakurikuler sekolah</p>
+            </div>
 
-
-<!-- =====================================================
-     CONTENT
-===================================================== -->
-
-<div class="content">
-
-
-    <!-- HEADER -->
-
-    <div class="header">
-
-
-        <div>
-
-            <h1>
-                Ekstrakurikuler
-            </h1>
-
-            <p>
-                Kelola data ekstrakurikuler sekolah
-            </p>
-
+            <a href="{{ route('admin.ekstrakurikuler.create') }}" class="add-btn">
+                + Tambah Ekskul
+            </a>
         </div>
 
-
-        <!-- TAMBAH EKSKUL -->
-
-        <a
-            href="{{ route('admin.ekstrakurikuler.create') }}"
-            class="add-btn"
-        >
-
-            + Tambah Ekskul
-
+        <a href="{{ route('dashboard.admin') }}" class="dashboard-btn">
+            ← Dashboard
         </a>
 
+        @if(session('success'))
+            <div class="success-message">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="error-message">
+                {{ session('error') }}
+            </div>
+        @endif
+
+        @if($errors->any())
+            <div class="error-message">
+                <strong>Terjadi kesalahan:</strong>
+                <ul>
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        <div class="stats">
+            Total Ekstrakurikuler:
+            <strong>{{ count($ekskul) }}</strong>
+            kegiatan terdaftar
+        </div>
+
+        <div class="grid">
+
+            @forelse($ekskul as $item)
+
+                <div class="card">
+
+                    <div class="icon">
+                        {{ $item['ikon'] ?? $item['icon'] ?? '⭐' }}
+                    </div>
+
+                    <h2>
+                        {{ $item['nama'] ?? 'Tanpa Nama' }}
+                    </h2>
+
+                    <p>
+                        {{ $item['deskripsi'] ?? 'Belum ada deskripsi.' }}
+                    </p>
+
+                    @if(!empty($item['pembina']))
+                        <p>
+                            <strong>Pembina:</strong>
+                            {{ $item['pembina'] }}
+                        </p>
+                    @endif
+
+                    @if(!empty($item['jadwal']))
+                        <p>
+                            <strong>Jadwal:</strong>
+                            {{ $item['jadwal'] }}
+                        </p>
+                    @endif
+
+                    @if(!empty($item['tempat']))
+                        <p>
+                            <strong>Tempat:</strong>
+                            {{ $item['tempat'] }}
+                        </p>
+                    @endif
+
+                    <a href="{{ route('admin.ekstrakurikuler.show', $item['id']) }}"
+                       class="kelola">
+                        Kelola
+                    </a>
+
+                </div>
+
+            @empty
+
+                <div class="empty">
+                    <h3>Belum Ada Data Ekstrakurikuler</h3>
+                    <p>Silakan klik tombol Tambah Ekskul untuk menambahkan data.</p>
+                </div>
+
+            @endforelse
+
+        </div>
 
     </div>
-
-
-
-    <!-- DASHBOARD -->
-
-    <a
-        href="{{ route('dashboard.admin') }}"
-        class="dashboard-btn"
-    >
-
-        ← Dashboard
-
-    </a>
-
-
-
-    <!-- =================================================
-         DATA EKSKUL
-    ================================================== -->
-
-    <div class="grid">
-
-
-        <!-- FUTSAL -->
-
-        <div class="card">
-
-            <div class="icon">
-                ⚽
-            </div>
-
-            <h2>
-                Futsal
-            </h2>
-
-            <p>
-                Ekstrakurikuler olahraga futsal.
-            </p>
-
-            <a
-                href="{{ route('admin.ekstrakurikuler.show', 1) }}"
-                class="kelola"
-            >
-
-                Kelola
-
-            </a>
-
-        </div>
-
-
-
-        <!-- CODING -->
-
-        <div class="card">
-
-            <div class="icon">
-                💻
-            </div>
-
-            <h2>
-                Coding
-            </h2>
-
-            <p>
-                Ekstrakurikuler pemrograman dan teknologi.
-            </p>
-
-            <a
-                href="{{ route('admin.ekstrakurikuler.show', 2) }}"
-                class="kelola"
-            >
-
-                Kelola
-
-            </a>
-
-        </div>
-
-
-
-        <!-- BASKET -->
-
-        <div class="card">
-
-            <div class="icon">
-                🏀
-            </div>
-
-            <h2>
-                Basket
-            </h2>
-
-            <p>
-                Ekstrakurikuler olahraga basket.
-            </p>
-
-            <a
-                href="{{ route('admin.ekstrakurikuler.show', 3) }}"
-                class="kelola"
-            >
-
-                Kelola
-
-            </a>
-
-        </div>
-
-
-
-        <!-- PENCAK SILAT -->
-
-        <div class="card">
-
-            <div class="icon">
-                🥋
-            </div>
-
-            <h2>
-                Pencak Silat
-            </h2>
-
-            <p>
-                Ekstrakurikuler bela diri.
-            </p>
-
-            <a
-                href="{{ route('admin.ekstrakurikuler.show', 4) }}"
-                class="kelola"
-            >
-
-                Kelola
-
-            </a>
-
-        </div>
-
-
-
-        <!-- PRAMUKA -->
-
-        <div class="card">
-
-            <div class="icon">
-                🏕️
-            </div>
-
-            <h2>
-                Pramuka
-            </h2>
-
-            <p>
-                Ekstrakurikuler kepramukaan.
-            </p>
-
-            <a
-                href="{{ route('admin.ekstrakurikuler.show', 5) }}"
-                class="kelola"
-            >
-
-                Kelola
-
-            </a>
-
-        </div>
-
-
-
-        <!-- VOLI -->
-
-        <div class="card">
-
-            <div class="icon">
-                🏐
-            </div>
-
-            <h2>
-                Voli
-            </h2>
-
-            <p>
-                Ekstrakurikuler olahraga voli.
-            </p>
-
-            <a
-                href="{{ route('admin.ekstrakurikuler.show', 6) }}"
-                class="kelola"
-            >
-
-                Kelola
-
-            </a>
-
-        </div>
-
-
-    </div>
-
-
-</div>
-
 
 </body>
 </html>

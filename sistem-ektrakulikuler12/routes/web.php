@@ -7,10 +7,15 @@ use Illuminate\Http\Request;
 
 use App\Http\Controllers\EkstrakurikulerController;
 use App\Http\Controllers\AdminEkstrakurikulerController;
+use App\Http\Controllers\GuruEkstrakurikulerController;
 use App\Http\Controllers\JadwalEkstrakurikulerController;
-use App\Models\PasswordRequest;
 use App\Http\Controllers\AbsensiController;
 use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\PenilaianController;
+use App\Http\Controllers\ProfilePhotoController;
+
+use App\Models\PasswordRequest;
+use App\Models\Ekstrakurikuler;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,6 +37,21 @@ Route::post('/login', [
     'prosesLogin',
 ])->name('login.process');
 
+/*
+|--------------------------------------------------------------------------
+| REGISTER
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/register', [
+    RegisterController::class,
+    'index',
+])->name('register');
+
+Route::post('/register', [
+    RegisterController::class,
+    'store',
+])->name('register.store');
 
 /*
 |--------------------------------------------------------------------------
@@ -46,7 +66,7 @@ Route::get('/dashboard', function () {
 
     return match (session('role')) {
         'admin' => redirect()->route('dashboard.admin'),
-        'guru'  => redirect()->route('dashboard.guru'),
+        'guru' => redirect()->route('dashboard.guru'),
         'siswa' => redirect()->route('dashboard.siswa'),
         default => redirect()->route('login'),
     };
@@ -63,12 +83,16 @@ Route::get('/dashboard-guru', function () {
 Route::get('/dashboard-siswa', function () {
     return view('dashboard-siswa');
 })->middleware('role:siswa')->name('dashboard.siswa');
-Route::get('/register', [RegisterController::class, 'index'])
-    ->name('register');
 
-Route::post('/register', [RegisterController::class, 'store'])
-    ->name('register.store');
+/*
+|--------------------------------------------------------------------------
+| LAPORAN UMUM
+|--------------------------------------------------------------------------
+*/
 
+Route::get('/laporan', function () {
+    return redirect()->route('dashboard');
+})->name('laporan');
 
 /*
 |--------------------------------------------------------------------------
@@ -80,6 +104,8 @@ Route::prefix('admin')
     ->name('admin.')
     ->middleware('role:admin')
     ->group(function () {
+
+        // EKSTRAKURIKULER
 
         Route::get('/ekstrakurikuler', [
             AdminEkstrakurikulerController::class,
@@ -99,58 +125,61 @@ Route::prefix('admin')
         Route::get('/ekstrakurikuler/{id}/edit', [
             AdminEkstrakurikulerController::class,
             'edit',
-        ])->whereNumber('id')
-          ->name('ekstrakurikuler.edit');
+        ])->whereNumber('id')->name('ekstrakurikuler.edit');
 
         Route::put('/ekstrakurikuler/{id}', [
             AdminEkstrakurikulerController::class,
             'update',
-        ])->whereNumber('id')
-          ->name('ekstrakurikuler.update');
+        ])->whereNumber('id')->name('ekstrakurikuler.update');
 
         Route::delete('/ekstrakurikuler/{id}', [
             AdminEkstrakurikulerController::class,
             'destroy',
-        ])->whereNumber('id')
-          ->name('ekstrakurikuler.destroy');
+        ])->whereNumber('id')->name('ekstrakurikuler.destroy');
 
         Route::get('/ekstrakurikuler/{id}', [
             AdminEkstrakurikulerController::class,
             'show',
-        ])->whereNumber('id')
-          ->name('ekstrakurikuler.show');
+        ])->whereNumber('id')->name('ekstrakurikuler.show');
+
+        // PENILAIAN
 
         Route::get('/penilaian', function () {
             return view('admin.penilaian');
         })->name('penilaian');
 
+        // LAPORAN
+
         Route::get('/laporan', function () {
             return view('admin.laporan');
         })->name('laporan');
 
+        // PROFIL
+
         Route::get('/profil', function () {
             return view('admin.profil');
         })->name('profil');
+
+        // PERMINTAAN PASSWORD
 
         Route::get('/password-requests', function () {
             $requests = PasswordRequest::latest()->get();
 
             return view('password-requests', compact('requests'));
         })->name('password.requests');
-        // Absensi Admin
-Route::get('/absensi', [AbsensiController::class, 'index'])
-    ->name('absensi');
 
-Route::post('/absensi', [AbsensiController::class, 'simpan'])
-    ->name('absensi.simpan');
+        // ABSENSI
+
+        Route::get('/absensi', [
+            AbsensiController::class,
+            'index',
+        ])->name('absensi');
+
+        Route::post('/absensi', [
+            AbsensiController::class,
+            'simpan',
+        ])->name('absensi.simpan');
     });
-
-
-/*
-|--------------------------------------------------------------------------
-| ALIAS PERMINTAAN PASSWORD ADMIN
-|--------------------------------------------------------------------------
-*/
 
 /*
 |--------------------------------------------------------------------------
@@ -158,34 +187,111 @@ Route::post('/absensi', [AbsensiController::class, 'simpan'])
 |--------------------------------------------------------------------------
 */
 
-Route::middleware('role:guru')->group(function () {
+Route::prefix('guru')
+    ->name('guru.')
+    ->middleware('role:guru')
+    ->group(function () {
 
-    Route::get('/guru/profil', function () {
-        return view('guru.profil');
-    })->name('guru.profil');
+        // PROFIL GURU
 
-    Route::get('/guru/kegiatan', function () {
-        return view('ekstrakurikuler.index');
-    })->name('guru.kegiatan');
+        Route::get('/profil', function () {
+            return view('guru.profil');
+        })->name('profil');
 
-    Route::get('/guru/penilaian', function () {
-        $nilai = [];
+        // DAFTAR EKSTRAKURIKULER
 
-        return view('penilaian', compact('nilai'));
-    })->name('guru.penilaian');
+        Route::get('/ekstrakurikuler', [
+            GuruEkstrakurikulerController::class,
+            'index',
+        ])->name('ekstrakurikuler.index');
 
-    Route::get('/guru/laporan', function () {
-        $siswa = [];
+        // FORM TAMBAH EKSTRAKURIKULER
 
-        return view('laporan', compact('siswa'));
-    })->name('guru.laporan');
-    Route::get('/guru/absensi', [AbsensiController::class, 'index'])
-    ->name('guru.absensi');
+        Route::get('/ekstrakurikuler/create', [
+            GuruEkstrakurikulerController::class,
+            'create',
+        ])->name('ekstrakurikuler.create');
 
-Route::post('/guru/absensi', [AbsensiController::class, 'simpan'])
-    ->name('guru.absensi.simpan');
-});
+        // SIMPAN EKSTRAKURIKULER
 
+        Route::post('/ekstrakurikuler', [
+            GuruEkstrakurikulerController::class,
+            'store',
+        ])->name('ekstrakurikuler.store');
+
+        // FORM EDIT EKSTRAKURIKULER
+
+        Route::get('/ekstrakurikuler/{id}/edit', [
+            GuruEkstrakurikulerController::class,
+            'edit',
+        ])->whereNumber('id')
+          ->name('ekstrakurikuler.edit');
+
+        // UPDATE EKSTRAKURIKULER
+
+        Route::put('/ekstrakurikuler/{id}', [
+            GuruEkstrakurikulerController::class,
+            'update',
+        ])->whereNumber('id')
+          ->name('ekstrakurikuler.update');
+
+        // HAPUS EKSTRAKURIKULER
+
+        Route::delete('/ekstrakurikuler/{id}', [
+            GuruEkstrakurikulerController::class,
+            'destroy',
+        ])->whereNumber('id')
+          ->name('ekstrakurikuler.destroy');
+
+        // MENU KEGIATAN LAMA
+
+        Route::get('/kegiatan', function () {
+            return redirect()->route('guru.ekstrakurikuler.index');
+        })->name('kegiatan');
+
+        // PENILAIAN
+
+        Route::get('/penilaian', [
+            PenilaianController::class,
+            'index',
+        ])->name('penilaian');
+
+        Route::post('/penilaian', [
+            PenilaianController::class,
+            'simpan',
+        ])->name('penilaian.simpan');
+
+        Route::put('/penilaian/{id}', [
+            PenilaianController::class,
+            'update',
+        ])->whereNumber('id')
+          ->name('penilaian.update');
+
+        Route::delete('/penilaian/{id}', [
+            PenilaianController::class,
+            'hapus',
+        ])->whereNumber('id')
+          ->name('penilaian.hapus');
+
+        // LAPORAN
+
+        Route::get('/laporan', [
+            EkstrakurikulerController::class,
+            'laporanGuru',
+        ])->name('laporan');
+
+        // ABSENSI
+
+        Route::get('/absensi', [
+            AbsensiController::class,
+            'index',
+        ])->name('absensi');
+
+        Route::post('/absensi', [
+            AbsensiController::class,
+            'simpan',
+        ])->name('absensi.simpan');
+    });
 
 /*
 |--------------------------------------------------------------------------
@@ -195,21 +301,32 @@ Route::post('/guru/absensi', [AbsensiController::class, 'simpan'])
 
 Route::middleware('role:siswa')->group(function () {
 
+    // DAFTAR EKSTRAKURIKULER
+
     Route::get('/ekstrakurikuler', [
         EkstrakurikulerController::class,
         'ekstrakurikuler',
     ])->name('ekstrakurikuler');
 
+    // DETAIL EKSTRAKURIKULER
+
     Route::get('/ekstrakurikuler/{id}', [
         EkstrakurikulerController::class,
         'detail',
-    ])->whereNumber('id')
-      ->name('ekstrakurikuler.detail');
+    ])->whereNumber('id')->name('ekstrakurikuler.detail');
+
+    // PROFIL SISWA
 
     Route::get('/profil', [
         EkstrakurikulerController::class,
         'profil',
     ])->name('profil');
+
+    Route::get('/siswa/profil', function () {
+        return view('siswa.profil');
+    })->name('siswa.profil');
+
+    // FOTO PROFIL
 
     Route::get('/profil/foto/{filename}', function ($filename) {
         $filename = basename($filename);
@@ -222,21 +339,14 @@ Route::middleware('role:siswa')->group(function () {
         return Storage::disk('public')->response($path);
     })->name('profil.foto');
 
-    Route::post('/profil/foto/upload', function (Request $request) {
-    $request->validate([
-        'foto' => 'required|image|mimes:jpg,jpeg,png,webp|max:2048',
-    ]);
+    // UPLOAD FOTO PROFIL
 
-    $filename = $request->file('foto')->hashName();
+    Route::post('/profil/foto/upload', [
+        ProfilePhotoController::class,
+        'upload',
+    ])->name('profil.foto.upload');
 
-    $request->file('foto')->storeAs(
-        'foto-profil',
-        $filename,
-        'public'
-    );
-
-    return back()->with('success', 'Foto profil berhasil diunggah.');
-})->name('profil.foto.upload');
+    // PENILAIAN SISWA
 
     Route::get('/penilaian', [
         EkstrakurikulerController::class,
@@ -246,15 +356,8 @@ Route::middleware('role:siswa')->group(function () {
     Route::get('/penilaian/{id}', [
         EkstrakurikulerController::class,
         'detailNilai',
-    ])->whereNumber('id')
-      ->name('penilaian.detail');
-
-    Route::get('/laporan', [
-        EkstrakurikulerController::class,
-        'laporan',
-    ])->name('laporan');
+    ])->whereNumber('id')->name('penilaian.detail');
 });
-
 
 /*
 |--------------------------------------------------------------------------
@@ -267,7 +370,6 @@ Route::get('/jadwal-ekstrakurikuler', [
     'index',
 ])->name('jadwal.ekstrakurikuler');
 
-
 /*
 |--------------------------------------------------------------------------
 | LUPA PASSWORD
@@ -279,6 +381,7 @@ Route::get('/lupa-password', function () {
 })->name('password.request');
 
 Route::post('/lupa-password', function (Request $request) {
+
     $validated = $request->validate([
         'username' => 'required|string|max:255',
         'role' => 'required|in:admin,guru,siswa',
@@ -294,8 +397,8 @@ Route::post('/lupa-password', function (Request $request) {
         'success',
         'Permintaan ubah password berhasil dikirim kepada Admin.'
     );
-})->name('password.email');
 
+})->name('password.email');
 
 /*
 |--------------------------------------------------------------------------
@@ -306,7 +409,6 @@ Route::post('/lupa-password', function (Request $request) {
 Route::get('/hubungi-admin', function () {
     return view('hubungi-admin');
 })->name('hubungi.admin');
-
 
 /*
 |--------------------------------------------------------------------------
@@ -320,6 +422,12 @@ Route::get('/logout', function () {
 
     return redirect()->route('login');
 })->name('logout');
+
+/*
+|--------------------------------------------------------------------------
+| TES ERROR
+|--------------------------------------------------------------------------
+*/
 
 Route::get('/tes-error-500', function () {
     abort(500);

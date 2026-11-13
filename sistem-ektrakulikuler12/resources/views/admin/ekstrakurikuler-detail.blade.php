@@ -1,17 +1,12 @@
+
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
-
     <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
-    <title>{{ $ekskul['nama'] }} - Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ $ekskul['nama'] ?? 'Detail Ekskul' }} - Admin</title>
 
     <style>
-
         * {
             box-sizing: border-box;
             margin: 0;
@@ -28,13 +23,10 @@
             position: fixed;
             left: 0;
             top: 0;
-
             width: 270px;
             height: 100vh;
-
             background: #111827;
             color: white;
-
             padding: 25px 15px;
         }
 
@@ -54,15 +46,10 @@
 
         .menu a {
             display: block;
-
             color: #e5e7eb;
-
             text-decoration: none;
-
             padding: 14px 18px;
-
             margin-bottom: 8px;
-
             border-radius: 9px;
         }
 
@@ -77,30 +64,20 @@
 
         .back {
             display: inline-block;
-
             background: #111827;
             color: white;
-
             text-decoration: none;
-
             padding: 12px 18px;
-
             border-radius: 8px;
-
             margin-bottom: 25px;
         }
 
         .box {
             background: white;
-
             max-width: 900px;
-
             border-radius: 18px;
-
             padding: 40px;
-
-            box-shadow:
-                0 5px 20px rgba(0,0,0,.08);
+            box-shadow: 0 5px 20px rgba(0,0,0,.08);
         }
 
         .icon {
@@ -117,17 +94,14 @@
             color: #64748b;
             font-size: 18px;
             margin-bottom: 30px;
+            line-height: 1.6;
         }
 
         .info {
             display: grid;
-
             grid-template-columns: 180px 1fr;
-
             gap: 15px;
-
             padding: 15px 0;
-
             border-bottom: 1px solid #e5e7eb;
         }
 
@@ -137,23 +111,20 @@
 
         .value {
             color: #64748b;
+            overflow-wrap: anywhere;
         }
 
         .buttons {
             margin-top: 30px;
-
             display: flex;
-
             gap: 10px;
+            flex-wrap: wrap;
         }
 
         .btn {
             text-decoration: none;
-
             padding: 12px 20px;
-
             border-radius: 8px;
-
             color: white;
         }
 
@@ -165,147 +136,97 @@
             background: #2563eb;
         }
 
-    </style>
+        @media (max-width: 768px) {
+            .sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+            }
 
+            .content {
+                margin-left: 0;
+                padding: 20px;
+            }
+
+            .box {
+                padding: 25px;
+            }
+
+            .info {
+                grid-template-columns: 1fr;
+                gap: 7px;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
-
-<!-- SIDEBAR -->
-
 <div class="sidebar">
-
     <div class="logo">
-
         <h2>ADMIN PANEL</h2>
-
         <p>Sistem Ekstrakurikuler</p>
-
     </div>
-
 
     <div class="menu">
-
-        <a href="{{ route('dashboard.admin') }}">
-            🏠 Dashboard
-        </a>
-
-        <a href="{{ route('admin.ekstrakurikuler') }}">
-            ⚽ Ekstrakurikuler
-        </a>
-
-        <a href="{{ route('admin.penilaian') }}">
-            ⭐ Penilaian
-        </a>
-
-        <a href="{{ route('admin.laporan') }}">
-            📄 Laporan
-        </a>
-
-        <a href="{{ route('admin.profil') }}">
-            👤 Profil
-        </a>
-
-        <a href="{{ route('login') }}">
-            🚪 Logout
-        </a>
-
+        <a href="{{ route('dashboard.admin') }}">🏠 Dashboard</a>
+        <a href="{{ route('admin.ekstrakurikuler') }}">⚽ Ekstrakurikuler</a>
+        <a href="{{ route('admin.penilaian') }}">⭐ Penilaian</a>
+        <a href="{{ route('admin.laporan') }}">📄 Laporan</a>
+        <a href="{{ route('admin.profil') }}">👤 Profil</a>
+        <a href="{{ route('login') }}">🚪 Logout</a>
     </div>
-
 </div>
 
-
-<!-- CONTENT -->
-
 <div class="content">
-
-    <a href="{{ route('admin.ekstrakurikuler') }}"
-       class="back">
-
+    <a href="{{ route('admin.ekstrakurikuler') }}" class="back">
         ← Kembali
-
     </a>
 
-
     <div class="box">
-
         <div class="icon">
-            {{ $ekskul['ikon'] }}
+            {{ $ekskul['ikon'] ?? '⚽' }}
         </div>
 
-
-        <h1>
-            {{ $ekskul['nama'] }}
-        </h1>
-
+        <h1>{{ $ekskul['nama'] ?? '-' }}</h1>
 
         <p class="description">
-            {{ $ekskul['deskripsi'] }}
+            {{ $ekskul['deskripsi'] ?? 'Belum ada deskripsi.' }}
         </p>
 
-
         <div class="info">
-
-            <div class="label">
-                Pembina
-            </div>
-
-            <div class="value">
-                {{ $ekskul['pembina'] }}
-            </div>
-
+            <div class="label">Pembina</div>
+            <div class="value">{{ $ekskul['pembina'] ?? '-' }}</div>
         </div>
 
-
         <div class="info">
-
-            <div class="label">
-                Jadwal
-            </div>
-
-            <div class="value">
-                {{ $ekskul['jadwal'] }}
-            </div>
-
+            <div class="label">Jadwal</div>
+            <div class="value">{{ $ekskul['jadwal'] ?? '-' }}</div>
         </div>
 
-
         <div class="info">
-
-            <div class="label">
-                Tempat
-            </div>
-
+            <div class="label">Tempat</div>
             <div class="value">
-                {{ $ekskul['tempat'] }}
+                {{ $ekskul['tempat'] ?? $ekskul['lokasi'] ?? '-' }}
             </div>
-
         </div>
-
 
         <div class="buttons">
-
-            <a href="{{ route('admin.ekstrakurikuler') }}"
-               class="btn back-list">
-
+            <a href="{{ route('admin.ekstrakurikuler') }}" class="btn back-list">
                 ← Daftar Ekskul
-
             </a>
 
             <a href="{{ route('admin.ekstrakurikuler.edit', $ekskul['id']) }}"
                class="btn edit">
-
                 ✏ Edit
-
             </a>
-
         </div>
-
     </div>
-
 </div>
 
 </body>
-
 </html>

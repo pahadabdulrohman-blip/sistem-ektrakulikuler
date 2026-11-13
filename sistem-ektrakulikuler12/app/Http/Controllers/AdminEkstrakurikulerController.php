@@ -2,239 +2,244 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Ekstrakurikuler;
 use Illuminate\Http\Request;
 
 class AdminEkstrakurikulerController extends Controller
 {
-    /*
-    |--------------------------------------------------------------------------
-    | DATA EKSTRAKURIKULER
-    |--------------------------------------------------------------------------
-    */
+    /**
+     * DATA AWAL EKSTRAKURIKULER
+     */
+    private function isiDataAwal(): void
+    {
+        $dataAwal = [
+            [
+                'nama_ekstrakurikuler' => 'Futsal',
+                'deskripsi' => 'Ekstrakurikuler olahraga futsal.',
+                'ikon' => '⚽',
+                'pembina' => 'Belum ditentukan',
+                'jadwal' => 'Belum ditentukan',
+                'tempat' => 'Lapangan Sekolah',
+            ],
+            [
+                'nama_ekstrakurikuler' => 'Coding',
+                'deskripsi' => 'Ekstrakurikuler pemrograman dan teknologi.',
+                'ikon' => '💻',
+                'pembina' => 'Belum ditentukan',
+                'jadwal' => 'Belum ditentukan',
+                'tempat' => 'Laboratorium Komputer',
+            ],
+            [
+                'nama_ekstrakurikuler' => 'Basket',
+                'deskripsi' => 'Ekstrakurikuler olahraga basket.',
+                'ikon' => '🏀',
+                'pembina' => 'Belum ditentukan',
+                'jadwal' => 'Belum ditentukan',
+                'tempat' => 'Lapangan Basket',
+            ],
+            [
+                'nama_ekstrakurikuler' => 'Pencak Silat',
+                'deskripsi' => 'Ekstrakurikuler bela diri.',
+                'ikon' => '🥋',
+                'pembina' => 'Belum ditentukan',
+                'jadwal' => 'Belum ditentukan',
+                'tempat' => 'Aula Sekolah',
+            ],
+            [
+                'nama_ekstrakurikuler' => 'Pramuka',
+                'deskripsi' => 'Ekstrakurikuler kepramukaan.',
+                'ikon' => '🏕️',
+                'pembina' => 'Belum ditentukan',
+                'jadwal' => 'Belum ditentukan',
+                'tempat' => 'Lapangan Sekolah',
+            ],
+            [
+                'nama_ekstrakurikuler' => 'Voli',
+                'deskripsi' => 'Ekstrakurikuler olahraga voli.',
+                'ikon' => '🏐',
+                'pembina' => 'Belum ditentukan',
+                'jadwal' => 'Belum ditentukan',
+                'tempat' => 'Lapangan Voli',
+            ],
+        ];
 
-    private function dataEkskul()
+        foreach ($dataAwal as $data) {
+            Ekstrakurikuler::firstOrCreate(
+                ['nama_ekstrakurikuler' => $data['nama_ekstrakurikuler']],
+                $data
+            );
+        }
+    }
+
+    /**
+     * FORMAT DATA UNTUK BLADE LAMA
+     */
+    private function formatEkskul(Ekstrakurikuler $item): array
     {
         return [
-            1 => [
-                'id' => 1,
-                'nama' => 'Futsal',
-                'deskripsi' => 'Ekstrakurikuler olahraga futsal.',
-                'icon' => '⚽',
-            ],
-
-            2 => [
-                'id' => 2,
-                'nama' => 'Coding',
-                'deskripsi' => 'Ekstrakurikuler pemrograman dan teknologi.',
-                'icon' => '💻',
-            ],
-
-            3 => [
-                'id' => 3,
-                'nama' => 'Basket',
-                'deskripsi' => 'Ekstrakurikuler olahraga basket.',
-                'icon' => '🏀',
-            ],
-
-            4 => [
-                'id' => 4,
-                'nama' => 'Pencak Silat',
-                'deskripsi' => 'Ekstrakurikuler bela diri.',
-                'icon' => '🥋',
-            ],
-
-            5 => [
-                'id' => 5,
-                'nama' => 'Pramuka',
-                'deskripsi' => 'Ekstrakurikuler kepramukaan.',
-                'icon' => '🏕️',
-            ],
-
-            6 => [
-                'id' => 6,
-                'nama' => 'Voli',
-                'deskripsi' => 'Ekstrakurikuler olahraga voli.',
-                'icon' => '🏐',
-            ],
+            'id' => $item->id,
+            'nama' => $item->nama_ekstrakurikuler,
+            'ikon' => $item->ikon ?? '⭐',
+            'deskripsi' => $item->deskripsi ?? '-',
+            'pembina' => $item->pembina ?? '-',
+            'jadwal' => $item->jadwal ?? '-',
+            'tempat' => $item->tempat ?? '-',
         ];
     }
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | INDEX
-    |--------------------------------------------------------------------------
-    */
-
+    /**
+     * HALAMAN UTAMA
+     */
     public function index()
     {
-        $ekskul = $this->dataEkskul();
+        $this->isiDataAwal();
+
+        $ekskul = Ekstrakurikuler::orderBy('id', 'asc')
+            ->get()
+            ->map(fn ($item) => $this->formatEkskul($item))
+            ->all();
 
         return view('admin.ekstrakurikuler', compact('ekskul'));
     }
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | TAMBAH
-    |--------------------------------------------------------------------------
-    */
-
+    /**
+     * FORM TAMBAH
+     */
     public function create()
     {
-        return view('admin.ekstrakurikuler.create');
+        return view('admin.ekstrakurikuler-create');
     }
 
+    /**
+     * VALIDASI FORM
+     */
+    private function validasiEkskul(Request $request): array
+    {
+        return $request->validate([
+            'nama' => 'required|string|max:100',
+            'ikon' => 'nullable|string|max:20',
+            'deskripsi' => 'required|string|max:1000',
+            'pembina' => 'nullable|string|max:100',
+            'jadwal' => 'nullable|string|max:100',
+            'tempat' => 'nullable|string|max:150',
+        ], [
+            'nama.required' => 'Nama ekstrakurikuler wajib diisi.',
+            'nama.max' => 'Nama maksimal 100 karakter.',
+            'ikon.max' => 'Ikon maksimal 20 karakter.',
+            'deskripsi.required' => 'Deskripsi wajib diisi.',
+            'deskripsi.max' => 'Deskripsi maksimal 1000 karakter.',
+            'pembina.max' => 'Nama pembina maksimal 100 karakter.',
+            'jadwal.max' => 'Jadwal maksimal 100 karakter.',
+            'tempat.max' => 'Tempat maksimal 150 karakter.',
+        ]);
+    }
 
-    /*
-    |--------------------------------------------------------------------------
-    | SIMPAN
-    |--------------------------------------------------------------------------
-    */
-
+    /**
+     * SIMPAN DATA BARU
+     */
     public function store(Request $request)
     {
-        $request->validate([
-            'nama' => 'required',
-            'deskripsi' => 'required',
-            'icon' => 'nullable',
+        $validated = $this->validasiEkskul($request);
+
+        Ekstrakurikuler::create([
+            'nama_ekstrakurikuler' => $validated['nama'],
+            'ikon' => $validated['ikon'] ?? '⭐',
+            'deskripsi' => $validated['deskripsi'],
+            'pembina' => $validated['pembina'] ?? '-',
+            'jadwal' => $validated['jadwal'] ?? '-',
+            'tempat' => $validated['tempat'] ?? '-',
         ]);
-
-        // Untuk sementara data disimpan di session
-        $data = session()->get('ekskul_tambahan', []);
-
-        $id = 7;
-
-        if (!empty($data)) {
-            $id = max(array_keys($data)) + 1;
-        }
-
-        $data[$id] = [
-            'id' => $id,
-            'nama' => $request->nama,
-            'deskripsi' => $request->deskripsi,
-            'icon' => $request->icon ?: '⭐',
-        ];
-
-        session()->put('ekskul_tambahan', $data);
 
         return redirect()
             ->route('admin.ekstrakurikuler')
             ->with('success', 'Ekstrakurikuler berhasil ditambahkan.');
     }
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | DETAIL / KELOLA
-    |--------------------------------------------------------------------------
-    */
-
+    /**
+     * HALAMAN DETAIL
+     */
     public function show($id)
     {
-        $ekskul = $this->dataEkskul();
+        $item = Ekstrakurikuler::find($id);
 
-        // Gabungkan data tambahan
-        $tambahan = session()->get('ekskul_tambahan', []);
-
-        $ekskul = $ekskul + $tambahan;
-
-        if (!isset($ekskul[$id])) {
+        if (!$item) {
             return redirect()
                 ->route('admin.ekstrakurikuler')
                 ->with('error', 'Data ekstrakurikuler tidak ditemukan.');
         }
 
-        return view(
-            'admin.ekstrakurikuler.show',
-            [
-                'ekskul' => $ekskul[$id]
-            ]
-        );
+        $ekskul = $this->formatEkskul($item);
+
+        return view('admin.ekstrakurikuler-detail', [
+            'ekskul' => $ekskul,
+            'ekstrakurikuler' => $ekskul,
+        ]);
     }
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | EDIT
-    |--------------------------------------------------------------------------
-    */
-
+    /**
+     * FORM EDIT
+     */
     public function edit($id)
     {
-        $ekskul = $this->dataEkskul();
+        $item = Ekstrakurikuler::find($id);
 
-        $tambahan = session()->get('ekskul_tambahan', []);
-
-        $ekskul = $ekskul + $tambahan;
-
-        if (!isset($ekskul[$id])) {
+        if (!$item) {
             return redirect()
                 ->route('admin.ekstrakurikuler')
-                ->with('error', 'Data tidak ditemukan.');
+                ->with('error', 'Data ekstrakurikuler tidak ditemukan.');
         }
 
-        return view(
-            'admin.ekstrakurikuler.edit',
-            [
-                'ekskul' => $ekskul[$id]
-            ]
-        );
+        $ekskul = $this->formatEkskul($item);
+
+        return view('admin.ekstrakurikuler-edit', [
+            'ekskul' => $ekskul,
+            'ekstrakurikuler' => $ekskul,
+        ]);
     }
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | UPDATE
-    |--------------------------------------------------------------------------
-    */
-
+    /**
+     * UPDATE DATA
+     */
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'nama' => 'required',
-            'deskripsi' => 'required',
-            'icon' => 'nullable',
-        ]);
+        $validated = $this->validasiEkskul($request);
 
-        $data = session()->get('ekskul_tambahan', []);
+        $item = Ekstrakurikuler::find($id);
 
-        if (!isset($data[$id])) {
+        if (!$item) {
             return redirect()
                 ->route('admin.ekstrakurikuler')
-                ->with('error', 'Data bawaan tidak dapat diubah.');
+                ->with('error', 'Data ekstrakurikuler tidak ditemukan.');
         }
 
-        $data[$id] = [
-            'id' => $id,
-            'nama' => $request->nama,
-            'deskripsi' => $request->deskripsi,
-            'icon' => $request->icon ?: '⭐',
-        ];
-
-        session()->put('ekskul_tambahan', $data);
+        $item->update([
+            'nama_ekstrakurikuler' => $validated['nama'],
+            'ikon' => $validated['ikon'] ?? '⭐',
+            'deskripsi' => $validated['deskripsi'],
+            'pembina' => $validated['pembina'] ?? '-',
+            'jadwal' => $validated['jadwal'] ?? '-',
+            'tempat' => $validated['tempat'] ?? '-',
+        ]);
 
         return redirect()
             ->route('admin.ekstrakurikuler')
             ->with('success', 'Ekstrakurikuler berhasil diperbarui.');
     }
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | HAPUS
-    |--------------------------------------------------------------------------
-    */
-
+    /**
+     * HAPUS DATA
+     */
     public function destroy($id)
     {
-        $data = session()->get('ekskul_tambahan', []);
+        $item = Ekstrakurikuler::find($id);
 
-        if (isset($data[$id])) {
-            unset($data[$id]);
-
-            session()->put('ekskul_tambahan', $data);
+        if (!$item) {
+            return redirect()
+                ->route('admin.ekstrakurikuler')
+                ->with('error', 'Data ekstrakurikuler tidak ditemukan.');
         }
+
+        $item->delete();
 
         return redirect()
             ->route('admin.ekstrakurikuler')
