@@ -324,25 +324,80 @@
             }
         }
 
-        @media (max-width: 650px) {
+        @media (max-width: 768px) {
             .sidebar {
+                position: sticky;
+                top: 0;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                width: 100%;
+                height: auto;
+                padding: 12px 14px;
+                z-index: 100;
+                box-shadow: 0 6px 18px rgba(4, 66, 112, .2);
+            }
+
+            .logo {
+                flex-shrink: 0;
+                padding: 0 10px 0 0;
+                border-right: 1px solid rgba(255, 255, 255, .25);
+                border-bottom: 0;
+            }
+
+            .logo-icon {
+                width: 36px;
+                height: 36px;
+                border-radius: 10px;
+                font-size: 18px;
+            }
+
+            .logo-text {
                 display: none;
+            }
+
+            .menu-title {
+                display: none;
+            }
+
+            .menu {
+                display: flex;
+                gap: 6px;
+                overflow-x: auto;
+                padding: 3px 0;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: thin;
+            }
+
+            .menu a {
+                flex: 0 0 auto;
+                margin: 0;
+                padding: 9px 12px;
+                border-radius: 8px;
+                font-size: 12px;
+                white-space: nowrap;
             }
 
             .main {
                 margin-left: 0;
             }
 
-            .content {
-                padding: 25px 18px;
-            }
-
             .topbar {
-                padding: 18px;
+                min-height: 62px;
+                padding: 14px 16px;
+                gap: 10px;
             }
 
             .top-title {
-                font-size: 17px;
+                font-size: 15px;
+            }
+
+            .user {
+                font-size: 11px;
+            }
+
+            .content {
+                padding: 20px 16px;
             }
 
             .heading {
@@ -350,33 +405,94 @@
             }
 
             h1 {
-                font-size: 29px;
+                font-size: 27px;
+            }
+
+            .subtitle {
+                font-size: 13px;
             }
 
             .counter {
                 display: inline-block;
-                margin: 0 0 20px;
+                margin: 0 0 18px;
+                font-size: 13px;
+                padding: 9px 14px;
+            }
+
+            .info {
+                padding: 13px 15px;
+                font-size: 13px;
+                margin-bottom: 18px;
+            }
+
+            .search {
+                height: 50px;
+                margin-bottom: 20px;
+                font-size: 14px;
+            }
+
+            .grid {
+                gap: 14px;
             }
 
             .card {
-                padding: 20px;
+                padding: 18px;
                 flex-wrap: wrap;
+                align-items: flex-start;
+                gap: 14px;
             }
 
             .icon {
-                width: 60px;
-                height: 60px;
-                min-width: 60px;
-                font-size: 28px;
+                width: 54px;
+                height: 54px;
+                min-width: 54px;
+                font-size: 25px;
+            }
+
+            .info-ekskul {
+                flex: 1 1 calc(100% - 70px);
             }
 
             .info-ekskul h2 {
                 font-size: 19px;
             }
 
+            .info-ekskul p {
+                font-size: 12px;
+                line-height: 1.6;
+            }
+
+            .btn-pilih {
+                width: 100%;
+                padding: 12px;
+            }
+
             .aksi-pilihan {
                 align-items: stretch;
                 flex-direction: column;
+                padding: 16px;
+            }
+
+            .aksi-pilihan button {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .content {
+                padding: 16px 12px;
+            }
+
+            .topbar {
+                padding: 12px;
+            }
+
+            .top-title {
+                font-size: 13px;
+            }
+
+            .user {
+                display: none;
             }
         }
     </style>

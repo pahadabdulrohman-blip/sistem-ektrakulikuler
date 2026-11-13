@@ -138,20 +138,89 @@
             background: #1d4ed8;
         }
 
-        @media(max-width: 700px) {
-
+        @media(max-width: 768px) {
             .sidebar {
-                width: 190px;
+                position: sticky;
+                top: 0;
+                width: 100%;
+                height: auto;
+                padding: 12px 14px;
+                z-index: 100;
+                box-shadow: 0 6px 18px rgba(0, 0, 0, .18);
+            }
+
+            .logo {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                text-align: left;
+                margin-bottom: 9px;
+            }
+
+            .logo h2 {
+                font-size: 17px;
+            }
+
+            .logo p {
+                display: none;
+            }
+
+            .menu {
+                display: flex;
+                gap: 6px;
+                overflow-x: auto;
+                padding-bottom: 3px;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: thin;
+            }
+
+            .menu a {
+                flex: 0 0 auto;
+                margin-bottom: 0;
+                padding: 9px 12px;
+                font-size: 12px;
+                white-space: nowrap;
             }
 
             .content {
-                margin-left: 190px;
-                padding: 20px;
+                margin-left: 0;
+                padding: 16px;
+            }
+
+            .header h1 {
+                font-size: 25px;
+            }
+
+            .profile {
+                padding: 22px;
             }
 
             .info strong {
                 display: block;
+                width: auto;
                 margin-bottom: 5px;
+            }
+        }
+
+        @media(max-width: 480px) {
+            .content {
+                padding: 12px;
+            }
+
+            .profile {
+                padding: 18px;
+                border-radius: 13px;
+            }
+
+            .avatar {
+                width: 74px;
+                height: 74px;
+                font-size: 32px;
+            }
+
+            .back {
+                width: 100%;
+                text-align: center;
             }
         }
     </style>

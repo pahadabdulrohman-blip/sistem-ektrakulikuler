@@ -96,6 +96,107 @@
             padding: 20px;
             border-radius: 12px;
         }
+
+        .info p {
+            margin-top: 10px;
+            line-height: 1.7;
+            color: #475569;
+        }
+
+        @media (max-width: 1024px) {
+            .content {
+                padding: 30px 24px;
+            }
+
+            .card {
+                padding: 32px;
+            }
+
+            h1 {
+                font-size: 34px;
+            }
+
+            .description {
+                font-size: 17px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                position: sticky;
+                top: 0;
+                width: 100%;
+                height: auto;
+                padding: 12px 14px;
+                z-index: 100;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: thin;
+                box-shadow: 0 6px 18px rgba(0, 0, 0, .2);
+            }
+
+            .sidebar h2,
+            .sidebar p {
+                display: none;
+            }
+
+            .menu {
+                flex: 0 0 auto;
+                margin: 0;
+                padding: 9px 12px;
+                font-size: 12px;
+                white-space: nowrap;
+                border-radius: 8px;
+            }
+
+            .content {
+                margin-left: 0;
+                padding: 18px;
+            }
+
+            .card {
+                padding: 24px;
+                border-radius: 16px;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+            .description {
+                font-size: 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .content {
+                padding: 12px;
+            }
+
+            .card {
+                padding: 18px;
+            }
+
+            .icon {
+                font-size: 52px;
+            }
+
+            h1 {
+                font-size: 23px;
+            }
+
+            .description {
+                font-size: 15px;
+            }
+
+            .info {
+                margin-top: 20px;
+                padding: 15px;
+            }
+        }
     </style>
 </head>
 

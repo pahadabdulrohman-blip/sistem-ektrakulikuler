@@ -244,48 +244,101 @@
 
         @media(max-width: 800px) {
             .sidebar {
-                width: 75px;
-                padding: 20px 8px;
+                position: sticky;
+                top: 0;
+                width: 100%;
+                height: auto;
+                padding: 12px 14px;
+                z-index: 100;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: thin;
+                box-shadow: 0 6px 18px rgba(0, 0, 0, .18);
             }
 
-            .brand {
-                font-size: 12px;
-                padding: 5px 2px 20px;
-            }
-
+            .brand,
             .menu-title {
                 display: none;
             }
 
             .menu {
-                font-size: 11px;
-                padding: 12px 5px;
-                text-align: center;
+                flex: 0 0 auto;
+                margin: 0;
+                padding: 9px 12px;
+                font-size: 12px;
+                white-space: nowrap;
             }
 
             .main {
-                margin-left: 75px;
-            }
-
-            .content {
-                padding: 22px 15px;
+                margin-left: 0;
+                min-height: 0;
             }
 
             .topbar {
-                padding: 18px;
+                min-height: 0;
+                padding: 16px 18px;
+                gap: 12px;
             }
 
             .topbar h2 {
                 font-size: 17px;
             }
 
+            .user {
+                font-size: 12px;
+            }
+
+            .content {
+                padding: 18px;
+            }
+
             .heading {
                 align-items: flex-start;
                 flex-direction: column;
+                margin-bottom: 18px;
             }
 
             .heading h1 {
                 font-size: 24px;
+            }
+
+            .heading .btn {
+                width: 100%;
+                text-align: center;
+            }
+
+            .table-box {
+                padding: 16px;
+            }
+
+            table {
+                min-width: 720px;
+            }
+
+            .total-box {
+                padding: 15px 18px;
+            }
+        }
+
+        @media(max-width: 480px) {
+            .topbar {
+                padding: 14px;
+            }
+
+            .content {
+                padding: 12px;
+            }
+
+            .heading h1 {
+                font-size: 21px;
+            }
+
+            .table-box {
+                padding: 12px;
+                border-radius: 13px;
             }
         }
     </style>

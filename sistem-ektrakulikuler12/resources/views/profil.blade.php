@@ -283,29 +283,117 @@
             }
         }
 
-        @media (max-width: 650px) {
+        @media (max-width: 768px) {
             .sidebar {
-                position: relative;
+                position: sticky;
+                top: 0;
+                bottom: auto;
                 width: 100%;
-                min-height: auto;
+                height: auto;
+                min-height: 0;
+                padding: 12px 14px;
+                z-index: 100;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: thin;
+                box-shadow: 0 6px 18px rgba(0, 0, 0, .18);
+            }
+
+            .logo {
+                width: 42px;
+                height: 42px;
+                margin: 0;
+                border-radius: 12px;
+                font-size: 22px;
+                flex-shrink: 0;
+            }
+
+            .sidebar h2,
+            .sidebar .subtitle,
+            .menu-title {
+                display: none;
+            }
+
+            .sidebar a {
+                flex: 0 0 auto;
+                padding: 9px 12px;
+                margin: 0;
+                font-size: 12px;
+                white-space: nowrap;
+                border-radius: 8px;
             }
 
             .main {
                 margin-left: 0;
+                padding: 16px;
+            }
+
+            .topbar {
                 padding: 18px;
+                border-radius: 15px;
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .topbar h1 {
+                font-size: 24px;
+            }
+
+            .top-user {
+                text-align: left;
+            }
+
+            .card {
+                padding: 22px;
+                border-radius: 15px;
             }
 
             .info-grid {
                 grid-template-columns: 1fr;
             }
 
-            .topbar {
-                align-items: flex-start;
-                flex-direction: column;
+            .avatar {
+                width: 110px;
+                height: 110px;
+                font-size: 48px;
+                border-width: 4px;
             }
 
-            .top-user {
-                text-align: left;
+            .btn {
+                width: 100%;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main {
+                padding: 12px;
+            }
+
+            .topbar {
+                padding: 15px;
+            }
+
+            .card {
+                padding: 18px;
+            }
+
+            .topbar h1 {
+                font-size: 21px;
+            }
+
+            .avatar {
+                width: 90px;
+                height: 90px;
+                font-size: 40px;
+            }
+
+            .card-title {
+                font-size: 20px;
             }
         }
     </style>

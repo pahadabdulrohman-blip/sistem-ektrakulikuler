@@ -345,40 +345,80 @@
 
         @media(max-width: 768px) {
             .sidebar {
-                width: 75px;
-                padding: 20px 10px;
-            }
-
-            .guru-logo h2,
-            .guru-logo p,
-            .menu-title,
-            .menu-text {
-                display: none;
+                position: sticky;
+                top: 0;
+                width: 100%;
+                height: auto;
+                padding: 12px 14px;
+                z-index: 200;
+                box-shadow: 0 6px 18px rgba(4, 66, 38, .2);
             }
 
             .guru-logo {
-                padding-bottom: 20px;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                padding: 0 0 10px;
+                border-bottom: 1px solid rgba(255,255,255,.16);
+                text-align: left;
             }
 
             .guru-icon {
-                width: 48px;
-                height: 48px;
-                font-size: 25px;
+                width: 40px;
+                height: 40px;
+                margin: 0;
+                border-radius: 11px;
+                font-size: 20px;
+                flex-shrink: 0;
+            }
+
+            .guru-logo h2 {
+                font-size: 18px;
+            }
+
+            .guru-logo p,
+            .menu-title {
+                display: none;
+            }
+
+            .menu {
+                flex-direction: row;
+                gap: 6px;
+                overflow-x: auto;
+                padding-top: 8px;
+                padding-bottom: 3px;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: thin;
             }
 
             .menu a {
-                justify-content: center;
-                padding: 15px 5px;
+                flex: 0 0 auto;
+                justify-content: flex-start;
+                padding: 8px 12px;
+                gap: 7px;
+                font-size: 12px;
+                white-space: nowrap;
+                border-radius: 8px;
+            }
+
+            .menu-icon {
+                width: auto;
+                font-size: 14px;
+            }
+
+            .menu-text {
+                display: inline;
             }
 
             .main {
-                margin-left: 75px;
-                width: calc(100% - 75px);
-                padding: 20px 15px;
+                margin-left: 0;
+                width: 100%;
+                padding: 16px;
             }
 
             .header {
-                padding: 20px;
+                padding: 18px;
+                border-radius: 14px;
             }
 
             .header h1 {
@@ -390,7 +430,24 @@
             }
 
             .stats {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 12px;
+            }
+
+            .stat-card {
+                padding: 15px;
+                gap: 11px;
+            }
+
+            .stat-icon {
+                width: 45px;
+                height: 45px;
+                border-radius: 12px;
+                font-size: 19px;
+            }
+
+            .stat-number {
+                font-size: 20px;
             }
 
             .quick-menu {
@@ -399,6 +456,47 @@
 
             .content-card {
                 padding: 18px;
+            }
+
+            .content-header {
+                flex-wrap: wrap;
+            }
+
+            .table-wrapper {
+                margin: 0 -6px;
+                padding: 0 6px;
+            }
+        }
+
+        @media(max-width: 480px) {
+            .main {
+                padding: 12px;
+            }
+
+            .header {
+                padding: 15px;
+            }
+
+            .header h1 {
+                font-size: 19px;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .content-card {
+                padding: 15px;
+                border-radius: 14px;
+            }
+
+            .content-header h2 {
+                font-size: 18px;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
             }
         }
     </style>

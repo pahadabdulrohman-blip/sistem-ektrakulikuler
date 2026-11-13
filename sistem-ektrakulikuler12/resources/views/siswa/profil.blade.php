@@ -289,29 +289,137 @@
             }
         }
 
-        @media(max-width: 600px) {
+        @media(max-width: 768px) {
             .sidebar {
                 width: 100%;
                 height: auto;
-                position: relative;
-                min-height: auto;
+                min-height: 0;
+                position: sticky;
+                top: 0;
+                padding: 12px 14px;
+                z-index: 100;
+                overflow: visible;
+                box-shadow: 0 6px 18px rgba(0, 0, 0, .18);
+            }
+
+            .logo {
+                display: flex;
+                align-items: center;
+                gap: 9px;
+                text-align: left;
+                margin-bottom: 9px;
+            }
+
+            .logo > i {
+                font-size: 20px;
+                margin: 0;
+                display: inline-block;
+            }
+
+            .sidebar-photo {
+                width: 38px;
+                height: 38px;
+                margin: 0;
+                font-size: 17px;
+                border-width: 2px;
+                flex-shrink: 0;
+            }
+
+            .logo h2 {
+                font-size: 17px;
+                letter-spacing: .5px;
+            }
+
+            .sidebar-username {
+                display: none;
+            }
+
+            .menu {
+                display: flex;
+                gap: 6px;
+                overflow-x: auto;
+                padding-bottom: 3px;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: thin;
+            }
+
+            .menu a {
+                flex: 0 0 auto;
+                padding: 9px 12px;
+                margin: 0;
+                gap: 7px;
+                font-size: 12px;
+                white-space: nowrap;
+                border-radius: 8px;
+            }
+
+            .menu a i {
+                width: auto;
+                font-size: 14px;
             }
 
             .main {
                 margin-left: 0;
-                padding: 20px;
+                padding: 16px;
             }
 
             .header {
                 display: block;
+                padding: 18px;
+                border-radius: 14px;
+            }
+
+            .header h1 {
+                font-size: 23px;
+            }
+
+            .content {
+                grid-template-columns: 1fr;
+                gap: 16px;
             }
 
             .info-grid {
                 grid-template-columns: 1fr;
             }
 
-            .menu a {
-                font-size: 16px;
+            .avatar {
+                width: 110px;
+                height: 110px;
+                font-size: 48px;
+            }
+
+            .card {
+                padding: 22px;
+            }
+
+            button,
+            .back {
+                width: 100%;
+                text-align: center;
+            }
+        }
+
+        @media(max-width: 480px) {
+            .main {
+                padding: 12px;
+            }
+
+            .header {
+                padding: 15px;
+            }
+
+            .card {
+                padding: 18px;
+            }
+
+            .header h1 {
+                font-size: 21px;
+            }
+
+            .avatar {
+                width: 90px;
+                height: 90px;
+                font-size: 40px;
             }
         }
     </style>

@@ -12,12 +12,13 @@
             min-height: 100vh;
             display: grid;
             place-items: center;
+            padding: 18px;
             font-family: Arial, sans-serif;
             background: #f4f7f9;
             color: #263238;
         }
         .card {
-            width: 90%;
+            width: 100%;
             max-width: 480px;
             padding: 40px;
             text-align: center;
@@ -36,6 +37,14 @@
             background: #093C5D;
             border-radius: 8px;
             text-decoration: none;
+        }
+
+        @media (max-width: 480px) {
+            .card { padding: 28px 18px; border-radius: 16px; }
+            h1 { font-size: 58px; }
+            h2 { font-size: 20px; }
+            p { font-size: 14px; }
+            a { width: 100%; }
         }
     </style>
 </head>

@@ -186,6 +186,99 @@
             color: #111827;
         }
 
+        @media (max-width: 1024px) {
+            .content {
+                padding: 30px 24px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                position: sticky;
+                top: 0;
+                width: 100%;
+                height: auto;
+                padding: 12px 14px;
+                z-index: 100;
+                box-shadow: 0 6px 18px rgba(0, 0, 0, .2);
+            }
+
+            .logo {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                text-align: left;
+                margin-bottom: 9px;
+            }
+
+            .logo h2 {
+                font-size: 17px;
+            }
+
+            .logo p {
+                display: none;
+            }
+
+            .menu {
+                display: flex;
+                gap: 6px;
+                overflow-x: auto;
+                padding-bottom: 3px;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: thin;
+            }
+
+            .menu a {
+                flex: 0 0 auto;
+                margin-bottom: 0;
+                padding: 9px 12px;
+                font-size: 12px;
+                white-space: nowrap;
+            }
+
+            .content {
+                margin-left: 0;
+                padding: 18px;
+            }
+
+            .header h1 {
+                font-size: 25px;
+            }
+
+            .box {
+                padding: 22px;
+                max-width: 100%;
+            }
+
+            .buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .content {
+                padding: 12px;
+            }
+
+            .header h1 {
+                font-size: 22px;
+            }
+
+            .box {
+                padding: 18px;
+                border-radius: 13px;
+            }
+
+            .form-group {
+                margin-bottom: 16px;
+            }
+        }
+
     </style>
 
 </head>

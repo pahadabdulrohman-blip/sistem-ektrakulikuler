@@ -92,6 +92,48 @@
             font-weight: 600;
             font-size: 14px;
         }
+
+        @media (max-width: 520px) {
+            body {
+                padding: 14px;
+                align-items: flex-start;
+            }
+
+            .card {
+                padding: 26px 20px;
+                border-radius: 18px;
+                margin: 10px 0;
+            }
+
+            .icon {
+                width: 64px;
+                height: 64px;
+                font-size: 28px;
+                margin-bottom: 16px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .contact {
+                padding: 16px;
+            }
+
+            .contact p {
+                overflow-wrap: anywhere;
+            }
+        }
+
+        @media (max-width: 380px) {
+            body {
+                padding: 10px;
+            }
+
+            .card {
+                padding: 22px 16px;
+            }
+        }
     </style>
 </head>
 

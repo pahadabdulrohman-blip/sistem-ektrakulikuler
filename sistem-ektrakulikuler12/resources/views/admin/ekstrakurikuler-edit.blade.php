@@ -115,6 +115,45 @@
             background: #fee2e2;
             color: #991b1b;
         }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 20px 14px;
+            }
+
+            .box {
+                padding: 22px;
+                border-radius: 13px;
+            }
+
+            h1 {
+                font-size: 25px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 12px;
+            }
+
+            .box {
+                padding: 18px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            .buttons {
+                flex-direction: column;
+            }
+
+            button,
+            .back {
+                width: 100%;
+                text-align: center;
+            }
+        }
     </style>
 </head>
 

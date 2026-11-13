@@ -296,31 +296,164 @@
         /* RESPONSIVE */
         @media (max-width: 1000px) {
             .summary {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .main {
+                padding: 28px 24px;
             }
         }
 
-        @media (max-width: 650px) {
+        @media (max-width: 768px) {
             .sidebar {
-                position: relative;
+                position: sticky;
+                top: 0;
+                bottom: auto;
                 width: 100%;
                 height: auto;
+                padding: 12px 14px;
+                z-index: 200;
+                box-shadow: 0 6px 18px rgba(4, 66, 38, .2);
+            }
+
+            .guru-logo {
+                display: flex;
+                align-items: center;
+                gap: 9px;
+                padding: 0 0 9px;
+                border-bottom: 1px solid rgba(255, 255, 255, .16);
+                text-align: left;
+            }
+
+            .logo-icon {
+                width: 38px;
+                height: 38px;
+                margin: 0;
+                border-radius: 10px;
+                font-size: 22px;
+                flex-shrink: 0;
+            }
+
+            .guru-logo h2 {
+                font-size: 17px;
+            }
+
+            .guru-logo p,
+            .menu-title {
+                display: none;
+            }
+
+            .menu {
+                display: flex;
+                gap: 6px;
+                overflow-x: auto;
+                padding-top: 8px;
+                padding-bottom: 3px;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: thin;
+            }
+
+            .menu a {
+                flex: 0 0 auto;
+                margin: 0;
+                padding: 8px 12px;
+                gap: 7px;
+                font-size: 12px;
+                white-space: nowrap;
+                border-radius: 8px;
+            }
+
+            .menu-icon {
+                width: auto;
+                font-size: 14px;
             }
 
             .main {
                 margin-left: 0;
                 width: 100%;
-                padding: 20px;
+                padding: 16px;
             }
 
-            .header,
+            .header {
+                padding: 18px;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .header h1 {
+                font-size: 23px;
+            }
+
+            .guru-profile {
+                align-self: flex-end;
+            }
+
+            .summary {
+                gap: 12px;
+            }
+
+            .summary-card {
+                padding: 18px;
+                gap: 12px;
+            }
+
+            .summary-icon {
+                width: 48px;
+                height: 48px;
+                font-size: 20px;
+            }
+
+            .summary-card h2 {
+                font-size: 21px;
+            }
+
+            .content-card {
+                padding: 18px;
+            }
+
             .content-heading {
                 flex-direction: column;
                 align-items: flex-start;
             }
 
+            .content-heading h2 {
+                font-size: 19px;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            table {
+                min-width: 620px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main {
+                padding: 12px;
+            }
+
+            .header {
+                padding: 15px;
+            }
+
+            .header h1 {
+                font-size: 20px;
+            }
+
             .guru-profile {
-                align-self: flex-end;
+                align-self: flex-start;
+            }
+
+            .summary {
+                grid-template-columns: 1fr;
+            }
+
+            .content-card {
+                padding: 14px;
+                border-radius: 14px;
             }
         }
 

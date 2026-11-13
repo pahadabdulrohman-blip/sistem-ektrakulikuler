@@ -100,6 +100,33 @@
         .login a:hover {
             text-decoration: underline;
         }
+
+        @media (max-width: 520px) {
+            body {
+                padding: 14px;
+                align-items: flex-start;
+            }
+
+            .container {
+                padding: 26px 22px;
+                border-radius: 16px;
+                margin: 10px 0;
+            }
+
+            h2 {
+                font-size: 24px;
+            }
+        }
+
+        @media (max-width: 380px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                padding: 22px 16px;
+            }
+        }
     </style>
 </head>
 

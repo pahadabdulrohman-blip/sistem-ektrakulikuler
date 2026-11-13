@@ -190,29 +190,121 @@ body {
     }
 }
 
-@media(max-width:600px) {
+@media(max-width:900px) {
+    .header {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+}
+
+@media(max-width:768px) {
     .sidebar {
+        position: sticky;
+        top: 0;
         width: 100%;
         height: auto;
-        min-height: 100vh;
-        position: relative;
+        min-height: 0;
+        padding: 14px 16px;
+        z-index: 100;
+        box-shadow: 0 6px 18px rgba(4, 66, 112, .18);
+    }
+
+    .logo {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 10px;
+        text-align: left;
+        margin-bottom: 10px;
+    }
+
+    .logo i {
+        font-size: 24px;
+        margin-bottom: 0;
+    }
+
+    .logo h2 {
+        font-size: 19px;
+        letter-spacing: .5px;
+    }
+
+    .menu {
+        display: flex;
+        gap: 6px;
+        overflow-x: auto;
+        padding-bottom: 4px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+    }
+
+    .menu a {
+        flex: 0 0 auto;
+        margin-bottom: 0;
+        padding: 9px 13px;
+        gap: 8px;
+        font-size: 13px;
+        white-space: nowrap;
+        border-radius: 9px;
+    }
+
+    .menu a i {
+        width: auto;
+        font-size: 14px;
     }
 
     .content {
         margin-left: 0;
-        padding: 20px;
+        padding: 18px;
     }
 
+    .header {
+        padding: 18px;
+        border-radius: 13px;
+    }
+
+    .header h1 {
+        font-size: 22px;
+    }
+
+    .content .header,
+    .content .card,
+    .content .jadwal-link {
+        min-width: 0;
+    }
+}
+
+@media(max-width:600px) {
+    .cards {
+        gap: 10px;
+    }
+
+    .card {
+        padding: 18px;
+    }
+
+    .stat {
+        gap: 12px;
+    }
+
+    .icon {
+        width: 46px;
+        height: 46px;
+        font-size: 18px;
+    }
+
+    .stat h2 {
+        font-size: 22px;
+    }
+}
+
+@media(max-width:420px) {
     .cards {
         grid-template-columns: 1fr;
     }
 
-    .logo {
-        margin-bottom: 35px;
-    }
-
-    .menu a {
-        font-size: 17px;
+    .content {
+        padding: 14px;
     }
 }
 </style>

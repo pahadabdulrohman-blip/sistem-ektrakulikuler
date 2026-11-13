@@ -22,7 +22,9 @@
         }
 
         .main {
-            margin-left: 270px;
+            width: 100%;
+            max-width: 1180px;
+            margin: 0 auto;
             padding: 35px;
         }
 
@@ -152,35 +154,62 @@
             font-weight: 600;
         }
 
-        @media(max-width: 800px) {
+        @media(max-width: 768px) {
             .main {
-                margin-left: 0;
+                padding: 16px;
+            }
+
+            .header,
+            .card {
                 padding: 18px;
+                border-radius: 13px;
             }
 
             .form-grid {
                 grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            table {
+                min-width: 620px;
+            }
+
+            .table-wrapper {
+                margin: 0 -4px;
+                padding: 0 4px;
+            }
+        }
+
+        @media(max-width: 480px) {
+            .main {
+                padding: 12px;
+            }
+
+            .header,
+            .card {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 21px;
+            }
+
+            h2 {
+                font-size: 19px;
             }
         }
     </style>
 </head>
 
 <body>
-    <div style="margin-bottom: 20px;">
-    <a href="{{ url('/dashboard') }}"
-       style="
-            display: inline-block;
-            padding: 12px 22px;
-            background-color: #0b3d5c;
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: 600;
-            transition: 0.3s;
-       ">
-        ← Kembali ke Dashboard
-    </a>
-</div>
 
 <main class="main">
     

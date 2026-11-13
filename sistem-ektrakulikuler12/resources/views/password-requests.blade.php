@@ -132,9 +132,64 @@
                 padding: 15px;
             }
 
+            .header {
+                padding: 22px;
+                border-radius: 16px;
+            }
+
+            .header h1 {
+                font-size: 22px;
+                line-height: 1.35;
+            }
+
             .notification {
                 align-items: flex-start;
                 flex-direction: column;
+                gap: 12px;
+                padding: 18px;
+            }
+
+            .left {
+                width: 100%;
+                align-items: flex-start;
+            }
+
+            .info {
+                min-width: 0;
+            }
+
+            .info p {
+                overflow-wrap: anywhere;
+            }
+        }
+
+        @media(max-width:480px) {
+            body {
+                padding: 10px;
+            }
+
+            .header {
+                padding: 18px;
+            }
+
+            .header h1 {
+                font-size: 19px;
+            }
+
+            .notification {
+                padding: 15px;
+            }
+
+            .icon {
+                width: 46px;
+                height: 46px;
+                font-size: 18px;
+                flex-shrink: 0;
+            }
+
+            .back {
+                display: block;
+                text-align: center;
             }
         }
     </style>
