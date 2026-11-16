@@ -272,7 +272,7 @@
 
             <div class="info">
                 <strong>Email</strong>
-                admin@sekolah.sch.id
+                adminekstrakulikuler@gmail.co
             </div>
 
 

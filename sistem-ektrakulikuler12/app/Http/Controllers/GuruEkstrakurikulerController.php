@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Ekstrakurikuler;
+use Illuminate\Validation\ValidationException;
 
 class GuruEkstrakurikulerController extends Controller
 {
@@ -24,8 +25,16 @@ class GuruEkstrakurikulerController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    /**
+     * Validasi data ekstrakurikuler sekaligus menolak nama yang sudah ada.
+     */
+    private function validasiEkstrakurikuler(Request $request, ?int $abaikanId = null): array
     {
+        // Rapikan spasi di awal/akhir sebelum divalidasi.
+        $request->merge([
+            'nama_ekstrakurikuler' => trim((string) $request->input('nama_ekstrakurikuler')),
+        ]);
+
         $data = $request->validate([
             'nama_ekstrakurikuler' => 'required|string|max:255',
             'deskripsi' => 'required|string',
@@ -34,6 +43,36 @@ class GuruEkstrakurikulerController extends Controller
             'jadwal' => 'nullable|string|max:255',
             'tempat' => 'nullable|string|max:255',
         ]);
+
+        // Samakan spasi ganda menjadi satu spasi.
+        $data['nama_ekstrakurikuler'] = preg_replace(
+            '/\s+/',
+            ' ',
+            $data['nama_ekstrakurikuler']
+        );
+
+        // Cek nama yang sama (tidak membedakan huruf besar/kecil).
+        $duplikat = Ekstrakurikuler::query()
+            ->whereRaw('LOWER(TRIM(nama_ekstrakurikuler)) = ?', [
+                mb_strtolower($data['nama_ekstrakurikuler']),
+            ])
+            ->when($abaikanId, fn ($query) => $query->where('id', '!=', $abaikanId))
+            ->exists();
+
+        if ($duplikat) {
+            throw ValidationException::withMessages([
+                'nama_ekstrakurikuler' => 'Ekstrakurikuler "'
+                    . $data['nama_ekstrakurikuler']
+                    . '" sudah terdaftar.',
+            ]);
+        }
+
+        return $data;
+    }
+
+    public function store(Request $request)
+    {
+        $data = $this->validasiEkstrakurikuler($request);
 
         Ekstrakurikuler::create($data);
 
@@ -57,14 +96,7 @@ class GuruEkstrakurikulerController extends Controller
     {
         $item = Ekstrakurikuler::findOrFail($id);
 
-        $data = $request->validate([
-            'nama_ekstrakurikuler' => 'required|string|max:255',
-            'deskripsi' => 'required|string',
-            'ikon' => 'nullable|string|max:50',
-            'pembina' => 'nullable|string|max:255',
-            'jadwal' => 'nullable|string|max:255',
-            'tempat' => 'nullable|string|max:255',
-        ]);
+        $data = $this->validasiEkstrakurikuler($request, (int) $id);
 
         $item->update($data);
 

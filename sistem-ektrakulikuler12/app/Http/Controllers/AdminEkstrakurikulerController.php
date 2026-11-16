@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Ekstrakurikuler;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class AdminEkstrakurikulerController extends Controller
 {
@@ -113,9 +114,14 @@ class AdminEkstrakurikulerController extends Controller
     /**
      * VALIDASI FORM
      */
-    private function validasiEkskul(Request $request): array
+    private function validasiEkskul(Request $request, ?int $abaikanId = null): array
     {
-        return $request->validate([
+        // Rapikan spasi di awal/akhir sebelum divalidasi.
+        $request->merge([
+            'nama' => trim((string) $request->input('nama')),
+        ]);
+
+        $validated = $request->validate([
             'nama' => 'required|string|max:100',
             'ikon' => 'nullable|string|max:20',
             'deskripsi' => 'required|string|max:1000',
@@ -132,6 +138,25 @@ class AdminEkstrakurikulerController extends Controller
             'jadwal.max' => 'Jadwal maksimal 100 karakter.',
             'tempat.max' => 'Tempat maksimal 150 karakter.',
         ]);
+
+        // Samakan spasi ganda menjadi satu spasi.
+        $validated['nama'] = preg_replace('/\s+/', ' ', $validated['nama']);
+
+        // Cek nama yang sama (tidak membedakan huruf besar/kecil).
+        $duplikat = Ekstrakurikuler::query()
+            ->whereRaw('LOWER(TRIM(nama_ekstrakurikuler)) = ?', [
+                mb_strtolower($validated['nama']),
+            ])
+            ->when($abaikanId, fn ($query) => $query->where('id', '!=', $abaikanId))
+            ->exists();
+
+        if ($duplikat) {
+            throw ValidationException::withMessages([
+                'nama' => 'Ekstrakurikuler "' . $validated['nama'] . '" sudah terdaftar.',
+            ]);
+        }
+
+        return $validated;
     }
 
     /**
@@ -202,7 +227,7 @@ class AdminEkstrakurikulerController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $validated = $this->validasiEkskul($request);
+        $validated = $this->validasiEkskul($request, (int) $id);
 
         $item = Ekstrakurikuler::find($id);
 

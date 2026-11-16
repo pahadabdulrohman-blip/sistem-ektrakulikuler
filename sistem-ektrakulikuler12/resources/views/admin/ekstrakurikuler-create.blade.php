@@ -316,6 +316,33 @@
 
 
     <div class="box">
+        {{-- NOTIFIKASI BERHASIL --}}
+@if(session('success'))
+    <div style="
+        background:#dcfce7;
+        color:#166534;
+        padding:13px;
+        border-radius:8px;
+        margin-bottom:20px;
+    ">
+        <i class="fa-solid fa-circle-check"></i>
+        {{ session('success') }}
+    </div>
+@endif
+
+{{-- NOTIFIKASI ERROR --}}
+@if($errors->any())
+    <div style="
+        background:#fee2e2;
+        color:#b91c1c;
+        padding:13px;
+        border-radius:8px;
+        margin-bottom:20px;
+    ">
+        <i class="fa-solid fa-circle-exclamation"></i>
+        {{ $errors->first() }}
+    </div>
+@endif
 
         <form
             action="{{ route('admin.ekstrakurikuler.store') }}"
