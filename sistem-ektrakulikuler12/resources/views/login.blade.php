@@ -849,8 +849,7 @@
         <div class="welcome">
 
             <h2>
-                Selamat Datang
-                <span>👋</span>
+                <span><i class="fa-solid fa-hand"></i></span> Selamat Datang
             </h2>
 
             <p>

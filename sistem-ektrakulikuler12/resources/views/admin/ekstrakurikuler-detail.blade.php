@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $ekskul['nama'] ?? 'Detail Ekskul' }} - Admin</title>
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
     <style>
         * {
             box-sizing: border-box;
@@ -51,6 +53,12 @@
             padding: 14px 18px;
             margin-bottom: 8px;
             border-radius: 9px;
+        }
+
+        .menu a i {
+            width: 18px;
+            margin-right: 8px;
+            text-align: center;
         }
 
         .menu a:hover {
@@ -173,23 +181,23 @@
     </div>
 
     <div class="menu">
-        <a href="{{ route('dashboard.admin') }}">🏠 Dashboard</a>
-        <a href="{{ route('admin.ekstrakurikuler') }}">⚽ Ekstrakurikuler</a>
-        <a href="{{ route('admin.penilaian') }}">⭐ Penilaian</a>
-        <a href="{{ route('admin.laporan') }}">📄 Laporan</a>
-        <a href="{{ route('admin.profil') }}">👤 Profil</a>
-        <a href="{{ route('login') }}">🚪 Logout</a>
+        <a href="{{ route('dashboard.admin') }}"><i class="fa-solid fa-house"></i>Dashboard</a>
+        <a href="{{ route('admin.ekstrakurikuler') }}"><i class="fa-solid fa-futbol"></i>Ekstrakurikuler</a>
+        <a href="{{ route('admin.penilaian') }}"><i class="fa-solid fa-star"></i>Penilaian</a>
+        <a href="{{ route('admin.laporan') }}"><i class="fa-solid fa-file-lines"></i>Laporan</a>
+        <a href="{{ route('admin.profil') }}"><i class="fa-solid fa-user"></i>Profil</a>
+        <a href="{{ route('login') }}"><i class="fa-solid fa-right-from-bracket"></i>Logout</a>
     </div>
 </div>
 
 <div class="content">
     <a href="{{ route('admin.ekstrakurikuler') }}" class="back">
-        ← Kembali
+        <i class="fa-solid fa-arrow-left"></i> Kembali
     </a>
 
     <div class="box">
         <div class="icon">
-            {{ $ekskul['ikon'] ?? '⚽' }}
+            @include('partials.ekskul-icon', ['ikon' => $ekskul['ikon'] ?? null, 'nama' => $ekskul['nama'] ?? ''])
         </div>
 
         <h1>{{ $ekskul['nama'] ?? '-' }}</h1>
@@ -217,12 +225,12 @@
 
         <div class="buttons">
             <a href="{{ route('admin.ekstrakurikuler') }}" class="btn back-list">
-                ← Daftar Ekskul
+                <i class="fa-solid fa-arrow-left"></i> Daftar Ekskul
             </a>
 
             <a href="{{ route('admin.ekstrakurikuler.edit', $ekskul['id']) }}"
                class="btn edit">
-                ✏ Edit
+                <i class="fa-solid fa-pen"></i> Edit
             </a>
         </div>
     </div>

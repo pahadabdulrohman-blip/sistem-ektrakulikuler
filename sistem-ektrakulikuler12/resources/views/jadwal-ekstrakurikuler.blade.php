@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Jadwal Ekstrakurikuler</title>
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
     <style>
         * {
             box-sizing: border-box;
@@ -58,6 +60,11 @@
         .info {
             margin: 10px 0;
             line-height: 1.6;
+        }
+
+        .info i {
+            margin-right: 6px;
+            color: #0f766e;
         }
 
         .badge {
@@ -123,7 +130,8 @@
                 <h3>{{ $item->nama_kegiatan }}</h3>
 
                 <div class="info">
-                    📅 <strong>
+                    <i class="fa-solid fa-calendar-days"></i>
+                    <strong>
                         @if($item->tanggal)
                             {{ \Carbon\Carbon::parse($item->tanggal)->locale('id')->translatedFormat('l, d F Y') }}
                         @else
@@ -133,12 +141,14 @@
                 </div>
 
                 <div class="info">
-                    🕒 {{ $item->jam_mulai ?? '-' }}
+                    <i class="fa-solid fa-clock"></i>
+                    {{ $item->jam_mulai ?? '-' }}
                     sampai {{ $item->jam_selesai ?? '-' }}
                 </div>
 
                 <div class="info">
-                    📍 {{ $item->lokasi ?? 'Lokasi belum ditentukan' }}
+                    <i class="fa-solid fa-location-dot"></i>
+                    {{ $item->lokasi ?? 'Lokasi belum ditentukan' }}
                 </div>
 
                 @if($item->keterangan)
@@ -172,7 +182,8 @@
                 <h3>{{ $item->nama_kegiatan }}</h3>
 
                 <div class="info">
-                    📅 <strong>
+                    <i class="fa-solid fa-calendar-days"></i>
+                    <strong>
                         @if($item->tanggal)
                             {{ \Carbon\Carbon::parse($item->tanggal)->locale('id')->translatedFormat('l, d F Y') }}
                         @else
@@ -182,12 +193,14 @@
                 </div>
 
                 <div class="info">
-                    🕒 {{ $item->jam_mulai ?? '-' }}
+                    <i class="fa-solid fa-clock"></i>
+                    {{ $item->jam_mulai ?? '-' }}
                     sampai {{ $item->jam_selesai ?? '-' }}
                 </div>
 
                 <div class="info">
-                    📍 {{ $item->lokasi ?? 'Lokasi belum ditentukan' }}
+                    <i class="fa-solid fa-location-dot"></i>
+                    {{ $item->lokasi ?? 'Lokasi belum ditentukan' }}
                 </div>
 
                 @if($item->keterangan)
@@ -207,7 +220,7 @@
     </section>
 
     <a href="{{ url('/dashboard-siswa') }}" class="kembali">
-        ← Kembali ke Dashboard
+        <i class="fa-solid fa-arrow-left"></i> Kembali ke Dashboard
     </a>
 
 </div>

@@ -9,6 +9,8 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
     <style>
         * {
             margin: 0;
@@ -345,44 +347,57 @@
 
         @media(max-width: 768px) {
             .sidebar {
-                width: 75px;
-                padding: 20px 10px;
-            }
-
-            .guru-logo h2,
-            .guru-logo p,
-            .menu-title,
-            .menu-text {
-                display: none;
+                position: relative;
+                width: 100%;
+                height: auto;
+                padding: 20px 16px;
             }
 
             .guru-logo {
-                padding-bottom: 20px;
+                text-align: center;
+                padding-bottom: 15px;
+            }
+
+            .guru-logo h2 {
+                font-size: 18px;
+            }
+
+            .guru-logo p {
+                font-size: 11px;
             }
 
             .guru-icon {
-                width: 48px;
-                height: 48px;
-                font-size: 25px;
+                width: 44px;
+                height: 44px;
+                font-size: 22px;
+            }
+
+            .menu-title {
+                margin: 18px 0 10px;
             }
 
             .menu a {
-                justify-content: center;
-                padding: 15px 5px;
+                padding: 12px 14px;
             }
 
             .main {
-                margin-left: 75px;
-                width: calc(100% - 75px);
+                margin-left: 0;
+                width: 100%;
                 padding: 20px 15px;
             }
 
             .header {
                 padding: 20px;
+                flex-direction: column;
+                align-items: flex-start;
             }
 
             .header h1 {
                 font-size: 21px;
+            }
+
+            .guru-profile {
+                align-self: flex-end;
             }
 
             .guru-info {
@@ -421,42 +436,42 @@
 
             <a href="{{ route('dashboard.guru') }}"
                class="{{ request()->routeIs('dashboard.guru') ? 'active' : '' }}">
-                <span class="menu-icon">🏠</span>
+                <span class="menu-icon"><i class="fa-solid fa-house"></i></span>
                 <span class="menu-text">Dashboard Guru</span>
             </a>
 
             <a href="{{ route('guru.kegiatan') }}"
                class="{{ request()->routeIs('guru.kegiatan') ? 'active' : '' }}">
-                <span class="menu-icon">👥</span>
+                <span class="menu-icon"><i class="fa-solid fa-users"></i></span>
                 <span class="menu-text">Data Kegiatan</span>
             </a>
 
             <a href="{{ route('guru.penilaian') }}"
                class="{{ request()->routeIs('guru.penilaian*') ? 'active' : '' }}">
-                <span class="menu-icon">⭐</span>
+                <span class="menu-icon"><i class="fa-solid fa-star"></i></span>
                 <span class="menu-text">Penilaian Siswa</span>
             </a>
 
             <a href="{{ route('guru.absensi') }}"
                class="{{ request()->routeIs('guru.absensi*') ? 'active' : '' }}">
-                <span class="menu-icon">🗓️</span>
+                <span class="menu-icon"><i class="fa-solid fa-calendar-check"></i></span>
                 <span class="menu-text">Absensi Siswa</span>
             </a>
 
             <a href="{{ route('guru.laporan') }}"
                class="{{ request()->routeIs('guru.laporan') ? 'active' : '' }}">
-                <span class="menu-icon">📄</span>
+                <span class="menu-icon"><i class="fa-solid fa-file-lines"></i></span>
                 <span class="menu-text">Laporan</span>
             </a>
 
             <a href="{{ route('guru.profil') }}"
                class="{{ request()->routeIs('guru.profil') ? 'active' : '' }}">
-                <span class="menu-icon">👤</span>
+                <span class="menu-icon"><i class="fa-solid fa-user"></i></span>
                 <span class="menu-text">Profil Guru</span>
             </a>
 
             <a href="{{ route('login') }}">
-                <span class="menu-icon">🚪</span>
+                <span class="menu-icon"><i class="fa-solid fa-right-from-bracket"></i></span>
                 <span class="menu-text">Logout</span>
             </a>
 
@@ -478,7 +493,9 @@
                     <span>Sistem Ekstrakurikuler</span>
                 </div>
 
-                <div class="profile-icon">👨‍🏫</div>
+                <div class="profile-icon">
+                    <i class="fa-solid fa-chalkboard-user"></i>
+                </div>
             </div>
         </header>
 
@@ -486,7 +503,7 @@
         <section class="stats">
 
             <div class="stat-card">
-                <div class="stat-icon">👨‍🎓</div>
+                <div class="stat-icon"><i class="fa-solid fa-user-graduate"></i></div>
                 <div>
                     <div class="stat-number">120</div>
                     <div class="stat-label">Total Siswa</div>
@@ -494,7 +511,7 @@
             </div>
 
             <div class="stat-card">
-                <div class="stat-icon">👥</div>
+                <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
                 <div>
                     <div class="stat-number">9</div>
                     <div class="stat-label">Ekstrakurikuler</div>
@@ -502,7 +519,7 @@
             </div>
 
             <div class="stat-card">
-                <div class="stat-icon">⭐</div>
+                <div class="stat-icon"><i class="fa-solid fa-star"></i></div>
                 <div>
                     <div class="stat-number">87</div>
                     <div class="stat-label">Rata-rata Nilai</div>
@@ -510,7 +527,7 @@
             </div>
 
             <div class="stat-card">
-                <div class="stat-icon">📅</div>
+                <div class="stat-icon"><i class="fa-solid fa-calendar-check"></i></div>
                 <div>
                     <div class="stat-number">92%</div>
                     <div class="stat-label">Kehadiran</div>

@@ -8,6 +8,8 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
     <style>
         * {
             margin: 0;
@@ -57,6 +59,18 @@
             margin-bottom: 8px;
             font-size: 14px;
             transition: .2s;
+        }
+
+        .menu i {
+            width: 18px;
+            margin-right: 8px;
+            text-align: center;
+        }
+
+        .row-icon {
+            display: inline-block;
+            width: 20px;
+            margin-right: 4px;
         }
 
         .menu:hover,
@@ -244,27 +258,31 @@
 
         @media(max-width: 800px) {
             .sidebar {
-                width: 75px;
-                padding: 20px 8px;
+                position: relative;
+                width: 100%;
+                height: auto;
+                padding: 20px 16px;
             }
 
             .brand {
-                font-size: 12px;
-                padding: 5px 2px 20px;
+                font-size: 18px;
+                padding: 0 0 16px;
             }
 
             .menu-title {
-                display: none;
+                margin: 16px 0 10px;
             }
 
             .menu {
-                font-size: 11px;
-                padding: 12px 5px;
-                text-align: center;
+                display: inline-block;
+                font-size: 13px;
+                padding: 11px 14px;
+                margin: 0 6px 8px 0;
             }
 
             .main {
-                margin-left: 75px;
+                margin-left: 0;
+                width: 100%;
             }
 
             .content {
@@ -287,6 +305,10 @@
             .heading h1 {
                 font-size: 24px;
             }
+
+            .user {
+                font-size: 11px;
+            }
         }
     </style>
 </head>
@@ -303,32 +325,32 @@
     <div class="menu-title">MENU GURU</div>
 
     <a href="{{ route('dashboard.guru') }}" class="menu">
-        🏠 Dashboard
+        <i class="fa-solid fa-house"></i>Dashboard
     </a>
 
     <a href="{{ route('guru.ekstrakurikuler.index') }}" class="menu active">
-        👥 Ekstrakurikuler
+        <i class="fa-solid fa-users"></i>Ekstrakurikuler
     </a>
 
     <a href="{{ route('guru.penilaian') }}" class="menu">
-        ⭐ Penilaian
+        <i class="fa-solid fa-star"></i>Penilaian
     </a>
 
     <a href="{{ route('guru.laporan') }}" class="menu">
-        📊 Laporan
+        <i class="fa-solid fa-chart-line"></i>Laporan
     </a>
 
     <a href="{{ route('guru.absensi') }}" class="menu">
-        📋 Absensi
+        <i class="fa-solid fa-calendar-check"></i>Absensi
     </a>
 
     <a href="{{ route('guru.profil') }}" class="menu">
-        👤 Profil
+        <i class="fa-solid fa-user"></i>Profil
     </a>
 
     <a href="{{ route('logout') }}" class="menu"
        onclick="return confirm('Yakin ingin keluar?')">
-        🚪 Logout
+        <i class="fa-solid fa-right-from-bracket"></i>Logout
     </a>
 
 </aside>
@@ -414,7 +436,9 @@
                             <td>{{ $index + 1 }}</td>
 
                             <td>
-                                {{ $item->ikon ?? '📌' }}
+                                <span class="row-icon">
+                                    @include('partials.ekskul-icon', ['ikon' => $item->ikon, 'nama' => $item->nama_ekstrakurikuler])
+                                </span>
                                 <strong>
                                     {{ $item->nama_ekstrakurikuler }}
                                 </strong>

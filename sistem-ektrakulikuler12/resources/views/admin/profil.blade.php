@@ -7,6 +7,8 @@
 
     <title>Profil Admin</title>
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
     <style>
         * {
             margin: 0;
@@ -53,6 +55,12 @@
             padding: 14px;
             border-radius: 8px;
             margin-bottom: 7px;
+        }
+
+        .menu a i {
+            width: 18px;
+            margin-right: 8px;
+            text-align: center;
         }
 
         .menu a:hover,
@@ -141,12 +149,30 @@
         @media(max-width: 700px) {
 
             .sidebar {
-                width: 190px;
+                position: relative;
+                width: 100%;
+                height: auto;
+                padding: 20px 16px;
+            }
+
+            .logo {
+                margin-bottom: 18px;
+            }
+
+            .menu {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 7px;
+            }
+
+            .menu a {
+                flex: 1 1 calc(50% - 7px);
+                text-align: center;
             }
 
             .content {
-                margin-left: 190px;
-                padding: 20px;
+                margin-left: 0;
+                padding: 20px 15px;
             }
 
             .info strong {
@@ -171,27 +197,27 @@
         <div class="menu">
 
             <a href="{{ route('dashboard.admin') }}">
-                🏠 Dashboard
+                <i class="fa-solid fa-house"></i>Dashboard
             </a>
 
             <a href="{{ route('admin.ekstrakurikuler') }}">
-                ⚽ Ekstrakurikuler
+                <i class="fa-solid fa-futbol"></i>Ekstrakurikuler
             </a>
 
             <a href="{{ route('admin.penilaian') }}">
-                ⭐ Penilaian
+                <i class="fa-solid fa-star"></i>Penilaian
             </a>
 
             <a href="{{ route('admin.laporan') }}">
-                📄 Laporan
+                <i class="fa-solid fa-file-lines"></i>Laporan
             </a>
 
             <a href="{{ route('admin.profil') }}" class="active">
-                👤 Profil
+                <i class="fa-solid fa-user"></i>Profil
             </a>
 
             <a href="{{ route('login') }}">
-                🚪 Logout
+                <i class="fa-solid fa-right-from-bracket"></i>Logout
             </a>
 
         </div>
@@ -217,7 +243,7 @@
         <div class="profile">
 
             <div class="avatar">
-                👤
+                <i class="fa-solid fa-user-shield"></i>
             </div>
 
             <h2>Administrator</h2>
@@ -290,8 +316,8 @@
     @else
         <div style="width:130px;height:130px;border-radius:50%;
                     background:#d9f7e7;display:flex;align-items:center;
-                    justify-content:center;font-size:45px;">
-            👤
+                    justify-content:center;font-size:45px;color:#166534;">
+            <i class="fa-solid fa-user"></i>
         </div>
     @endif
 

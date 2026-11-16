@@ -92,6 +92,31 @@
             font-weight: 600;
             font-size: 14px;
         }
+
+        @media(max-width: 480px) {
+            body {
+                padding: 14px;
+            }
+
+            .card {
+                padding: 26px 20px;
+                border-radius: 18px;
+            }
+
+            .icon {
+                width: 65px;
+                height: 65px;
+                font-size: 28px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            .contact {
+                padding: 16px;
+            }
+        }
     </style>
 </head>
 

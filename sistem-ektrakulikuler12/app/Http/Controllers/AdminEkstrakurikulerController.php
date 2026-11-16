@@ -16,7 +16,7 @@ class AdminEkstrakurikulerController extends Controller
             [
                 'nama_ekstrakurikuler' => 'Futsal',
                 'deskripsi' => 'Ekstrakurikuler olahraga futsal.',
-                'ikon' => '⚽',
+                'ikon' => 'F',
                 'pembina' => 'Belum ditentukan',
                 'jadwal' => 'Belum ditentukan',
                 'tempat' => 'Lapangan Sekolah',
@@ -24,7 +24,7 @@ class AdminEkstrakurikulerController extends Controller
             [
                 'nama_ekstrakurikuler' => 'Coding',
                 'deskripsi' => 'Ekstrakurikuler pemrograman dan teknologi.',
-                'ikon' => '💻',
+                'ikon' => 'C',
                 'pembina' => 'Belum ditentukan',
                 'jadwal' => 'Belum ditentukan',
                 'tempat' => 'Laboratorium Komputer',
@@ -32,7 +32,7 @@ class AdminEkstrakurikulerController extends Controller
             [
                 'nama_ekstrakurikuler' => 'Basket',
                 'deskripsi' => 'Ekstrakurikuler olahraga basket.',
-                'ikon' => '🏀',
+                'ikon' => 'B',
                 'pembina' => 'Belum ditentukan',
                 'jadwal' => 'Belum ditentukan',
                 'tempat' => 'Lapangan Basket',
@@ -40,7 +40,7 @@ class AdminEkstrakurikulerController extends Controller
             [
                 'nama_ekstrakurikuler' => 'Pencak Silat',
                 'deskripsi' => 'Ekstrakurikuler bela diri.',
-                'ikon' => '🥋',
+                'ikon' => 'PS',
                 'pembina' => 'Belum ditentukan',
                 'jadwal' => 'Belum ditentukan',
                 'tempat' => 'Aula Sekolah',
@@ -48,7 +48,7 @@ class AdminEkstrakurikulerController extends Controller
             [
                 'nama_ekstrakurikuler' => 'Pramuka',
                 'deskripsi' => 'Ekstrakurikuler kepramukaan.',
-                'ikon' => '🏕️',
+                'ikon' => 'PR',
                 'pembina' => 'Belum ditentukan',
                 'jadwal' => 'Belum ditentukan',
                 'tempat' => 'Lapangan Sekolah',
@@ -56,7 +56,7 @@ class AdminEkstrakurikulerController extends Controller
             [
                 'nama_ekstrakurikuler' => 'Voli',
                 'deskripsi' => 'Ekstrakurikuler olahraga voli.',
-                'ikon' => '🏐',
+                'ikon' => 'V',
                 'pembina' => 'Belum ditentukan',
                 'jadwal' => 'Belum ditentukan',
                 'tempat' => 'Lapangan Voli',
@@ -79,7 +79,7 @@ class AdminEkstrakurikulerController extends Controller
         return [
             'id' => $item->id,
             'nama' => $item->nama_ekstrakurikuler,
-            'ikon' => $item->ikon ?? '⭐',
+            'ikon' => $item->ikon ?: strtoupper(substr($item->nama_ekstrakurikuler, 0, 1)),
             'deskripsi' => $item->deskripsi ?? '-',
             'pembina' => $item->pembina ?? '-',
             'jadwal' => $item->jadwal ?? '-',
@@ -143,7 +143,7 @@ class AdminEkstrakurikulerController extends Controller
 
         Ekstrakurikuler::create([
             'nama_ekstrakurikuler' => $validated['nama'],
-            'ikon' => $validated['ikon'] ?? '⭐',
+            'ikon' => ($validated['ikon'] ?? '') ?: strtoupper(substr($validated['nama'], 0, 1)),
             'deskripsi' => $validated['deskripsi'],
             'pembina' => $validated['pembina'] ?? '-',
             'jadwal' => $validated['jadwal'] ?? '-',
@@ -214,7 +214,7 @@ class AdminEkstrakurikulerController extends Controller
 
         $item->update([
             'nama_ekstrakurikuler' => $validated['nama'],
-            'ikon' => $validated['ikon'] ?? '⭐',
+            'ikon' => ($validated['ikon'] ?? '') ?: strtoupper(substr($validated['nama'], 0, 1)),
             'deskripsi' => $validated['deskripsi'],
             'pembina' => $validated['pembina'] ?? '-',
             'jadwal' => $validated['jadwal'] ?? '-',

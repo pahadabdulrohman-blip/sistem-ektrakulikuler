@@ -6,6 +6,8 @@
 
     <title>{{ $ekskul['nama'] }}</title>
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
     <style>
         * {
             box-sizing: border-box;
@@ -46,6 +48,12 @@
             padding: 14px;
             margin-bottom: 8px;
             border-radius: 10px;
+        }
+
+        .menu i {
+            width: 18px;
+            margin-right: 8px;
+            text-align: center;
         }
 
         .menu:hover {
@@ -96,6 +104,51 @@
             padding: 20px;
             border-radius: 12px;
         }
+
+        @media(max-width: 700px) {
+            .sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+                padding: 22px 16px;
+            }
+
+            .sidebar p {
+                margin-bottom: 20px;
+            }
+
+            .menu {
+                display: inline-block;
+                padding: 10px 14px;
+                margin: 0 6px 8px 0;
+            }
+
+            .content {
+                margin-left: 0;
+                padding: 22px 15px;
+            }
+
+            .back {
+                padding: 10px 16px;
+                margin-bottom: 20px;
+            }
+
+            .card {
+                padding: 25px 20px;
+            }
+
+            .icon {
+                font-size: 52px;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+            .description {
+                font-size: 16px;
+            }
+        }
     </style>
 </head>
 
@@ -108,19 +161,19 @@
         <p>Sistem Ekstrakurikuler</p>
 
         <a href="{{ route('dashboard.siswa') }}" class="menu">
-            🏠 Dashboard
+            <i class="fa-solid fa-house"></i>Dashboard
         </a>
 
         <a href="{{ route('ekstrakurikuler') }}" class="menu">
-            ⚽ Ekstrakurikuler
+            <i class="fa-solid fa-users"></i>Ekstrakurikuler
         </a>
 
         <a href="{{ route('penilaian') }}" class="menu">
-            ⭐ Penilaian
+            <i class="fa-solid fa-star"></i>Penilaian
         </a>
 
         <a href="{{ route('profil') }}" class="menu">
-            👤 Profil
+            <i class="fa-solid fa-user"></i>Profil
         </a>
 
     </aside>
@@ -129,13 +182,13 @@
     <main class="content">
 
         <a href="{{ route('ekstrakurikuler') }}" class="back">
-            ← Kembali
+            <i class="fa-solid fa-arrow-left"></i> Kembali
         </a>
 
         <div class="card">
 
             <div class="icon">
-                {{ $ekskul['icon'] }}
+                @include('partials.ekskul-icon', ['ikon' => $ekskul['icon'] ?? null, 'nama' => $ekskul['nama'] ?? ''])
             </div>
 
             <h1>

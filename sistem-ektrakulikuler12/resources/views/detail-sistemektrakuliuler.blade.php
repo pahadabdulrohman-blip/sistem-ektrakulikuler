@@ -34,7 +34,7 @@
         font-size:65px;
         margin-bottom:20px;
     ">
-        ⚽
+        @include('partials.ekskul-icon', ['ikon' => $data['ikon'] ?? null, 'nama' => $data['nama'] ?? ''])
     </div>
 
 

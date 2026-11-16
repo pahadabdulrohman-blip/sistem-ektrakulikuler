@@ -100,6 +100,21 @@
         .login a:hover {
             text-decoration: underline;
         }
+
+        @media(max-width: 480px) {
+            body {
+                padding: 14px;
+            }
+
+            .container {
+                padding: 24px 20px;
+                border-radius: 14px;
+            }
+
+            h2 {
+                font-size: 22px;
+            }
+        }
     </style>
 </head>
 

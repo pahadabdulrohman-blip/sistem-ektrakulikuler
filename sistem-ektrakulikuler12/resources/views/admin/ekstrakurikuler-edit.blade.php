@@ -115,6 +115,30 @@
             background: #fee2e2;
             color: #991b1b;
         }
+
+        @media(max-width: 600px) {
+            body {
+                padding: 22px 14px;
+            }
+
+            .box {
+                padding: 22px 18px;
+                border-radius: 12px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            .buttons {
+                flex-direction: column;
+            }
+
+            button,
+            .back {
+                text-align: center;
+            }
+        }
     </style>
 </head>
 

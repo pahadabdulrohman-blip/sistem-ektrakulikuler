@@ -161,12 +161,30 @@
             .form-grid {
                 grid-template-columns: 1fr;
             }
+
+            .top-back {
+                padding: 15px 15px 0;
+            }
+
+            .top-back a {
+                display: block !important;
+                text-align: center;
+                padding: 11px 16px !important;
+            }
+
+            .header, .card {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
         }
     </style>
 </head>
 
 <body>
-    <div style="margin-bottom: 20px;">
+    <div class="top-back" style="margin-bottom: 20px;">
     <a href="{{ url('/dashboard') }}"
        style="
             display: inline-block;

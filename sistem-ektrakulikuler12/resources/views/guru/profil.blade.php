@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profil Guru - Sistem Ekstrakurikuler</title>
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
     <style>
         * {
             margin: 0;
@@ -71,6 +73,12 @@
             text-decoration: none;
             font-size: 16px;
             transition: .2s;
+        }
+
+        .sidebar a i {
+            width: 20px;
+            margin-right: 8px;
+            text-align: center;
         }
 
         .sidebar a:hover,
@@ -314,12 +322,12 @@
 
     <div class="menu-title">MENU GURU</div>
 
-    <a href="/dashboard-guru">🏠 &nbsp; Dashboard Guru</a>
-    <a href="/guru/kegiatan">👥 &nbsp; Data Kegiatan</a>
-    <a href="/guru/penilaian">⭐ &nbsp; Penilaian Siswa</a>
-    <a href="/guru/laporan">📄 &nbsp; Laporan</a>
-    <a href="/guru/profil" class="active">👤 &nbsp; Profil Guru</a>
-    <a href="/logout">🚪 &nbsp; Logout</a>
+    <a href="/dashboard-guru"><i class="fa-solid fa-house"></i>Dashboard Guru</a>
+    <a href="/guru/kegiatan"><i class="fa-solid fa-users"></i>Data Kegiatan</a>
+    <a href="/guru/penilaian"><i class="fa-solid fa-star"></i>Penilaian Siswa</a>
+    <a href="/guru/laporan"><i class="fa-solid fa-file-lines"></i>Laporan</a>
+    <a href="/guru/profil" class="active"><i class="fa-solid fa-user"></i>Profil Guru</a>
+    <a href="/logout"><i class="fa-solid fa-right-from-bracket"></i>Logout</a>
 
 </aside>
 
@@ -359,7 +367,7 @@
             <br>
 
             <a href="/dashboard-guru" class="btn btn-secondary">
-                ← Kembali ke Dashboard
+                <i class="fa-solid fa-arrow-left"></i> Kembali ke Dashboard
             </a>
 
         </section>
@@ -424,7 +432,7 @@
                     >
 
                     <button type="submit" class="btn">
-                        📷 Simpan Foto Profil
+                        <i class="fa-solid fa-camera"></i> Simpan Foto Profil
                     </button>
 
                 </form>

@@ -7,6 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ekstrakurikuler Admin</title>
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
     <style>
         * {
             box-sizing: border-box;
@@ -280,32 +282,33 @@
         <div class="menu">
 
             <a href="{{ route('dashboard.admin') }}">
-                <span class="menu-icon">🏠</span>
+                <span class="menu-icon"><i class="fa-solid fa-house"></i></span>
                 Dashboard
             </a>
 
             <a href="{{ route('admin.ekstrakurikuler') }}" class="active">
-                <span class="menu-icon">⚽</span>
+                <span class="menu-icon"><i class="fa-solid fa-futbol"></i></span>
                 Ekstrakurikuler
             </a>
 
             <a href="{{ route('admin.penilaian') }}">
-                <span class="menu-icon">⭐</span>
+                <span class="menu-icon"><i class="fa-solid fa-star"></i></span>
                 Penilaian
             </a>
 
             <a href="{{ route('admin.laporan') }}">
-                <span class="menu-icon">📄</span>
+                <span class="menu-icon"><i class="fa-solid fa-file-lines"></i></span>
                 Laporan
             </a>
 
             <a href="{{ route('admin.profil') }}">
-                <span class="menu-icon">👤</span>
+                <span class="menu-icon"><i class="fa-solid fa-user"></i></span>
                 Profil
             </a>
 
             <a href="{{ route('admin.password.requests') }}">
-                <span class="menu-icon">🔔</span>
+                <span class="menu-icon"><i class="fa-solid fa-bell"></i></span>
+
                 <span>Permintaan Password</span>
 
                 @php
@@ -321,7 +324,7 @@
             </a>
 
             <a href="{{ route('logout') }}">
-                <span class="menu-icon">🚪</span>
+                <span class="menu-icon"><i class="fa-solid fa-right-from-bracket"></i></span>
                 Logout
             </a>
 
@@ -381,7 +384,7 @@
                 <div class="card">
 
                     <div class="icon">
-                        {{ $item['ikon'] ?? $item['icon'] ?? '⭐' }}
+                        @include('partials.ekskul-icon', ['ikon' => $item['ikon'] ?? $item['icon'] ?? null, 'nama' => $item['nama'] ?? ''])
                     </div>
 
                     <h2>

@@ -7,6 +7,8 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
     <style>
         * {
             margin: 0;
@@ -383,32 +385,32 @@
     <nav class="menu">
 
         <a href="{{ route('dashboard.guru') }}">
-            <span class="menu-icon">🏠</span>
+            <span class="menu-icon"><i class="fa-solid fa-house"></i></span>
             Dashboard Guru
         </a>
 
         <a href="{{ route('guru.kegiatan') }}">
-            <span class="menu-icon">👥</span>
+            <span class="menu-icon"><i class="fa-solid fa-users"></i></span>
             Data Kegiatan
         </a>
 
         <a href="{{ route('guru.penilaian') }}">
-            <span class="menu-icon">⭐</span>
+            <span class="menu-icon"><i class="fa-solid fa-star"></i></span>
             Penilaian Siswa
         </a>
 
         <a href="{{ route('guru.laporan') }}" class="active">
-            <span class="menu-icon">📄</span>
+            <span class="menu-icon"><i class="fa-solid fa-file-lines"></i></span>
             Laporan
         </a>
 
         <a href="{{ route('guru.profil') }}">
-            <span class="menu-icon">👤</span>
+            <span class="menu-icon"><i class="fa-solid fa-user"></i></span>
             Profil Guru
         </a>
 
         <a href="{{ route('logout') }}">
-            <span class="menu-icon">🚪</span>
+            <span class="menu-icon"><i class="fa-solid fa-right-from-bracket"></i></span>
             Logout
         </a>
 
@@ -430,7 +432,10 @@
                 <span>Sistem Ekstrakurikuler</span>
             </div>
 
-            <div class="profile-icon">👨‍🏫</div>
+            <div class="profile-icon">
+                <i class="fa-solid fa-chalkboard-user"></i>
+            </div>
+
         </div>
     </header>
 
@@ -438,7 +443,7 @@
     <section class="summary">
 
         <div class="summary-card">
-            <div class="summary-icon">👨‍🎓</div>
+            <div class="summary-icon"><i class="fa-solid fa-user-graduate"></i></div>
             <div>
                 <h2>{{ $totalSiswa }}</h2>
                 <p>Data Siswa</p>
@@ -446,7 +451,7 @@
         </div>
 
         <div class="summary-card">
-            <div class="summary-icon">👥</div>
+            <div class="summary-icon"><i class="fa-solid fa-users"></i></div>
             <div>
                 <h2>{{ $totalKegiatan }}</h2>
                 <p>Data Kegiatan</p>
@@ -454,7 +459,7 @@
         </div>
 
         <div class="summary-card">
-            <div class="summary-icon">📊</div>
+            <div class="summary-icon"><i class="fa-solid fa-chart-line"></i></div>
             <div>
                 <h2>{{ $totalPenilaian }}</h2>
                 <p>Data Penilaian</p>
@@ -473,7 +478,7 @@
             </div>
 
             <button class="btn" onclick="window.print()">
-                🖨 Cetak Laporan
+                <i class="fa-solid fa-print"></i> Cetak Laporan
             </button>
         </div>
 

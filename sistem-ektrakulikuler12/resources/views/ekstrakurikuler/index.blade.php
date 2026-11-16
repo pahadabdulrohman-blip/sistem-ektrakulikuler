@@ -8,6 +8,8 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
     <style>
         * {
             box-sizing: border-box;
@@ -73,6 +75,12 @@
             text-decoration: none;
             font-size: 14px;
             transition: .2s;
+        }
+
+        .menu a i {
+            width: 18px;
+            margin-right: 6px;
+            text-align: center;
         }
 
         .menu a:hover,
@@ -162,6 +170,24 @@
             font-size: 15px;
             outline: none;
             margin-bottom: 30px;
+        }
+
+        .search-wrap {
+            position: relative;
+        }
+
+        .search-wrap > i {
+            position: absolute;
+            left: 20px;
+            top: 29px;
+            transform: translateY(-50%);
+            color: #6590a8;
+            font-size: 15px;
+            pointer-events: none;
+        }
+
+        .search-wrap .search {
+            padding-left: 48px;
         }
 
         .search:focus {
@@ -326,11 +352,36 @@
 
         @media (max-width: 650px) {
             .sidebar {
-                display: none;
+                position: relative;
+                width: 100%;
+                height: auto;
+                padding: 20px 16px;
+            }
+
+            .logo {
+                padding-bottom: 16px;
+            }
+
+            .menu-title {
+                margin: 16px 0 10px;
+            }
+
+            .menu {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 7px;
+            }
+
+            .menu a {
+                flex: 1 1 calc(50% - 7px);
+                text-align: center;
+                margin-bottom: 0;
+                padding: 12px 10px;
             }
 
             .main {
                 margin-left: 0;
+                width: 100%;
             }
 
             .content {
@@ -386,7 +437,7 @@
 
 <aside class="sidebar">
     <div class="logo">
-        <div class="logo-icon">🏫</div>
+        <div class="logo-icon"><i class="fa-solid fa-school"></i></div>
         <div class="logo-text">
             Sistem<br>Ekstrakurikuler
         </div>
@@ -395,10 +446,10 @@
     <div class="menu-title">MENU UTAMA</div>
 
     <nav class="menu">
-        <a href="{{ route('dashboard.siswa') }}">🏠 &nbsp; Dashboard</a>
-        <a href="{{ route('ekstrakurikuler') }}" class="active">👥 &nbsp; Ekstrakurikuler</a>
-        <a href="{{ route('penilaian') }}">⭐ &nbsp; Penilaian</a>
-        <a href="{{ route('profil') }}">👤 &nbsp; Profil</a>
+        <a href="{{ route('dashboard.siswa') }}"><i class="fa-solid fa-house"></i>Dashboard</a>
+        <a href="{{ route('ekstrakurikuler') }}" class="active"><i class="fa-solid fa-users"></i>Ekstrakurikuler</a>
+        <a href="{{ route('penilaian') }}"><i class="fa-solid fa-star"></i>Penilaian</a>
+        <a href="{{ route('profil') }}"><i class="fa-solid fa-user"></i>Profil</a>
     </nav>
 </aside>
 
@@ -429,18 +480,22 @@
         </div>
 
         <div class="info">
-            ℹ️ Kamu hanya dapat memilih
+            <i class="fa-solid fa-circle-info"></i>
+            Kamu hanya dapat memilih
             <strong>maksimal 2 ekstrakurikuler</strong>.
             Setelah memilih 2, pilihan lainnya akan dinonaktifkan.
         </div>
 
-        <input
-            type="text"
-            id="search"
-            class="search"
-            placeholder="🔍 Cari ekstrakurikuler..."
-            aria-label="Cari ekstrakurikuler"
-        >
+        <div class="search-wrap">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input
+                type="text"
+                id="search"
+                class="search"
+                placeholder="Cari ekstrakurikuler..."
+                aria-label="Cari ekstrakurikuler"
+            >
+        </div>
 
         <div class="grid" id="daftarEkskul">
 
@@ -452,7 +507,7 @@
                      data-name="{{ strtolower($item->nama_ekstrakurikuler) }}">
 
                     <div class="icon">
-                        {{ $item->ikon ?: '⭐' }}
+                        @include('partials.ekskul-icon', ['ikon' => $item->ikon, 'nama' => $item->nama_ekstrakurikuler])
                     </div>
 
                     <div class="info-ekskul">
@@ -505,7 +560,7 @@
                 id="btnKunci"
                 onclick="kunciPilihan()"
                 disabled>
-                🔒 Kunci Pilihan
+                <i class="fa-solid fa-lock"></i> Kunci Pilihan
             </button>
 
             <button
@@ -513,7 +568,7 @@
                 id="btnBatal"
                 onclick="batalkanSemua()"
                 disabled>
-                ↩ Batalkan Semua
+                <i class="fa-solid fa-rotate-left"></i> Batalkan Semua
             </button>
 
             <p id="statusPilihan" aria-live="polite">
@@ -573,8 +628,8 @@
 
             button.classList.toggle('selected', sudahDipilih);
 
-            button.textContent = sudahDipilih
-                ? '✓ Dipilih'
+            button.innerHTML = sudahDipilih
+                ? '<i class="fa-solid fa-check"></i> Dipilih'
                 : 'Pilih';
 
             button.disabled = terkunci ||
@@ -587,9 +642,9 @@
         document.getElementById('btnBatal').disabled =
             terkunci || pilihan.length === 0;
 
-        document.getElementById('statusPilihan').textContent =
+        document.getElementById('statusPilihan').innerHTML =
             terkunci
-                ? 'Status: 🔒 Pilihan sudah dikunci'
+                ? '<i class="fa-solid fa-lock"></i> Status: Pilihan sudah dikunci'
                 : 'Status: Belum dikunci';
     }
 

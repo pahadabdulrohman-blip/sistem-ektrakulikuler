@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profil Siswa - Sistem Ekstrakurikuler</title>
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
     <style>
         * {
             margin: 0;
@@ -82,6 +84,12 @@
             text-decoration: none;
             font-size: 16px;
             transition: .2s;
+        }
+
+        .sidebar a i {
+            width: 20px;
+            margin-right: 8px;
+            text-align: center;
         }
 
         .sidebar a:hover,
@@ -344,12 +352,12 @@
 
     <div class="menu-title">MENU SISWA</div>
 
-    <a href="/dashboard-siswa">🏠 &nbsp; Dashboard Siswa</a>
-    <a href="/ekstrakurikuler">👥 &nbsp; Daftar Ekstrakurikuler</a>
-    <a href="/jadwal-ekstrakurikuler">📅 &nbsp; Jadwal Kegiatan</a>
-    <a href="/penilaian">⭐ &nbsp; Penilaian Saya</a>
-    <a href="/profil" class="active">👤 &nbsp; Profil Siswa</a>
-    <a href="/logout">🚪 &nbsp; Logout</a>
+    <a href="/dashboard-siswa"><i class="fa-solid fa-house"></i>Dashboard Siswa</a>
+    <a href="/ekstrakurikuler"><i class="fa-solid fa-users"></i>Daftar Ekstrakurikuler</a>
+    <a href="/jadwal-ekstrakurikuler"><i class="fa-solid fa-calendar-days"></i>Jadwal Kegiatan</a>
+    <a href="/penilaian"><i class="fa-solid fa-star"></i>Penilaian Saya</a>
+    <a href="/profil" class="active"><i class="fa-solid fa-user"></i>Profil Siswa</a>
+    <a href="/logout"><i class="fa-solid fa-right-from-bracket"></i>Logout</a>
 
 </aside>
 
@@ -391,7 +399,7 @@
             <br>
 
             <a href="/dashboard-siswa" class="btn btn-secondary">
-                ← Kembali ke Dashboard
+                <i class="fa-solid fa-arrow-left"></i> Kembali ke Dashboard
             </a>
 
         </section>
@@ -458,7 +466,7 @@
                     >
 
                     <button type="submit" class="btn">
-                        📷 Simpan Foto Profil
+                        <i class="fa-solid fa-camera"></i> Simpan Foto Profil
                     </button>
 
                 </form>
