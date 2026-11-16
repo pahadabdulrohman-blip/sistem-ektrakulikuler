@@ -13,6 +13,9 @@ rel="stylesheet">
 <link rel="stylesheet"
 href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
+<!-- Chart.js untuk visualisasi statistik dashboard -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
 <style>
 
 *{
@@ -217,6 +220,62 @@ body{
     border-bottom:1px solid #eee;
 }
 
+
+/* VISUALISASI STATISTIK */
+
+.charts-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+    margin-bottom:25px;
+}
+
+.chart-card{
+    background:white;
+    padding:25px;
+    border-radius:15px;
+    box-shadow:0 4px 15px rgba(0,0,0,.05);
+}
+
+.chart-card h2{
+    font-size:16px;
+    color:#212529;
+}
+
+.chart-sub{
+    color:#777;
+    font-size:12px;
+    margin:4px 0 18px;
+}
+
+.chart-box{
+    position:relative;
+    height:290px;
+}
+
+.chart-wide{
+    grid-column:1 / -1;
+}
+
+.chart-empty{
+    height:290px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+
+    color:#999;
+    font-size:13px;
+
+    border:1px dashed #dde2e8;
+    border-radius:12px;
+}
+
+.chart-empty i{
+    font-size:26px;
+}
+
 .badge{
     padding:5px 10px;
     background:#e9ecef;
@@ -314,6 +373,14 @@ body{
         grid-template-columns:1fr;
     }
 
+    .charts-grid{
+        grid-template-columns:1fr;
+    }
+
+    .chart-wide{
+        grid-column:auto;
+    }
+
 }
 
 @media(max-width:600px){
@@ -391,6 +458,67 @@ body{
     $totalPenilaian = \App\Models\Penilaian::count();
 
     $totalPenilaianTampil = number_format($totalPenilaian, 0, ',', '.');
+
+    // Data visualisasi: pendaftar per ekstrakurikuler.
+    $pendaftarPerEkskul = \App\Models\Ekstrakurikuler::withCount('pendaftaran')
+        ->orderByDesc('pendaftaran_count')
+        ->orderBy('nama_ekstrakurikuler')
+        ->get();
+
+    $labelPendaftarEkskul = $pendaftarPerEkskul
+        ->pluck('nama_ekstrakurikuler')
+        ->all();
+
+    $dataPendaftarEkskul = $pendaftarPerEkskul
+        ->pluck('pendaftaran_count')
+        ->all();
+
+    // Data visualisasi: rekap status absensi.
+    $statusAbsensi = \App\Models\AbsensiSiswa::selectRaw(
+        'status, COUNT(*) as jumlah'
+    )
+        ->groupBy('status')
+        ->pluck('jumlah', 'status');
+
+    $dataStatusAbsensi = [
+        (int) ($statusAbsensi['hadir'] ?? 0),
+        (int) ($statusAbsensi['izin'] ?? 0),
+        (int) ($statusAbsensi['sakit'] ?? 0),
+        (int) ($statusAbsensi['alpa'] ?? 0),
+    ];
+
+    // Data visualisasi: rata-rata nilai per ekstrakurikuler.
+    $nilaiPerEkskul = \App\Models\Penilaian::selectRaw(
+        'TRIM(nama_kegiatan) as nama_kegiatan, '
+        . 'AVG(nilai) as rata_nilai'
+    )
+        ->whereNotNull('nama_kegiatan')
+        ->where('nama_kegiatan', '!=', '')
+        ->groupByRaw('TRIM(nama_kegiatan)')
+        ->orderByRaw('TRIM(nama_kegiatan)')
+        ->get();
+
+    $labelNilaiEkskul = $nilaiPerEkskul
+        ->pluck('nama_kegiatan')
+        ->all();
+
+    $dataNilaiEkskul = $nilaiPerEkskul
+        ->map(fn ($item) => round((float) $item->rata_nilai, 1))
+        ->all();
+
+    // Data visualisasi: sebaran siswa per kelas.
+    $sebaranKelas = \App\Models\User::where('role', 'siswa')
+        ->pluck('kelas')
+        ->map(function ($kelas) {
+            $kelas = trim((string) $kelas);
+
+            return $kelas !== '' ? $kelas : 'Belum diisi';
+        })
+        ->countBy()
+        ->sortKeys();
+
+    $labelKelas = $sebaranKelas->keys()->all();
+    $dataKelas = $sebaranKelas->values()->all();
 
 @endphp
 
@@ -646,6 +774,93 @@ body{
 
 
 
+    <!-- VISUALISASI STATISTIK -->
+
+    <div class="charts-grid">
+
+        <div class="chart-card">
+
+            <h2>Pendaftar per Ekstrakurikuler</h2>
+
+            <p class="chart-sub">
+                Jumlah siswa yang terdaftar pada setiap kegiatan.
+            </p>
+
+            <div class="chart-box">
+                <canvas id="chartPendaftar"></canvas>
+            </div>
+
+            <div class="chart-empty" id="emptyPendaftar" style="display:none;">
+                <i class="fa-regular fa-chart-bar"></i>
+                Belum ada data pendaftaran.
+            </div>
+
+        </div>
+
+
+        <div class="chart-card">
+
+            <h2>Status Kehadiran</h2>
+
+            <p class="chart-sub">
+                Rekap absensi seluruh kegiatan ekstrakurikuler.
+            </p>
+
+            <div class="chart-box">
+                <canvas id="chartKehadiran"></canvas>
+            </div>
+
+            <div class="chart-empty" id="emptyKehadiran" style="display:none;">
+                <i class="fa-regular fa-calendar"></i>
+                Belum ada data absensi.
+            </div>
+
+        </div>
+
+
+        <div class="chart-card">
+
+            <h2>Sebaran Siswa per Kelas</h2>
+
+            <p class="chart-sub">
+                Jumlah siswa terdaftar pada setiap kelas.
+            </p>
+
+            <div class="chart-box">
+                <canvas id="chartKelas"></canvas>
+            </div>
+
+            <div class="chart-empty" id="emptyKelas" style="display:none;">
+                <i class="fa-regular fa-user"></i>
+                Belum ada data siswa.
+            </div>
+
+        </div>
+
+
+        <div class="chart-card">
+
+            <h2>Rata-rata Nilai per Ekstrakurikuler</h2>
+
+            <p class="chart-sub">
+                Nilai rata-rata dari seluruh penilaian siswa.
+            </p>
+
+            <div class="chart-box">
+                <canvas id="chartNilai"></canvas>
+            </div>
+
+            <div class="chart-empty" id="emptyNilai" style="display:none;">
+                <i class="fa-regular fa-star"></i>
+                Belum ada data penilaian.
+            </div>
+
+        </div>
+
+    </div>
+
+
+
     <!-- DATA SISTEM -->
 
     <div class="grid">
@@ -855,6 +1070,202 @@ body{
 
 </main>
 
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            if (typeof Chart === 'undefined') {
+                ['emptyPendaftar', 'emptyKehadiran', 'emptyKelas', 'emptyNilai']
+                    .forEach(function (id) {
+                        var pesan = document.getElementById(id);
+
+                        if (pesan) {
+                            pesan.style.display = 'flex';
+                        }
+                    });
+
+                return;
+            }
+
+            var labelPendaftar = @json($labelPendaftarEkskul);
+            var dataPendaftar = @json($dataPendaftarEkskul);
+            var dataKehadiran = @json($dataStatusAbsensi);
+            var labelNilai = @json($labelNilaiEkskul);
+            var dataNilai = @json($dataNilaiEkskul);
+            var labelKelas = @json($labelKelas);
+            var dataKelas = @json($dataKelas);
+
+            var totalKehadiran = dataKehadiran.reduce(
+                function (total, nilai) { return total + nilai; },
+                0
+            );
+
+            function tampilkanKosong(canvasId, pesanId) {
+                var canvas = document.getElementById(canvasId);
+                var pesan = document.getElementById(pesanId);
+
+                if (canvas) {
+                    canvas.style.display = 'none';
+                }
+
+                if (pesan) {
+                    pesan.style.display = 'flex';
+                }
+            }
+
+            // 1. Pendaftar per ekstrakurikuler.
+            if (labelPendaftar.length === 0) {
+                tampilkanKosong('chartPendaftar', 'emptyPendaftar');
+            } else {
+                new Chart(document.getElementById('chartPendaftar'), {
+                    type: 'bar',
+                    data: {
+                        labels: labelPendaftar,
+                        datasets: [{
+                            label: 'Jumlah Pendaftar',
+                            data: dataPendaftar,
+                            backgroundColor: '#212529',
+                            hoverBackgroundColor: '#08718b',
+                            borderRadius: 8,
+                            maxBarThickness: 46
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: { precision: 0 },
+                                grid: { color: '#eef1f5' }
+                            },
+                            x: {
+                                grid: { display: false }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // 2. Status kehadiran.
+            if (totalKehadiran === 0) {
+                tampilkanKosong('chartKehadiran', 'emptyKehadiran');
+            } else {
+                new Chart(document.getElementById('chartKehadiran'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Hadir', 'Izin', 'Sakit', 'Alpa'],
+                        datasets: [{
+                            data: dataKehadiran,
+                            backgroundColor: [
+                                '#148f5a',
+                                '#3b82f6',
+                                '#f59e0b',
+                                '#ef4444'
+                            ],
+                            borderWidth: 3,
+                            borderColor: '#ffffff'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: '58%',
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    usePointStyle: true,
+                                    boxWidth: 8,
+                                    padding: 16
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // 3. Sebaran siswa per kelas.
+            if (labelKelas.length === 0) {
+                tampilkanKosong('chartKelas', 'emptyKelas');
+            } else {
+                new Chart(document.getElementById('chartKelas'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: labelKelas,
+                        datasets: [{
+                            data: dataKelas,
+                            backgroundColor: [
+                                '#212529',
+                                '#08718b',
+                                '#148f5a',
+                                '#f59e0b',
+                                '#3b82f6',
+                                '#ef4444',
+                                '#8b5cf6'
+                            ],
+                            borderWidth: 3,
+                            borderColor: '#ffffff'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: '58%',
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    usePointStyle: true,
+                                    boxWidth: 8,
+                                    padding: 16
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // 4. Rata-rata nilai per ekstrakurikuler.
+            if (labelNilai.length === 0) {
+                tampilkanKosong('chartNilai', 'emptyNilai');
+            } else {
+                new Chart(document.getElementById('chartNilai'), {
+                    type: 'bar',
+                    data: {
+                        labels: labelNilai,
+                        datasets: [{
+                            label: 'Rata-rata Nilai',
+                            data: dataNilai,
+                            backgroundColor: '#08718b',
+                            hoverBackgroundColor: '#212529',
+                            borderRadius: 8,
+                            maxBarThickness: 46
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 100,
+                                grid: { color: '#eef1f5' }
+                            },
+                            x: {
+                                grid: { display: false }
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    </script>
 
     <script src="{{ asset('js/mobile.js') }}"></script>
 </body>
