@@ -318,6 +318,89 @@ class EkstrakurikulerController extends Controller
 
     /*
     |--------------------------------------------------------------------------
+    | REKAP AGREGAT EKSTRAKURIKULER
+    |--------------------------------------------------------------------------
+    |
+    | Rekap ini memakai kueri agregat SQL:
+    | COUNT pendaftar, COUNT/SUM/AVG nilai, dan COUNT absensi per status.
+    |
+    */
+
+    private function rekapEkstrakurikuler(): array
+    {
+        $daftarEkskul = Ekstrakurikuler::orderBy('nama_ekstrakurikuler')->get();
+
+        // COUNT jumlah pendaftar per ekstrakurikuler.
+        $jumlahPendaftar = PendaftaranEkstrakurikuler::selectRaw(
+            'ekstrakurikuler_id, COUNT(*) as jumlah'
+        )
+            ->groupBy('ekstrakurikuler_id')
+            ->get()
+            ->pluck('jumlah', 'ekstrakurikuler_id');
+
+        // COUNT, SUM, dan AVG nilai per nama kegiatan.
+        $rekapNilai = Penilaian::selectRaw(
+            'LOWER(TRIM(nama_kegiatan)) as nama_kegiatan, '
+            . 'COUNT(*) as jumlah_penilaian, '
+            . 'SUM(nilai) as total_nilai, '
+            . 'AVG(nilai) as rata_nilai'
+        )
+            ->whereNotNull('nama_kegiatan')
+            ->where('nama_kegiatan', '!=', '')
+            ->groupByRaw('LOWER(TRIM(nama_kegiatan))')
+            ->get()
+            ->keyBy('nama_kegiatan');
+
+        // COUNT absensi per kegiatan dan per status.
+        $rekapAbsensi = AbsensiSiswa::selectRaw(
+            'LOWER(TRIM(nama_kegiatan)) as nama_kegiatan, '
+            . 'status, COUNT(*) as jumlah'
+        )
+            ->whereNotNull('nama_kegiatan')
+            ->where('nama_kegiatan', '!=', '')
+            ->groupByRaw('LOWER(TRIM(nama_kegiatan)), status')
+            ->get()
+            ->groupBy('nama_kegiatan');
+
+        return $daftarEkskul
+            ->map(function ($ekskul) use ($jumlahPendaftar, $rekapNilai, $rekapAbsensi) {
+                $kunci = mb_strtolower(trim((string) $ekskul->nama_ekstrakurikuler));
+
+                $nilai = $rekapNilai->get($kunci);
+
+                $status = $rekapAbsensi
+                    ->get($kunci, collect())
+                    ->pluck('jumlah', 'status');
+
+                $hadir = (int) ($status['hadir'] ?? 0);
+                $izin = (int) ($status['izin'] ?? 0);
+                $sakit = (int) ($status['sakit'] ?? 0);
+                $alpa = (int) ($status['alpa'] ?? 0);
+                $totalAbsensi = $hadir + $izin + $sakit + $alpa;
+
+                return [
+                    'id' => $ekskul->id,
+                    'nama' => $ekskul->nama_ekstrakurikuler,
+                    'jumlah_pendaftar' => (int) ($jumlahPendaftar[$ekskul->id] ?? 0),
+                    'jumlah_penilaian' => (int) ($nilai->jumlah_penilaian ?? 0),
+                    'total_nilai' => (float) ($nilai->total_nilai ?? 0),
+                    'rata_nilai' => $nilai ? (float) $nilai->rata_nilai : null,
+                    'hadir' => $hadir,
+                    'izin' => $izin,
+                    'sakit' => $sakit,
+                    'alpa' => $alpa,
+                    'total_absensi' => $totalAbsensi,
+                    'persen_hadir' => $totalAbsensi > 0
+                        ? (int) round($hadir / $totalAbsensi * 100)
+                        : 0,
+                ];
+            })
+            ->values()
+            ->all();
+    }
+
+    /*
+    |--------------------------------------------------------------------------
     | DATA LAPORAN
     |--------------------------------------------------------------------------
     */
@@ -325,6 +408,8 @@ class EkstrakurikulerController extends Controller
     private function dataLaporan($daftarSiswa)
     {
         $siswaCollection = collect($daftarSiswa)->values();
+
+        $rekapEkskul = $this->rekapEkstrakurikuler();
 
         // Kegiatan dari catatan penilaian dan absensi.
         $catatanKegiatan = Penilaian::select('username', 'nama_kegiatan')
@@ -387,6 +472,21 @@ class EkstrakurikulerController extends Controller
                 ->count(),
 
             'totalPenilaian' => Penilaian::count(),
+
+            // Hasil kueri agregat untuk tabel rekap ekstrakurikuler.
+            'rekapEkskul' => $rekapEkskul,
+            'totalPendaftar' => array_sum(
+                array_column($rekapEkskul, 'jumlah_pendaftar')
+            ),
+            'totalNilai' => array_sum(
+                array_column($rekapEkskul, 'total_nilai')
+            ),
+            'totalHadir' => array_sum(
+                array_column($rekapEkskul, 'hadir')
+            ),
+            'totalAbsensi' => array_sum(
+                array_column($rekapEkskul, 'total_absensi')
+            ),
 
             'siswa' => $siswaCollection->map(
                 function ($item) use ($kegiatanPerSiswa, $penilaianPerSiswa) {

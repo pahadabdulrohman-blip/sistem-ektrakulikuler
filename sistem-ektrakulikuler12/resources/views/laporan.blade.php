@@ -178,7 +178,7 @@
         /* RINGKASAN */
         .summary {
             display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
+            grid-template-columns: repeat(4, minmax(0, 1fr));
             gap: 20px;
             margin-bottom: 28px;
         }
@@ -413,6 +413,8 @@
     $totalSiswa = $totalSiswa ?? count($siswaList);
     $totalKegiatan = $totalKegiatan ?? 0;
     $totalPenilaian = $totalPenilaian ?? 0;
+    $totalPendaftar = $totalPendaftar ?? 0;
+    $rekapEkskul = $rekapEkskul ?? collect();
 
     // Profil guru yang sedang login.
     $usernameGuru = session('username', 'guru');
@@ -535,6 +537,14 @@
             </div>
         </div>
 
+        <div class="summary-card">
+            <div class="summary-icon"><i class="fa-solid fa-clipboard-list"></i></div>
+            <div>
+                <h2>{{ $totalPendaftar }}</h2>
+                <p>Total Pendaftaran</p>
+            </div>
+        </div>
+
     </section>
 
     <!-- TABEL LAPORAN -->
@@ -606,6 +616,28 @@
             terbaru dari database. Gunakan tombol Cetak Laporan untuk
             mencetak halaman.
         </p>
+
+    </section>
+
+    <!-- REKAP AGREGAT EKSTRAKURIKULER -->
+    <section class="content-card" style="margin-top: 25px;">
+
+        <div class="content-heading">
+            <div>
+                <h2>Rekap Agregat Ekstrakurikuler</h2>
+                <p>
+                    Dihitung langsung di database memakai COUNT, SUM, AVG,
+                    dan GROUP BY.
+                </p>
+            </div>
+        </div>
+
+        <div class="table-wrapper">
+            @include('partials.rekap-ekstrakurikuler', [
+                'rekapEkskul' => $rekapEkskul,
+                'totalPendaftar' => $totalPendaftar,
+            ])
+        </div>
 
     </section>
 

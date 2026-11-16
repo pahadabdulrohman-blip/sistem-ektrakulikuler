@@ -139,18 +139,11 @@ class AdminEkstrakurikulerController extends Controller
             'tempat.max' => 'Tempat maksimal 150 karakter.',
         ]);
 
-        // Samakan spasi ganda menjadi satu spasi.
-        $validated['nama'] = preg_replace('/\s+/', ' ', $validated['nama']);
+        // Samakan spasi ganda / spasi tersembunyi menjadi satu spasi.
+        $validated['nama'] = Ekstrakurikuler::rapikanNama($validated['nama']);
 
-        // Cek nama yang sama (tidak membedakan huruf besar/kecil).
-        $duplikat = Ekstrakurikuler::query()
-            ->whereRaw('LOWER(TRIM(nama_ekstrakurikuler)) = ?', [
-                mb_strtolower($validated['nama']),
-            ])
-            ->when($abaikanId, fn ($query) => $query->where('id', '!=', $abaikanId))
-            ->exists();
-
-        if ($duplikat) {
+        // Cek nama yang sama (tidak membedakan huruf besar/kecil dan spasi).
+        if (Ekstrakurikuler::namaSudahAda($validated['nama'], $abaikanId)) {
             throw ValidationException::withMessages([
                 'nama' => 'Ekstrakurikuler "' . $validated['nama'] . '" sudah terdaftar.',
             ]);

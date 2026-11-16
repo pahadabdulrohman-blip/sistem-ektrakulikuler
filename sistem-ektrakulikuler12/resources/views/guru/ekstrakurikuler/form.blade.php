@@ -113,6 +113,27 @@
         <h1>{{ $judul }}</h1>
         <p class="subtitle">Lengkapi informasi ekstrakurikuler berikut.</p>
 
+        @if ($errors->any())
+            <div style="
+                background: #fee2e2;
+                color: #b91c1c;
+                padding: 13px;
+                border-radius: 10px;
+                margin-bottom: 18px;
+                font-size: 13px;
+            ">
+                <strong>
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                    Data gagal disimpan:
+                </strong>
+                <ul style="margin: 8px 0 0 20px;">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
         <form action="{{ $action }}" method="POST">
             @csrf
 

@@ -100,7 +100,7 @@
         /* RINGKASAN */
         .summary {
             display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
+            grid-template-columns: repeat(4, minmax(0, 1fr));
             gap: 20px;
             margin-bottom: 25px;
         }
@@ -301,6 +301,8 @@
     $totalSiswa = $totalSiswa ?? 0;
     $totalPenilaian = $totalPenilaian ?? $detailPenilaian->count();
     $rataNilai = $rataNilai ?? '-';
+    $totalPendaftar = $totalPendaftar ?? 0;
+    $rekapEkskul = $rekapEkskul ?? collect();
 @endphp
 
     <!-- SIDEBAR -->
@@ -393,6 +395,14 @@
                 </div>
             </div>
 
+            <div class="summary-card">
+                <div class="summary-icon"><i class="fa-solid fa-clipboard-list"></i></div>
+                <div>
+                    <h2>{{ $totalPendaftar }}</h2>
+                    <p>Total Pendaftaran</p>
+                </div>
+            </div>
+
         </section>
 
         <!-- TABEL LAPORAN -->
@@ -439,6 +449,26 @@
                 </tbody>
 
             </table>
+
+        </div>
+
+        <!-- REKAP AGREGAT EKSTRAKURIKULER -->
+        <div class="table-box" style="margin-top: 25px;">
+
+            <div style="margin-bottom: 18px;">
+                <h2 style="color: #111827; font-size: 20px;">
+                    Rekap Agregat Ekstrakurikuler
+                </h2>
+                <p style="color: #6b7280; font-size: 13px; margin-top: 4px;">
+                    Dihitung langsung di database memakai COUNT, SUM, AVG,
+                    dan GROUP BY.
+                </p>
+            </div>
+
+            @include('partials.rekap-ekstrakurikuler', [
+                'rekapEkskul' => $rekapEkskul,
+                'totalPendaftar' => $totalPendaftar,
+            ])
 
         </div>
 

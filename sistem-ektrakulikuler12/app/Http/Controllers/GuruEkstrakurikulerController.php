@@ -44,22 +44,13 @@ class GuruEkstrakurikulerController extends Controller
             'tempat' => 'nullable|string|max:255',
         ]);
 
-        // Samakan spasi ganda menjadi satu spasi.
-        $data['nama_ekstrakurikuler'] = preg_replace(
-            '/\s+/',
-            ' ',
+        // Samakan spasi ganda / spasi tersembunyi menjadi satu spasi.
+        $data['nama_ekstrakurikuler'] = Ekstrakurikuler::rapikanNama(
             $data['nama_ekstrakurikuler']
         );
 
-        // Cek nama yang sama (tidak membedakan huruf besar/kecil).
-        $duplikat = Ekstrakurikuler::query()
-            ->whereRaw('LOWER(TRIM(nama_ekstrakurikuler)) = ?', [
-                mb_strtolower($data['nama_ekstrakurikuler']),
-            ])
-            ->when($abaikanId, fn ($query) => $query->where('id', '!=', $abaikanId))
-            ->exists();
-
-        if ($duplikat) {
+        // Cek nama yang sama (tidak membedakan huruf besar/kecil dan spasi).
+        if (Ekstrakurikuler::namaSudahAda($data['nama_ekstrakurikuler'], $abaikanId)) {
             throw ValidationException::withMessages([
                 'nama_ekstrakurikuler' => 'Ekstrakurikuler "'
                     . $data['nama_ekstrakurikuler']
