@@ -164,12 +164,23 @@
             font-size: 13px;
         }
 
+        .error {
+            background: #fdecec;
+            color: #a02020;
+            padding: 14px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
         @media(max-width:600px) {
             .card {
                 padding: 30px 22px;
             }
         }
     </style>
+    <link rel="stylesheet" href="{{ asset('css/mobile.css') }}">
 </head>
 
 <body>
@@ -183,14 +194,25 @@
     <h1>Lupa Password?</h1>
 
     <p class="subtitle">
-        Masukkan data akun kamu. Permintaan perubahan password akan
-        diteruskan kepada Admin Sistem.
+        Masukkan data akun kamu. Admin akan memproses permintaan ini dan
+        password baru dikirim ke email yang terdaftar pada akun kamu.
     </p>
 
     @if(session('success'))
         <div class="success">
             <i class="fa-solid fa-circle-check"></i>
             {{ session('success') }}
+        </div>
+    @endif
+
+    @if($errors->any())
+        <div class="error">
+            @foreach($errors->all() as $error)
+                <div>
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                    {{ $error }}
+                </div>
+            @endforeach
         </div>
     @endif
 
@@ -201,9 +223,8 @@
 
         <select name="role" required>
             <option value="">Pilih Role</option>
-            <option value="admin">Admin</option>
-            <option value="guru">Guru</option>
-            <option value="siswa">Siswa</option>
+            <option value="guru" {{ old('role') === 'guru' ? 'selected' : '' }}>Guru</option>
+            <option value="siswa" {{ old('role') === 'siswa' ? 'selected' : '' }}>Siswa</option>
         </select>
 
         <br><br>
@@ -216,6 +237,7 @@
             <input
                 type="text"
                 name="username"
+                value="{{ old('username') }}"
                 placeholder="Masukkan username"
                 required
             >
@@ -247,5 +269,6 @@
 
 </div>
 
+    <script src="{{ asset('js/mobile.js') }}"></script>
 </body>
 </html>

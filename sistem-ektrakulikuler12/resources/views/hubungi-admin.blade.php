@@ -84,6 +84,17 @@
             color: #08718e;
         }
 
+        .contact a {
+            color: #08718e;
+            font-weight: 600;
+            text-decoration: none;
+            word-break: break-word;
+        }
+
+        .contact a:hover {
+            text-decoration: underline;
+        }
+
         .back {
             display: inline-block;
             margin-top: 10px;
@@ -118,6 +129,7 @@
             }
         }
     </style>
+    <link rel="stylesheet" href="{{ asset('css/mobile.css') }}">
 </head>
 
 <body>
@@ -144,7 +156,9 @@
 
         <p>
             <i class="fa-solid fa-envelope"></i>
-           fahad.abdul845@smk.belajar.id
+            <a href="mailto:adminekstrakulikuler@gmail.com">
+                adminekstrakulikuler@gmail.com
+            </a>
         </p>
 
         <p>
@@ -166,5 +180,6 @@
 
 </div>
 
+    <script src="{{ asset('js/mobile.js') }}"></script>
 </body>
 </html>

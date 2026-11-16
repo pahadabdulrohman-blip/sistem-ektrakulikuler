@@ -362,6 +362,7 @@ body{
 
 </style>
 
+    <link rel="stylesheet" href="{{ asset('css/mobile.css') }}">
 </head>
 
 <body>
@@ -369,10 +370,27 @@ body{
 
 @php
 
+    $usernameAdmin = session('username');
+
+    $namaAdmin = \App\Models\User::where('username', $usernameAdmin)
+        ->where('role', 'admin')
+        ->value('name') ?? 'Administrator';
+
     $jumlahPermintaan = \App\Models\PasswordRequest::where(
         'status',
         'menunggu'
     )->count();
+
+    // Statistik diambil langsung dari database agar selalu mengikuti data terbaru.
+    $totalSiswa = \App\Models\User::where('role', 'siswa')->count();
+
+    $totalGuru = \App\Models\User::where('role', 'guru')->count();
+
+    $totalEkskul = \App\Models\Ekstrakurikuler::count();
+
+    $totalPenilaian = \App\Models\Penilaian::count();
+
+    $totalPenilaianTampil = number_format($totalPenilaian, 0, ',', '.');
 
 @endphp
 
@@ -410,7 +428,15 @@ body{
         </a>
 
 
-        <a href="{{ route('penilaian') }}">
+        <a href="{{ route('admin.guru.index') }}">
+            <i class="fa-solid fa-chalkboard-user"></i>
+
+            <span>Akun Guru</span>
+
+        </a>
+
+
+        <a href="{{ route('admin.penilaian') }}">
 
             <i class="fa-solid fa-star"></i>
 
@@ -504,7 +530,8 @@ body{
             <h1>Dashboard Admin</h1>
 
             <p>
-                Kelola seluruh data Sistem Ekstrakurikuler Sekolah.
+                Selamat datang, {{ $namaAdmin }}. Kelola seluruh data
+                Sistem Ekstrakurikuler Sekolah.
             </p>
 
         </div>
@@ -546,7 +573,7 @@ body{
 
             <div>
 
-                <h2>350</h2>
+                <h2>{{ $totalSiswa }}</h2>
 
                 <p>Total Siswa</p>
 
@@ -566,7 +593,7 @@ body{
 
             <div>
 
-                <h2>25</h2>
+                <h2>{{ $totalGuru }}</h2>
 
                 <p>Total Guru</p>
 
@@ -586,7 +613,7 @@ body{
 
             <div>
 
-                <h2>9</h2>
+                <h2>{{ $totalEkskul }}</h2>
 
                 <p>Ekstrakurikuler</p>
 
@@ -606,7 +633,7 @@ body{
 
             <div>
 
-                <h2>1.250</h2>
+                <h2>{{ $totalPenilaianTampil }}</h2>
 
                 <p>Data Penilaian</p>
 
@@ -633,7 +660,7 @@ body{
 
                 <span>Total Siswa</span>
 
-                <strong>350</strong>
+                <strong>{{ $totalSiswa }}</strong>
 
             </div>
 
@@ -642,7 +669,7 @@ body{
 
                 <span>Total Guru</span>
 
-                <strong>25</strong>
+                <strong>{{ $totalGuru }}</strong>
 
             </div>
 
@@ -651,7 +678,7 @@ body{
 
                 <span>Ekstrakurikuler</span>
 
-                <strong>9</strong>
+                <strong>{{ $totalEkskul }}</strong>
 
             </div>
 
@@ -660,7 +687,7 @@ body{
 
                 <span>Penilaian</span>
 
-                <strong>1.250</strong>
+                <strong>{{ $totalPenilaianTampil }}</strong>
 
             </div>
 
@@ -829,6 +856,7 @@ body{
 </main>
 
 
+    <script src="{{ asset('js/mobile.js') }}"></script>
 </body>
 
 </html>

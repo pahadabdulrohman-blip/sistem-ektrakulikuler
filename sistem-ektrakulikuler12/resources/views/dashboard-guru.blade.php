@@ -166,6 +166,13 @@
             align-items: center;
             justify-content: center;
             font-size: 23px;
+            overflow: hidden;
+        }
+
+        .profile-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         /* STATISTIK */
@@ -417,9 +424,46 @@
             }
         }
     </style>
+    <link rel="stylesheet" href="{{ asset('css/mobile.css') }}">
 </head>
 
 <body>
+
+@php
+    $usernameGuru = session('username', 'guru');
+
+    $guru = \App\Models\User::where('username', $usernameGuru)
+        ->where('role', 'guru')
+        ->first();
+
+    $namaGuru = $guru->name ?? 'Guru Pembimbing';
+
+    $fotoGuru = \App\Models\ProfilePhoto::where('username', $usernameGuru)
+        ->where('role', 'guru')
+        ->first();
+
+    // Statistik diambil langsung dari database agar selalu mengikuti data terbaru.
+    $totalSiswa = \App\Models\User::where('role', 'siswa')->count();
+
+    $daftarEkskul = \App\Models\Ekstrakurikuler::withCount('pendaftaran')
+        ->orderBy('nama_ekstrakurikuler')
+        ->get();
+
+    $totalEkskul = $daftarEkskul->count();
+
+    $rataNilai = round((float) \App\Models\Penilaian::avg('nilai'), 1);
+    $rataNilaiTampil = rtrim(
+        rtrim(number_format($rataNilai, 1, ',', '.'), '0'),
+        ','
+    );
+
+    $totalAbsensi = \App\Models\AbsensiSiswa::count();
+    $totalHadir = \App\Models\AbsensiSiswa::where('status', 'hadir')->count();
+
+    $persenHadir = $totalAbsensi > 0
+        ? (int) round($totalHadir / $totalAbsensi * 100)
+        : 0;
+@endphp
 
     <!-- SIDEBAR GURU -->
     <aside class="sidebar">
@@ -444,6 +488,12 @@
                class="{{ request()->routeIs('guru.kegiatan') ? 'active' : '' }}">
                 <span class="menu-icon"><i class="fa-solid fa-users"></i></span>
                 <span class="menu-text">Data Kegiatan</span>
+            </a>
+
+            <a href="{{ route('guru.jadwal.index') }}"
+               class="{{ request()->routeIs('guru.jadwal*') ? 'active' : '' }}">
+                <span class="menu-icon"><i class="fa-solid fa-calendar-days"></i></span>
+                <span class="menu-text">Jadwal Kegiatan</span>
             </a>
 
             <a href="{{ route('guru.penilaian') }}"
@@ -484,17 +534,24 @@
         <header class="header">
             <div>
                 <h1>Dashboard Guru</h1>
-                <p>Selamat datang di Sistem Ekstrakurikuler.</p>
+                <p>Selamat datang, {{ $namaGuru }}. Berikut data terbaru sistem ekstrakurikuler.</p>
             </div>
 
             <div class="guru-profile">
                 <div class="guru-info">
-                    <strong>Guru Pembimbing</strong>
-                    <span>Sistem Ekstrakurikuler</span>
+                    <strong>{{ $namaGuru }}</strong>
+                    <span>Guru Pembimbing</span>
                 </div>
 
                 <div class="profile-icon">
-                    <i class="fa-solid fa-chalkboard-user"></i>
+                    @if ($fotoGuru && $fotoGuru->photo_path)
+                        <img
+                            src="{{ asset('storage/' . $fotoGuru->photo_path) }}"
+                            alt="Foto Profil {{ $namaGuru }}"
+                        >
+                    @else
+                        <i class="fa-solid fa-chalkboard-user"></i>
+                    @endif
                 </div>
             </div>
         </header>
@@ -505,7 +562,7 @@
             <div class="stat-card">
                 <div class="stat-icon"><i class="fa-solid fa-user-graduate"></i></div>
                 <div>
-                    <div class="stat-number">120</div>
+                    <div class="stat-number">{{ $totalSiswa }}</div>
                     <div class="stat-label">Total Siswa</div>
                 </div>
             </div>
@@ -513,7 +570,7 @@
             <div class="stat-card">
                 <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
                 <div>
-                    <div class="stat-number">9</div>
+                    <div class="stat-number">{{ $totalEkskul }}</div>
                     <div class="stat-label">Ekstrakurikuler</div>
                 </div>
             </div>
@@ -521,7 +578,7 @@
             <div class="stat-card">
                 <div class="stat-icon"><i class="fa-solid fa-star"></i></div>
                 <div>
-                    <div class="stat-number">87</div>
+                    <div class="stat-number">{{ $rataNilaiTampil }}</div>
                     <div class="stat-label">Rata-rata Nilai</div>
                 </div>
             </div>
@@ -529,7 +586,7 @@
             <div class="stat-card">
                 <div class="stat-icon"><i class="fa-solid fa-calendar-check"></i></div>
                 <div>
-                    <div class="stat-number">92%</div>
+                    <div class="stat-number">{{ $persenHadir }}%</div>
                     <div class="stat-label">Kehadiran</div>
                 </div>
             </div>
@@ -564,45 +621,31 @@
                     </thead>
 
                     <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>Futsal</td>
-                            <td>Pak Ahmad</td>
-                            <td>25</td>
-                            <td>Senin</td>
-                            <td><span class="status">Aktif</span></td>
-                        </tr>
-
-                        <tr>
-                            <td>2</td>
-                            <td>Coding</td>
-                            <td>Pak Budi</td>
-                            <td>20</td>
-                            <td>Rabu</td>
-                            <td><span class="status">Aktif</span></td>
-                        </tr>
-
-                        <tr>
-                            <td>3</td>
-                            <td>Basket</td>
-                            <td>Pak Deni</td>
-                            <td>18</td>
-                            <td>Jumat</td>
-                            <td><span class="status">Aktif</span></td>
-                        </tr>
-
-                        <tr>
-                            <td>4</td>
-                            <td>Pramuka</td>
-                            <td>Bu Siti</td>
-                            <td>30</td>
-                            <td>Sabtu</td>
-                            <td><span class="status">Aktif</span></td>
-                        </tr>
+                        @forelse ($daftarEkskul as $ekskul)
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $ekskul->nama_ekstrakurikuler }}</td>
+                                <td>{{ $ekskul->pembina ?: 'Belum ditentukan' }}</td>
+                                <td>{{ $ekskul->pendaftaran_count }}</td>
+                                <td>{{ $ekskul->jadwal ?: 'Belum ditentukan' }}</td>
+                                <td><span class="status">Aktif</span></td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="6" style="text-align:center;color:#718096;padding:35px;">
+                                    Belum ada data ekstrakurikuler.
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
 
         </section>
 
-      
+    </main>
+
+    <script src="{{ asset('js/mobile.js') }}"></script>
+</body>
+
+</html>

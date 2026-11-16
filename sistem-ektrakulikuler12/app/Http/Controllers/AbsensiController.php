@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\AbsensiSiswa;
+use App\Models\Ekstrakurikuler;
 use App\Models\User;
 
 class AbsensiController extends Controller
@@ -12,14 +13,20 @@ class AbsensiController extends Controller
     {
         $siswa = User::where('role', 'siswa')
             ->whereNotNull('username')
+            ->with(['pendaftaranEkstrakurikuler.ekstrakurikuler'])
             ->orderBy('name')
             ->get();
+
+        // Data siswa per username untuk menampilkan nama dan kelas di rekap.
+        $dataSiswa = $siswa->keyBy('username');
+
+        $ekskul = Ekstrakurikuler::orderBy('nama_ekstrakurikuler')->get();
 
         $absensi = AbsensiSiswa::latest('tanggal')
             ->latest()
             ->get();
 
-        return view('absensi.index', compact('siswa', 'absensi'));
+        return view('absensi.index', compact('siswa', 'absensi', 'dataSiswa', 'ekskul'));
     }
 
     public function simpan(Request $request)
@@ -54,7 +61,7 @@ class AbsensiController extends Controller
         );
 
         return redirect()
-            ->route('guru.absensi')
+            ->route(session('role') === 'admin' ? 'admin.absensi' : 'guru.absensi')
             ->with('success', 'Absensi siswa berhasil disimpan.');
     }
 }

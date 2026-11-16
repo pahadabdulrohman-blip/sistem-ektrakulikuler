@@ -144,7 +144,7 @@ body {
 /* GRID */
 .grid {
     display: grid;
-    grid-template-columns: 2fr 1fr;
+    grid-template-columns: 1fr;
     gap: 20px;
 }
 
@@ -163,20 +163,21 @@ body {
     margin-top: 5px;
 }
 
-/* LINK JADWAL */
-.jadwal-link {
-    display: block;
-    background: white;
-    padding: 20px;
-    border-radius: 15px;
-    color: #0d6efd;
-    text-decoration: none;
-    font-weight: 600;
-    box-shadow: 0 4px 15px rgba(0,0,0,.05);
+.empty-ekskul {
+    color: #777;
+    font-size: 14px;
+    line-height: 1.6;
+    padding: 10px 0;
 }
 
-.jadwal-link:hover {
-    background: #e7f0ff;
+.empty-ekskul a {
+    color: #0d6efd;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.empty-ekskul a:hover {
+    text-decoration: underline;
 }
 
 /* RESPONSIVE */
@@ -216,9 +217,22 @@ body {
     }
 }
 </style>
+    <link rel="stylesheet" href="{{ asset('css/mobile.css') }}">
 </head>
 
 <body>
+
+@php
+    $pilihanEkskul = \App\Models\PendaftaranEkstrakurikuler::with('ekstrakurikuler')
+        ->where('username', session('username'))
+        ->get()
+        ->pluck('ekstrakurikuler')
+        ->filter();
+
+    $userSiswa = \App\Models\User::where('username', session('username'))->first();
+    $namaSiswa = $userSiswa->name ?? session('username', 'Siswa');
+    $kelasSiswa = $userSiswa->kelas_saat_ini ?? '-';
+@endphp
 
 <!-- SIDEBAR SISWA -->
 <aside class="sidebar">
@@ -238,6 +252,11 @@ body {
         <a href="{{ route('ekstrakurikuler') }}">
             <i class="fa-solid fa-users"></i>
             <span>Ekstrakurikuler</span>
+        </a>
+
+        <a href="{{ route('jadwal.ekstrakurikuler') }}">
+            <i class="fa-solid fa-calendar-days"></i>
+            <span>Jadwal Kegiatan</span>
         </a>
 
         <a href="{{ route('penilaian') }}">
@@ -264,7 +283,10 @@ body {
 
     <div class="header">
         <h1>Dashboard Siswa</h1>
-        <p>Selamat datang di Sistem Ekstrakurikuler</p>
+        <p>
+            Selamat datang, {{ $namaSiswa }}
+            &middot; Kelas {{ $kelasSiswa }}
+        </p>
     </div>
 
     <div class="cards">
@@ -274,7 +296,7 @@ body {
                 <i class="fa-solid fa-users"></i>
             </div>
             <div>
-                <h2>2</h2>
+                <h2>{{ $pilihanEkskul->count() }}</h2>
                 <p>Ekstrakurikuler</p>
             </div>
         </div>
@@ -316,25 +338,32 @@ body {
         <div class="card">
             <h2>Ekstrakurikuler Saya</h2>
 
-            <div class="item">
-                <strong>Futsal</strong>
-                <small>Senin, 15.30 - 17.00</small>
-            </div>
+            @forelse ($pilihanEkskul as $ekskul)
 
-            <div class="item">
-                <strong>Coding</strong>
-                <small>Rabu, 15.30 - 17.00</small>
-            </div>
+                <div class="item">
+                    <strong>{{ $ekskul->nama_ekstrakurikuler }}</strong>
+                    <small>
+                        {{ $ekskul->jadwal ?: 'Jadwal belum ditentukan' }}
+                        @if ($ekskul->tempat)
+                            &middot; {{ $ekskul->tempat }}
+                        @endif
+                    </small>
+                </div>
+
+            @empty
+
+                <p class="empty-ekskul">
+                    Kamu belum memilih ekstrakurikuler.
+                    <a href="{{ route('ekstrakurikuler') }}">Pilih sekarang</a>.
+                </p>
+
+            @endforelse
         </div>
-
-        <a href="{{ route('jadwal.ekstrakurikuler') }}" class="jadwal-link">
-            <i class="fa-solid fa-calendar-days"></i>
-            Jadwal Ekstrakurikuler
-        </a>
 
     </div>
 
 </main>
 
+    <script src="{{ asset('js/mobile.js') }}"></script>
 </body>
 </html>

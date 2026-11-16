@@ -135,9 +135,36 @@
             display: inline-block;
             padding: 5px 10px;
             border-radius: 20px;
+            background: #e5e7eb;
+            color: #4b5563;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .badge.sangat-baik {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .badge.baik {
             background: #dbeafe;
             color: #1d4ed8;
-            font-size: 12px;
+        }
+
+        .badge.cukup {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge.perlu-bimbingan {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .empty {
+            text-align: center;
+            color: #6b7280;
+            padding: 35px;
         }
 
         @media(max-width: 700px) {
@@ -181,9 +208,16 @@
             }
         }
     </style>
+    <link rel="stylesheet" href="{{ asset('css/mobile.css') }}">
 </head>
 
 <body>
+
+@php
+    $daftarNilai = $daftarNilai ?? collect();
+    $totalPenilaian = $totalPenilaian ?? $daftarNilai->count();
+    $rataNilai = $rataNilai ?? '-';
+@endphp
 
     <!-- SIDEBAR -->
     <div class="sidebar">
@@ -201,6 +235,10 @@
 
             <a href="{{ route('admin.ekstrakurikuler') }}">
                 <i class="fa-solid fa-futbol"></i>Ekstrakurikuler
+            </a>
+
+            <a href="{{ route('admin.guru.index') }}">
+                <i class="fa-solid fa-chalkboard-user"></i>Akun Guru
             </a>
 
             <a href="{{ route('admin.penilaian') }}" class="active">
@@ -231,7 +269,11 @@
 
             <div>
                 <h1>Penilaian</h1>
-                <p>Kelola nilai siswa ekstrakurikuler</p>
+                <p>
+                    Daftar nilai siswa ekstrakurikuler. Total
+                    {{ $totalPenilaian }} penilaian, rata-rata
+                    {{ $rataNilai }}.
+                </p>
             </div>
 
             <a href="{{ route('dashboard.admin') }}" class="back">
@@ -257,52 +299,30 @@
                 </thead>
 
                 <tbody>
+                    @forelse ($daftarNilai as $index => $item)
+                        @php
+                            $predikat = data_get($item, 'predikat', '-');
+                        @endphp
 
-                    <tr>
-                        <td>1</td>
-                        <td>Ahmad Fauzan</td>
-                        <td>XI RPL 1</td>
-                        <td>Futsal</td>
-                        <td class="nilai">92</td>
-                        <td><span class="badge">Sangat Baik</span></td>
-                    </tr>
-
-                    <tr>
-                        <td>2</td>
-                        <td>Muhammad Rizky</td>
-                        <td>XI RPL 1</td>
-                        <td>Coding</td>
-                        <td class="nilai">87</td>
-                        <td><span class="badge">Baik</span></td>
-                    </tr>
-
-                    <tr>
-                        <td>3</td>
-                        <td>Fahad Abdul</td>
-                        <td>XI RPL 2</td>
-                        <td>Basket</td>
-                        <td class="nilai">84</td>
-                        <td><span class="badge">Baik</span></td>
-                    </tr>
-
-                    <tr>
-                        <td>4</td>
-                        <td>Rizal Maulana</td>
-                        <td>XI RPL 2</td>
-                        <td>Pramuka</td>
-                        <td class="nilai">74</td>
-                        <td><span class="badge">Cukup</span></td>
-                    </tr>
-
-                    <tr>
-                        <td>5</td>
-                        <td>Andi Saputra</td>
-                        <td>XI RPL 1</td>
-                        <td>Pencak Silat</td>
-                        <td class="nilai">67</td>
-                        <td><span class="badge">Perlu Bimbingan</span></td>
-                    </tr>
-
+                        <tr>
+                            <td>{{ $index + 1 }}</td>
+                            <td>{{ data_get($item, 'nama', '-') }}</td>
+                            <td>{{ data_get($item, 'kelas', '-') }}</td>
+                            <td>{{ data_get($item, 'kegiatan', '-') }}</td>
+                            <td class="nilai">{{ data_get($item, 'nilai', '-') }}</td>
+                            <td>
+                                <span class="badge {{ \Illuminate\Support\Str::slug($predikat) }}">
+                                    {{ $predikat }}
+                                </span>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="6" class="empty">
+                                Belum ada data penilaian untuk ditampilkan.
+                            </td>
+                        </tr>
+                    @endforelse
                 </tbody>
 
             </table>
@@ -311,5 +331,6 @@
 
     </div>
 
+    <script src="{{ asset('js/mobile.js') }}"></script>
 </body>
 </html>

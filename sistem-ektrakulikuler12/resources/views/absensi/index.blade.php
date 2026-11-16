@@ -181,9 +181,15 @@
             }
         }
     </style>
+    <link rel="stylesheet" href="{{ asset('css/mobile.css') }}">
 </head>
 
 <body>
+@php
+    $dataSiswa = $dataSiswa ?? collect($siswa ?? [])->keyBy('username');
+    $ekskul = $ekskul ?? collect();
+@endphp
+
     <div class="top-back" style="margin-bottom: 20px;">
     <a href="{{ url('/dashboard') }}"
        style="
@@ -203,8 +209,8 @@
 <main class="main">
     
 
-    <a href="{{ route('dashboard.guru') }}" class="back">
-        ← Kembali ke Dashboard Guru
+    <a href="{{ route('dashboard') }}" class="back">
+        ← Kembali ke Dashboard
     </a>
 
     <header class="header">
@@ -243,23 +249,48 @@
                         <option value="">-- Pilih Siswa --</option>
 
                         @foreach($siswa as $item)
+                            @php
+                                $ekskulSiswa = $item->pendaftaranEkstrakurikuler
+                                    ->pluck('ekstrakurikuler.nama_ekstrakurikuler')
+                                    ->filter()
+                                    ->values();
+                            @endphp
+
                             <option value="{{ $item->username }}"
+                                data-kelas="{{ $item->kelas_saat_ini ?? '-' }}"
+                                data-ekskul="{{ $ekskulSiswa->implode('|') }}"
                                 {{ old('username') == $item->username ? 'selected' : '' }}>
-                                {{ $item->name }} ({{ $item->username }})
+                                {{ $item->name }} ({{ $item->username }}) - Kelas {{ $item->kelas_saat_ini ?? '-' }}
                             </option>
                         @endforeach
                     </select>
                 </div>
 
                 <div>
-                    <label>Nama Kegiatan</label>
+                    <label>Kelas</label>
                     <input
                         type="text"
-                        name="nama_kegiatan"
-                        value="{{ old('nama_kegiatan') }}"
-                        placeholder="Contoh: Futsal"
-                        required
+                        id="kelasSiswa"
+                        value="-"
+                        readonly
+                        style="background:#f3f6fa;"
                     >
+                </div>
+
+                <div>
+                    <label>Nama Kegiatan</label>
+                    <select name="nama_kegiatan" id="namaKegiatan" required>
+                        <option value="">-- Pilih Ekstrakurikuler --</option>
+                        @foreach($ekskul as $item)
+                            <option value="{{ $item->nama_ekstrakurikuler }}"
+                                {{ old('nama_kegiatan') == $item->nama_ekstrakurikuler ? 'selected' : '' }}>
+                                {{ $item->nama_ekstrakurikuler }}
+                            </option>
+                        @endforeach
+                    </select>
+                    <small style="color:#718096;display:block;margin-top:6px;">
+                        Otomatis mengikuti ekstrakurikuler siswa yang dipilih.
+                    </small>
                 </div>
 
                 <div>
@@ -301,7 +332,8 @@
                 <thead>
                     <tr>
                         <th>No</th>
-                        <th>Username Siswa</th>
+                        <th>Nama Siswa</th>
+                        <th>Kelas</th>
                         <th>Kegiatan</th>
                         <th>Tanggal</th>
                         <th>Status</th>
@@ -311,9 +343,14 @@
 
                 <tbody>
                     @forelse($absensi as $index => $item)
+                        @php
+                            $siswaAbsen = $dataSiswa->get($item->username);
+                        @endphp
+
                         <tr>
                             <td>{{ $index + 1 }}</td>
-                            <td>{{ $item->username }}</td>
+                            <td>{{ $siswaAbsen->name ?? $item->username }}</td>
+                            <td>{{ $siswaAbsen->kelas_saat_ini ?? '-' }}</td>
                             <td>{{ $item->nama_kegiatan }}</td>
                             <td>{{ $item->tanggal }}</td>
                             <td>
@@ -325,7 +362,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" style="text-align:center;">
+                            <td colspan="7" style="text-align:center;">
                                 Belum ada data absensi.
                             </td>
                         </tr>
@@ -338,5 +375,64 @@
 
 </main>
 
+<script>
+    (function () {
+        const siswa = document.querySelector('select[name="username"]');
+        const kelas = document.getElementById('kelasSiswa');
+        const kegiatan = document.getElementById('namaKegiatan');
+
+        // Semua pilihan ekskul dari server (dipakai bila siswa belum memilih ekskul).
+        const semuaEkskul = Array.from(kegiatan.options)
+            .map(function (opsi) {
+                return opsi.value;
+            })
+            .filter(Boolean);
+
+        let pertamaKali = true;
+
+        function isiDataSiswa() {
+            const opsi = siswa.options[siswa.selectedIndex];
+            const daftarEkskul = opsi && opsi.dataset.ekskul
+                ? opsi.dataset.ekskul.split('|').filter(Boolean)
+                : [];
+
+            kelas.value = opsi && opsi.dataset.kelas ? opsi.dataset.kelas : '-';
+
+            if (!opsi || !opsi.value) {
+                pertamaKali = false;
+                return;
+            }
+
+            const nilaiLama = pertamaKali ? kegiatan.value : '';
+            pertamaKali = false;
+
+            // Ekskul yang diikuti siswa; jika belum ada, tampilkan semua ekskul.
+            const daftarTampil = daftarEkskul.length > 0
+                ? daftarEkskul
+                : semuaEkskul;
+
+            kegiatan.innerHTML = '';
+
+            daftarTampil.forEach(function (nama) {
+                const pilihan = document.createElement('option');
+                pilihan.value = nama;
+                pilihan.textContent = nama;
+                kegiatan.appendChild(pilihan);
+            });
+
+            // Langsung pilih ekskul siswa tanpa perlu klik ulang.
+            if (nilaiLama && daftarTampil.indexOf(nilaiLama) !== -1) {
+                kegiatan.value = nilaiLama;
+            } else if (daftarTampil.length > 0) {
+                kegiatan.selectedIndex = 0;
+            }
+        }
+
+        siswa.addEventListener('change', isiDataSiswa);
+        isiDataSiswa();
+    })();
+</script>
+
+    <script src="{{ asset('js/mobile.js') }}"></script>
 </body>
 </html>

@@ -181,6 +181,7 @@
             }
         }
     </style>
+    <link rel="stylesheet" href="{{ asset('css/mobile.css') }}">
 </head>
 
 <body>
@@ -202,6 +203,10 @@
 
             <a href="{{ route('admin.ekstrakurikuler') }}">
                 <i class="fa-solid fa-futbol"></i>Ekstrakurikuler
+            </a>
+
+            <a href="{{ route('admin.guru.index') }}">
+                <i class="fa-solid fa-chalkboard-user"></i>Akun Guru
             </a>
 
             <a href="{{ route('admin.penilaian') }}">
@@ -344,6 +349,7 @@
 </div>
     </div>
 
+    <script src="{{ asset('js/mobile.js') }}"></script>
 </body>
 
 </html>

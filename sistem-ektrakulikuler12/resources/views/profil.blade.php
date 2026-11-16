@@ -317,12 +317,16 @@
             }
         }
     </style>
+    <link rel="stylesheet" href="{{ asset('css/mobile.css') }}">
 </head>
 
 <body>
 
 @php
     $username = session('username', 'siswa');
+
+    $userSiswa = \App\Models\User::where('username', $username)->first();
+    $kelasSiswa = $userSiswa->kelas_saat_ini ?? '-';
 
     $fotoProfil = \App\Models\ProfilePhoto::where('username', $username)
         ->where('role', 'siswa')
@@ -423,6 +427,11 @@
                         <strong>Siswa</strong>
                     </div>
 
+                    <div class="info">
+                        <small>Kelas</small>
+                        <strong>{{ $kelasSiswa }}</strong>
+                    </div>
+
                 </div>
 
             </section>
@@ -479,5 +488,6 @@
 
 </main>
 
+    <script src="{{ asset('js/mobile.js') }}"></script>
 </body>
 </html>

@@ -97,6 +97,48 @@
             border-radius: 8px;
         }
 
+        /* RINGKASAN */
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .summary-card {
+            background: white;
+            padding: 22px;
+            border-radius: 14px;
+            box-shadow: 0 4px 15px rgba(0,0,0,.08);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .summary-icon {
+            width: 55px;
+            height: 55px;
+            flex-shrink: 0;
+            border-radius: 12px;
+            background: #dbeafe;
+            color: #1d4ed8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+        }
+
+        .summary-card h2 {
+            color: #111827;
+            font-size: 24px;
+        }
+
+        .summary-card p {
+            color: #6b7280;
+            font-size: 12px;
+            margin-top: 3px;
+        }
+
         .table-box {
             background: white;
             padding: 25px;
@@ -135,8 +177,41 @@
             display: inline-block;
             padding: 5px 10px;
             border-radius: 20px;
+            background: #e5e7eb;
+            color: #4b5563;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .badge.sangat-baik {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .badge.baik {
             background: #dbeafe;
             color: #1d4ed8;
+        }
+
+        .badge.cukup {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge.perlu-bimbingan {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .empty {
+            text-align: center;
+            color: #6b7280;
+            padding: 35px;
+        }
+
+        .report-note {
+            margin-top: 18px;
+            color: #6b7280;
             font-size: 12px;
         }
 
@@ -149,6 +224,12 @@
             border: none;
             border-radius: 8px;
             cursor: pointer;
+        }
+
+        @media(max-width: 900px) {
+            .summary {
+                grid-template-columns: 1fr;
+            }
         }
 
         @media(max-width: 700px) {
@@ -202,11 +283,25 @@
             .content {
                 margin-left: 0;
             }
+
+            .summary-card,
+            .table-box {
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
         }
     </style>
+    <link rel="stylesheet" href="{{ asset('css/mobile.css') }}">
 </head>
 
 <body>
+
+@php
+    $detailPenilaian = $detailPenilaian ?? collect();
+    $totalSiswa = $totalSiswa ?? 0;
+    $totalPenilaian = $totalPenilaian ?? $detailPenilaian->count();
+    $rataNilai = $rataNilai ?? '-';
+@endphp
 
     <!-- SIDEBAR -->
     <div class="sidebar">
@@ -224,6 +319,10 @@
 
             <a href="{{ route('admin.ekstrakurikuler') }}">
                 <i class="fa-solid fa-futbol"></i>Ekstrakurikuler
+            </a>
+
+            <a href="{{ route('admin.guru.index') }}">
+                <i class="fa-solid fa-chalkboard-user"></i>Akun Guru
             </a>
 
             <a href="{{ route('admin.penilaian') }}">
@@ -258,7 +357,7 @@
             </div>
 
             <a href="{{ route('dashboard.admin') }}" class="back">
-                ← Dashboard
+                &larr; Dashboard
             </a>
 
         </div>
@@ -267,7 +366,36 @@
             <i class="fa-solid fa-print"></i> Cetak Laporan
         </button>
 
+        <!-- RINGKASAN -->
+        <section class="summary">
 
+            <div class="summary-card">
+                <div class="summary-icon"><i class="fa-solid fa-users"></i></div>
+                <div>
+                    <h2>{{ $totalSiswa }}</h2>
+                    <p>Total Siswa</p>
+                </div>
+            </div>
+
+            <div class="summary-card">
+                <div class="summary-icon"><i class="fa-solid fa-star"></i></div>
+                <div>
+                    <h2>{{ $totalPenilaian }}</h2>
+                    <p>Data Penilaian</p>
+                </div>
+            </div>
+
+            <div class="summary-card">
+                <div class="summary-icon"><i class="fa-solid fa-chart-line"></i></div>
+                <div>
+                    <h2>{{ $rataNilai }}</h2>
+                    <p>Rata-rata Nilai</p>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- TABEL LAPORAN -->
         <div class="table-box">
 
             <table>
@@ -284,69 +412,43 @@
                 </thead>
 
                 <tbody>
+                    @forelse ($detailPenilaian as $index => $item)
+                        @php
+                            $predikat = data_get($item, 'predikat', '-');
+                        @endphp
 
-                    <tr>
-                        <td>1</td>
-                        <td>Ahmad Fauzan</td>
-                        <td>XI RPL 1</td>
-                        <td>Futsal</td>
-                        <td class="nilai">92</td>
-                        <td>
-                            <span class="badge">Sangat Baik</span>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>2</td>
-                        <td>Muhammad Rizky</td>
-                        <td>XI RPL 1</td>
-                        <td>Coding</td>
-                        <td class="nilai">87</td>
-                        <td>
-                            <span class="badge">Baik</span>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>3</td>
-                        <td>Fahad Abdul</td>
-                        <td>XI RPL 2</td>
-                        <td>Basket</td>
-                        <td class="nilai">84</td>
-                        <td>
-                            <span class="badge">Baik</span>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>4</td>
-                        <td>Rizal Maulana</td>
-                        <td>XI RPL 2</td>
-                        <td>Pramuka</td>
-                        <td class="nilai">74</td>
-                        <td>
-                            <span class="badge">Cukup</span>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>5</td>
-                        <td>Andi Saputra</td>
-                        <td>XI RPL 1</td>
-                        <td>Pencak Silat</td>
-                        <td class="nilai">67</td>
-                        <td>
-                            <span class="badge">Perlu Bimbingan</span>
-                        </td>
-                    </tr>
-
+                        <tr>
+                            <td>{{ $index + 1 }}</td>
+                            <td>{{ data_get($item, 'nama', '-') }}</td>
+                            <td>{{ data_get($item, 'kelas', '-') }}</td>
+                            <td>{{ data_get($item, 'kegiatan', '-') }}</td>
+                            <td class="nilai">{{ data_get($item, 'nilai', '-') }}</td>
+                            <td>
+                                <span class="badge {{ \Illuminate\Support\Str::slug($predikat) }}">
+                                    {{ $predikat }}
+                                </span>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="6" class="empty">
+                                Belum ada data penilaian untuk ditampilkan.
+                            </td>
+                        </tr>
+                    @endforelse
                 </tbody>
 
             </table>
 
         </div>
 
+        <p class="report-note">
+            Laporan ini menampilkan data penilaian terbaru dari database.
+            Gunakan tombol Cetak Laporan untuk mencetak halaman.
+        </p>
+
     </div>
 
+    <script src="{{ asset('js/mobile.js') }}"></script>
 </body>
 </html>

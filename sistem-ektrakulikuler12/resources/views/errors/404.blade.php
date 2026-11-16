@@ -38,6 +38,7 @@
             text-decoration: none;
         }
     </style>
+    <link rel="stylesheet" href="{{ asset('css/mobile.css') }}">
 </head>
 <body>
     <div class="card">
@@ -46,5 +47,6 @@
         <p>Maaf, halaman yang kamu cari tidak tersedia atau sudah dipindahkan.</p>
         <a href="{{ route('login') }}">Kembali ke Login</a>
     </div>
+    <script src="{{ asset('js/mobile.js') }}"></script>
 </body>
 </html>

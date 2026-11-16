@@ -301,6 +301,7 @@
             }
         }
     </style>
+    <link rel="stylesheet" href="{{ asset('css/mobile.css') }}">
 </head>
 
 <body>
@@ -324,6 +325,7 @@
 
     <a href="/dashboard-guru"><i class="fa-solid fa-house"></i>Dashboard Guru</a>
     <a href="/guru/kegiatan"><i class="fa-solid fa-users"></i>Data Kegiatan</a>
+    <a href="/guru/jadwal"><i class="fa-solid fa-calendar-days"></i>Jadwal Kegiatan</a>
     <a href="/guru/penilaian"><i class="fa-solid fa-star"></i>Penilaian Siswa</a>
     <a href="/guru/laporan"><i class="fa-solid fa-file-lines"></i>Laporan</a>
     <a href="/guru/profil" class="active"><i class="fa-solid fa-user"></i>Profil Guru</a>
@@ -445,5 +447,6 @@
 
 </main>
 
+    <script src="{{ asset('js/mobile.js') }}"></script>
 </body>
 </html>

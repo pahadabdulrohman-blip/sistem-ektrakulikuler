@@ -14,7 +14,7 @@
         body {
             font-family: Poppins, sans-serif;
             background: #eef8ff;
-            color: #075985;
+            color: #0ca15e;
         }
 
         .container {
@@ -51,7 +51,7 @@
         }
 
         input:focus, textarea:focus {
-            border-color: #0788bd;
+            border-color: #07bd6b;
             box-shadow: 0 0 0 3px #0788bd18;
         }
 
@@ -69,7 +69,7 @@
             padding: 12px 20px;
             border: none;
             border-radius: 9px;
-            background: #0788bd;
+            background: #07bd41;
             color: white;
             text-decoration: none;
             font-family: inherit;
@@ -102,6 +102,7 @@
             }
         }
     </style>
+    <link rel="stylesheet" href="{{ asset('css/mobile.css') }}">
 </head>
 
 <body>
@@ -173,6 +174,7 @@
     </div>
 </div>
 
+    <script src="{{ asset('js/mobile.js') }}"></script>
 </body>
 </html>
 

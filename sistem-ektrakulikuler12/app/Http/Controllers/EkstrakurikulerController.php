@@ -7,6 +7,8 @@ use App\Models\User;
 use App\Models\Penilaian;
 use App\Models\AbsensiSiswa;
 use App\Models\Ekstrakurikuler;
+use App\Models\PendaftaranEkstrakurikuler;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class EkstrakurikulerController extends Controller
@@ -106,7 +108,81 @@ class EkstrakurikulerController extends Controller
         // Mengambil seluruh data ekstrakurikuler dari MySQL
         $ekskul = Ekstrakurikuler::orderBy('id', 'asc')->get();
 
-        return view('ekstrakurikuler.index', compact('ekskul'));
+        // Pilihan ekstrakurikuler milik siswa yang sedang login
+        $pilihan = PendaftaranEkstrakurikuler::where(
+            'username',
+            session('username')
+        )
+            ->orderBy('id')
+            ->pluck('ekstrakurikuler_id')
+            ->map(fn ($id) => (string) $id)
+            ->values()
+            ->all();
+
+        return view('ekstrakurikuler.index', compact('ekskul', 'pilihan'));
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | SIMPAN PILIHAN EKSTRAKURIKULER SISWA
+    |--------------------------------------------------------------------------
+    */
+
+    public function simpanPilihan(Request $request)
+    {
+        if (!session('login') || session('role') !== 'siswa') {
+            return redirect()->route('login');
+        }
+
+        $request->validate([
+            'pilihan' => 'required|array|min:1|max:2',
+            'pilihan.*' => 'integer|distinct|exists:ekstrakurikuler,id',
+        ], [
+            'pilihan.required' => 'Pilih minimal satu ekstrakurikuler.',
+            'pilihan.min' => 'Pilih minimal satu ekstrakurikuler.',
+            'pilihan.max' => 'Maksimal memilih 2 ekstrakurikuler.',
+            'pilihan.*.exists' => 'Ekstrakurikuler yang dipilih tidak ditemukan.',
+        ]);
+
+        $username = session('username');
+        $pilihan = $request->input('pilihan', []);
+
+        DB::transaction(function () use ($username, $pilihan) {
+            PendaftaranEkstrakurikuler::where('username', $username)->delete();
+
+            foreach ($pilihan as $id) {
+                PendaftaranEkstrakurikuler::create([
+                    'username' => $username,
+                    'ekstrakurikuler_id' => $id,
+                ]);
+            }
+        });
+
+        return redirect()
+            ->route('ekstrakurikuler')
+            ->with('success', 'Pilihan ekstrakurikuler berhasil disimpan.');
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | HAPUS PILIHAN EKSTRAKURIKULER SISWA
+    |--------------------------------------------------------------------------
+    */
+
+    public function batalkanPilihan()
+    {
+        if (!session('login') || session('role') !== 'siswa') {
+            return redirect()->route('login');
+        }
+
+        PendaftaranEkstrakurikuler::where(
+            'username',
+            session('username')
+        )->delete();
+
+        return redirect()
+            ->route('ekstrakurikuler')
+            ->with('success', 'Pilihan ekstrakurikuler berhasil dihapus.');
     }
 
     /*
@@ -195,10 +271,49 @@ class EkstrakurikulerController extends Controller
         }
 
         $siswa = User::where('role', 'siswa')
+            ->with('pendaftaranEkstrakurikuler.ekstrakurikuler')
             ->orderBy('name')
             ->get();
 
         return view('laporan', $this->dataLaporan($siswa));
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | LAPORAN ADMIN
+    |--------------------------------------------------------------------------
+    */
+
+    public function laporanAdmin()
+    {
+        $siswa = User::where('role', 'siswa')
+            ->with('pendaftaranEkstrakurikuler.ekstrakurikuler')
+            ->orderBy('name')
+            ->get();
+
+        $data = $this->dataLaporan($siswa);
+
+        $penilaian = Penilaian::latest()->get();
+        $dataSiswa = $siswa->keyBy('username');
+
+        // Rincian setiap penilaian untuk laporan admin.
+        $data['detailPenilaian'] = $penilaian->map(function ($item) use ($dataSiswa) {
+            $user = $dataSiswa->get($item->username);
+
+            return [
+                'nama' => data_get($user, 'name', $item->username),
+                'kelas' => data_get($user, 'kelas_saat_ini', '-'),
+                'kegiatan' => $item->nama_kegiatan ?: '-',
+                'nilai' => Penilaian::formatNilai($item->nilai),
+                'predikat' => Penilaian::predikatDariNilai($item->nilai),
+            ];
+        });
+
+        $data['rataNilai'] = $penilaian->isNotEmpty()
+            ? Penilaian::formatNilai($penilaian->avg('nilai'))
+            : '-';
+
+        return view('admin.laporan', $data);
     }
 
     /*
@@ -209,7 +324,10 @@ class EkstrakurikulerController extends Controller
 
     private function dataLaporan($daftarSiswa)
     {
-        $kegiatanPerSiswa = Penilaian::select('username', 'nama_kegiatan')
+        $siswaCollection = collect($daftarSiswa)->values();
+
+        // Kegiatan dari catatan penilaian dan absensi.
+        $catatanKegiatan = Penilaian::select('username', 'nama_kegiatan')
             ->distinct()
             ->get()
             ->concat(
@@ -228,31 +346,79 @@ class EkstrakurikulerController extends Controller
                     ->values();
             });
 
+        // Gabungkan dengan ekstrakurikuler yang sedang didaftarkan siswa.
+        $kegiatanPerSiswa = $siswaCollection->mapWithKeys(
+            function ($item) use ($catatanKegiatan) {
+                $username = data_get($item, 'username');
+
+                $terdaftar = collect(
+                    data_get($item, 'pendaftaranEkstrakurikuler', [])
+                )->map(
+                    fn ($pendaftaran) => data_get(
+                        $pendaftaran,
+                        'ekstrakurikuler.nama_ekstrakurikuler'
+                    )
+                );
+
+                $kegiatan = $catatanKegiatan
+                    ->get($username, collect())
+                    ->merge($terdaftar)
+                    ->filter()
+                    ->map(fn ($kegiatan) => trim($kegiatan))
+                    ->unique()
+                    ->sort()
+                    ->values();
+
+                return [$username => $kegiatan];
+            }
+        );
+
+        $penilaianPerSiswa = Penilaian::select('username', 'nilai')
+            ->get()
+            ->groupBy('username');
+
         return [
             'totalSiswa' => User::where('role', 'siswa')->count(),
 
             'totalKegiatan' => $kegiatanPerSiswa
                 ->flatten()
+                ->filter()
                 ->unique()
                 ->count(),
 
             'totalPenilaian' => Penilaian::count(),
 
-            'siswa' => collect($daftarSiswa)
-                ->values()
-                ->map(function ($item) use ($kegiatanPerSiswa) {
-                    $kegiatan = $kegiatanPerSiswa->get(
-                        data_get($item, 'username')
-                    );
+            'siswa' => $siswaCollection->map(
+                function ($item) use ($kegiatanPerSiswa, $penilaianPerSiswa) {
+                    $username = data_get($item, 'username');
+
+                    $kegiatan = $kegiatanPerSiswa
+                        ->get($username, collect());
+
+                    $daftarNilai = $penilaianPerSiswa
+                        ->get($username, collect())
+                        ->pluck('nilai');
+
+                    $rataNilai = $daftarNilai->isNotEmpty()
+                        ? round((float) $daftarNilai->avg(), 1)
+                        : null;
 
                     return [
                         'nama' => data_get($item, 'name', '-'),
-                        'kelas' => data_get($item, 'kelas', '-'),
-                        'ekstrakurikuler' => $kegiatan
+                        'kelas' => data_get($item, 'kelas_saat_ini')
+                            ?? data_get($item, 'kelas', '-'),
+                        'ekstrakurikuler' => $kegiatan->isNotEmpty()
                             ? $kegiatan->implode(', ')
                             : '-',
+                        'nilai' => $rataNilai !== null
+                            ? Penilaian::formatNilai($rataNilai)
+                            : '-',
+                        'predikat' => $rataNilai !== null
+                            ? Penilaian::predikatDariNilai($rataNilai)
+                            : '-',
                     ];
-                }),
+                }
+            ),
         ];
     }
 }

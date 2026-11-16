@@ -20,7 +20,7 @@
         body {
             font-family: 'Poppins', sans-serif;
             background: #eef8ff;
-            color: #075985;
+            color: #078544;
         }
 
         .sidebar {
@@ -30,7 +30,7 @@
             left: 0;
             top: 0;
             padding: 28px 20px;
-            background: linear-gradient(180deg, #0788bd, #08618b);
+            background: linear-gradient(180deg, #07bd4d, #08618b);
             color: white;
             z-index: 10;
         }
@@ -85,7 +85,7 @@
 
         .topbar {
             min-height: 90px;
-            background: #0788bd;
+            background: #07bd50;
             color: white;
             display: flex;
             align-items: center;
@@ -116,7 +116,7 @@
 
         .heading h1 {
             font-size: 30px;
-            color: #075985;
+            color: #078544;
         }
 
         .heading p {
@@ -130,7 +130,7 @@
             border-radius: 10px;
             padding: 12px 18px;
             color: white;
-            background: #0788bd;
+            background: #07bd5c;
             text-decoration: none;
             cursor: pointer;
             font-family: inherit;
@@ -141,7 +141,7 @@
         }
 
         .btn:hover {
-            background: #056b99;
+            background: #05992d;
             transform: translateY(-1px);
         }
 
@@ -198,7 +198,7 @@
         }
 
         th {
-            color: #075985;
+            color: #078535;
             background: #eff8fd;
             white-space: nowrap;
         }
@@ -209,7 +209,7 @@
         }
 
         td strong {
-            color: #075985;
+            color: #078529;
         }
 
         td small {
@@ -253,7 +253,7 @@
 
         .total-box strong {
             font-size: 23px;
-            color: #0788bd;
+            color: #07bd59;
         }
 
         @media(max-width: 800px) {
@@ -311,6 +311,7 @@
             }
         }
     </style>
+    <link rel="stylesheet" href="{{ asset('css/mobile.css') }}">
 </head>
 
 <body>
@@ -330,6 +331,10 @@
 
     <a href="{{ route('guru.ekstrakurikuler.index') }}" class="menu active">
         <i class="fa-solid fa-users"></i>Ekstrakurikuler
+    </a>
+
+    <a href="{{ route('guru.jadwal.index') }}" class="menu">
+        <i class="fa-solid fa-calendar-days"></i>Jadwal Kegiatan
     </a>
 
     <a href="{{ route('guru.penilaian') }}" class="menu">
@@ -509,5 +514,6 @@
 
 </main>
 
+    <script src="{{ asset('js/mobile.js') }}"></script>
 </body>
 </html>

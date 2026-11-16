@@ -536,6 +536,7 @@
             }
         }
     </style>
+    <link rel="stylesheet" href="{{ asset('css/mobile.css') }}">
 </head>
 
 <body>
@@ -948,5 +949,6 @@
 
 </div>
 
+    <script src="{{ asset('js/mobile.js') }}"></script>
 </body>
 </html>

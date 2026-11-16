@@ -16,4 +16,12 @@ class Ekstrakurikuler extends Model
         'ikon',
         'tempat',
     ];
+
+    public function pendaftaran()
+    {
+        return $this->hasMany(
+            PendaftaranEkstrakurikuler::class,
+            'ekstrakurikuler_id'
+        );
+    }
 }

@@ -1,0 +1,207 @@
+/* =========================================================
+   MOBILE / HP RESPONSIVE OVERRIDES
+   Dimuat paling akhir di setiap halaman supaya menimpa
+   aturan desktop pada masing-masing view.
+   ========================================================= */
+
+.oc-mobile-menu,
+.oc-mobile-overlay {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    :root {
+        --oc-safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    html,
+    body {
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+
+    body {
+        -webkit-text-size-adjust: 100%;
+    }
+
+    img,
+    svg,
+    video,
+    canvas,
+    iframe {
+        max-width: 100%;
+    }
+
+    img,
+    video {
+        height: auto;
+    }
+
+    /* Cegah iOS otomatis zoom saat input difokuskan */
+    input,
+    select,
+    textarea {
+        font-size: 16px !important;
+    }
+
+    /* Tabel tetap bisa digeser ke samping, tidak merusak lebar halaman */
+    .table-wrapper,
+    .table-wrap,
+    .table-box,
+    .table-container {
+        max-width: 100%;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Konten memakai lebar penuh karena sidebar menjadi drawer */
+    .content,
+    .main {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin-left: 0 !important;
+        padding-bottom: calc(90px + var(--oc-safe-bottom)) !important;
+    }
+
+    .header {
+        flex-wrap: wrap;
+        gap: 14px;
+    }
+
+    /* -----------------------------
+       SIDEBAR SEBAGAI DRAWER
+    ----------------------------- */
+    .sidebar {
+        position: fixed !important;
+        top: 0 !important;
+        right: auto !important;
+        bottom: 0 !important;
+        left: 0 !important;
+
+        width: min(82vw, 310px) !important;
+        max-width: 310px !important;
+        height: 100vh !important;
+        height: 100dvh !important;
+
+        margin: 0 !important;
+        border-radius: 0 18px 18px 0;
+
+        overflow-y: auto !important;
+        overscroll-behavior: contain;
+
+        transform: translateX(-105%);
+        transition: transform 0.28s ease;
+
+        z-index: 1200 !important;
+        box-shadow: 12px 0 40px rgba(0, 0, 0, 0.32);
+    }
+
+    body.oc-mobile-nav-open .sidebar {
+        transform: translateX(0);
+    }
+
+    body.oc-mobile-nav-open {
+        overflow: hidden !important;
+    }
+
+    /* Kembalikan label menu yang mungkin disembunyikan versi desktop */
+    .sidebar .logo h2,
+    .sidebar .logo p,
+    .sidebar .menu span:not(.badge) {
+        display: inline-flex !important;
+        align-items: center;
+    }
+
+    .sidebar .logo h2,
+    .sidebar .logo p {
+        display: block !important;
+    }
+
+    .sidebar .menu {
+        display: block !important;
+    }
+
+    .sidebar .menu a {
+        justify-content: flex-start !important;
+        white-space: normal;
+    }
+
+    .sidebar .menu-icon {
+        flex: 0 0 auto;
+    }
+
+    /* Tombol menu melayang */
+    .oc-mobile-menu {
+        position: fixed;
+        right: 18px;
+        bottom: calc(18px + var(--oc-safe-bottom));
+
+        width: 54px;
+        height: 54px;
+        padding: 0;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border: 0;
+        border-radius: 50%;
+
+        background: linear-gradient(135deg, #0b3d5c, #0879b3);
+        color: #fff;
+
+        box-shadow: 0 10px 25px rgba(8, 121, 179, 0.38);
+        cursor: pointer;
+
+        z-index: 1300;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .oc-mobile-menu:active {
+        transform: scale(0.95);
+    }
+
+    .oc-mobile-menu svg {
+        width: 24px;
+        height: 24px;
+        display: block;
+    }
+
+    .oc-mobile-menu .oc-icon-close {
+        display: none;
+    }
+
+    body.oc-mobile-nav-open .oc-mobile-menu .oc-icon-open {
+        display: none;
+    }
+
+    body.oc-mobile-nav-open .oc-mobile-menu .oc-icon-close {
+        display: block;
+    }
+
+    /* Latar gelap saat drawer terbuka */
+    .oc-mobile-overlay {
+        display: block;
+        position: fixed;
+        inset: 0;
+
+        background: rgba(15, 23, 42, 0.55);
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.25s ease;
+
+        z-index: 1150;
+    }
+
+    body.oc-mobile-nav-open .oc-mobile-overlay {
+        opacity: 1;
+        visibility: visible;
+    }
+}
+
+@media (max-width: 420px) {
+    .content,
+    .main {
+        padding-left: 16px !important;
+        padding-right: 16px !important;
+    }
+}

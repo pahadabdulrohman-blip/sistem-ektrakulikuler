@@ -116,6 +116,7 @@
             }
         }
     </style>
+    <link rel="stylesheet" href="{{ asset('css/mobile.css') }}">
 </head>
 
 <body>
@@ -123,7 +124,9 @@
 <div class="container">
 
     <h2>AKTIVIA</h2>
-    <p class="subtitle">Buat akun baru untuk bergabung</p>
+    <p class="subtitle">
+        Pendaftaran akun siswa. Akun guru dibuat oleh admin sekolah.
+    </p>
 
     @if ($errors->any())
         <div class="error">
@@ -163,16 +166,18 @@
             required
         >
 
-        <label>Daftar Sebagai</label>
-        <select name="role" required>
-            <option value="">-- Pilih Role --</option>
-            <option value="siswa" {{ old('role') == 'siswa' ? 'selected' : '' }}>
-                Siswa
-            </option>
-            <option value="guru" {{ old('role') == 'guru' ? 'selected' : '' }}>
-                Guru
-            </option>
+        <label>Kelas</label>
+        <select name="kelas" required>
+            <option value="">-- Pilih Kelas --</option>
+            @foreach (\App\Models\User::DAFTAR_KELAS as $kelas)
+                <option value="{{ $kelas }}" {{ old('kelas') == $kelas ? 'selected' : '' }}>
+                    {{ $kelas }}
+                </option>
+            @endforeach
         </select>
+        <small style="color:#777;display:block;margin-top:6px;">
+            Kelas otomatis naik setiap tahun ajaran baru.
+        </small>
 
         <label>Password</label>
         <input
@@ -200,5 +205,6 @@
 
 </div>
 
+    <script src="{{ asset('js/mobile.js') }}"></script>
 </body>
 </html>

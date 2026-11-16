@@ -293,7 +293,7 @@
             cursor: pointer;
         }
 
-        #btnKunci {
+        #btnSimpan {
             background: #087fb3;
             color: white;
         }
@@ -431,6 +431,7 @@
             }
         }
     </style>
+    <link rel="stylesheet" href="{{ asset('css/mobile.css') }}">
 </head>
 
 <body>
@@ -448,6 +449,7 @@
     <nav class="menu">
         <a href="{{ route('dashboard.siswa') }}"><i class="fa-solid fa-house"></i>Dashboard</a>
         <a href="{{ route('ekstrakurikuler') }}" class="active"><i class="fa-solid fa-users"></i>Ekstrakurikuler</a>
+        <a href="{{ route('jadwal.ekstrakurikuler') }}"><i class="fa-solid fa-calendar-days"></i>Jadwal Kegiatan</a>
         <a href="{{ route('penilaian') }}"><i class="fa-solid fa-star"></i>Penilaian</a>
         <a href="{{ route('profil') }}"><i class="fa-solid fa-user"></i>Profil</a>
     </nav>
@@ -465,6 +467,22 @@
     </header>
 
     <section class="content">
+
+        @if (session('success'))
+            <div class="info" style="background:#dcfce7;border-left-color:#16a34a;color:#166534;">
+                <i class="fa-solid fa-circle-check"></i>
+                {{ session('success') }}
+            </div>
+        @endif
+
+        @if ($errors->any())
+            <div class="info" style="background:#fee2e2;border-left-color:#dc2626;color:#991b1b;">
+                <i class="fa-solid fa-circle-exclamation"></i>
+                @foreach ($errors->all() as $error)
+                    <div>{{ $error }}</div>
+                @endforeach
+            </div>
+        @endif
 
         <div class="heading">
             <div>
@@ -553,44 +571,50 @@
             Ekstrakurikuler tidak ditemukan.
         </div>
 
-        <div class="aksi-pilihan">
+        <form
+            id="formPilihan"
+            class="aksi-pilihan"
+            action="{{ route('ekstrakurikuler.simpan') }}"
+            method="POST"
+        >
+            @csrf
+            <div id="inputPilihan"></div>
 
             <button
                 type="button"
-                id="btnKunci"
-                onclick="kunciPilihan()"
+                id="btnSimpan"
+                onclick="simpanPilihan()"
                 disabled>
-                <i class="fa-solid fa-lock"></i> Kunci Pilihan
+                <i class="fa-solid fa-floppy-disk"></i> Simpan Pilihan
             </button>
 
             <button
                 type="button"
                 id="btnBatal"
-                onclick="batalkanSemua()"
+                onclick="hapusPilihan()"
                 disabled>
-                <i class="fa-solid fa-rotate-left"></i> Batalkan Semua
+                <i class="fa-solid fa-trash"></i> Hapus Pilihan
             </button>
 
             <p id="statusPilihan" aria-live="polite">
-                Status: Belum dikunci
+                Status: belum memilih
             </p>
+        </form>
 
-        </div>
+        <form id="formBatal" action="{{ route('ekstrakurikuler.batal') }}" method="POST" hidden>
+            @csrf
+        </form>
 
     </section>
 </main>
 
 <script>
-    let pilihan = [];
-    let terkunci = false;
+    // Pilihan awal diambil dari database milik siswa yang sedang login
+    let pilihan = @json($pilihan);
+    const jumlahTersimpan = {{ count($pilihan) }};
 
     // MEMILIH EKSTRAKURIKULER BERDASARKAN ID DATABASE
     function pilihEkskul(button) {
-
-        if (terkunci) {
-            alert('Pilihan sudah dikunci.');
-            return;
-        }
 
         const card = button.closest('.card');
         const id = card.dataset.id;
@@ -632,24 +656,33 @@
                 ? '<i class="fa-solid fa-check"></i> Dipilih'
                 : 'Pilih';
 
-            button.disabled = terkunci ||
-                (pilihan.length >= 2 && !sudahDipilih);
+            button.disabled = pilihan.length >= 2 && !sudahDipilih;
         });
 
-        document.getElementById('btnKunci').disabled =
-            terkunci || pilihan.length === 0;
+        document.getElementById('btnSimpan').disabled =
+            pilihan.length === 0;
 
         document.getElementById('btnBatal').disabled =
-            terkunci || pilihan.length === 0;
+            pilihan.length === 0 && jumlahTersimpan === 0;
 
-        document.getElementById('statusPilihan').innerHTML =
-            terkunci
-                ? '<i class="fa-solid fa-lock"></i> Status: Pilihan sudah dikunci'
-                : 'Status: Belum dikunci';
+        const status = document.getElementById('statusPilihan');
+
+        if (pilihan.length === 0 && jumlahTersimpan > 0) {
+            status.innerHTML =
+                '<i class="fa-solid fa-circle-info"></i> Status: pilihan tersimpan akan dihapus';
+        } else if (pilihan.length > 0 && jumlahTersimpan > 0) {
+            status.innerHTML =
+                '<i class="fa-solid fa-circle-check"></i> Status: pilihan tersimpan';
+        } else if (pilihan.length > 0) {
+            status.innerHTML =
+                '<i class="fa-solid fa-circle-info"></i> Status: belum disimpan';
+        } else {
+            status.innerHTML = 'Status: belum memilih';
+        }
     }
 
-    // MENGUNCI PILIHAN
-    function kunciPilihan() {
+    // MENYIMPAN PILIHAN KE DATABASE
+    function simpanPilihan() {
 
         if (pilihan.length === 0) {
             alert('Pilih minimal satu ekstrakurikuler.');
@@ -662,40 +695,38 @@
                 `.card[data-id="${id}"]`
             );
 
-            return card.querySelector('h2').textContent.trim();
+            return card ? card.querySelector('h2').textContent.trim() : id;
         });
 
         const yakin = confirm(
-            'Yakin ingin mengunci pilihan ' +
+            'Simpan pilihan ' +
             namaPilihan.join(' dan ') + '?'
         );
 
         if (!yakin) return;
 
-        terkunci = true;
+        const wadah = document.getElementById('inputPilihan');
+        wadah.innerHTML = '';
 
-        updateButton();
+        pilihan.forEach(id => {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'pilihan[]';
+            input.value = id;
+            wadah.appendChild(input);
+        });
 
-        alert('Pilihan berhasil dikunci pada halaman ini.');
+        document.getElementById('formPilihan').submit();
     }
 
-    // MEMBATALKAN SEMUA PILIHAN
-    function batalkanSemua() {
+    // MENGHAPUS PILIHAN YANG TERSIMPAN
+    function hapusPilihan() {
 
-        if (terkunci) {
-            alert('Pilihan sudah dikunci dan tidak dapat dibatalkan.');
+        if (!confirm('Hapus semua pilihan ekstrakurikuler kamu?')) {
             return;
         }
 
-        if (pilihan.length === 0) return;
-
-        if (!confirm('Batalkan semua pilihan ekstrakurikuler?')) {
-            return;
-        }
-
-        pilihan = [];
-
-        updateButton();
+        document.getElementById('formBatal').submit();
     }
 
     // FITUR PENCARIAN
@@ -729,5 +760,6 @@
     updateButton();
 </script>
 
+    <script src="{{ asset('js/mobile.js') }}"></script>
 </body>
 </html>

@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 
 use App\Http\Controllers\EkstrakurikulerController;
 use App\Http\Controllers\AdminEkstrakurikulerController;
+use App\Http\Controllers\AdminGuruController;
+use App\Http\Controllers\AdminPasswordRequestController;
 use App\Http\Controllers\GuruEkstrakurikulerController;
 use App\Http\Controllers\JadwalEkstrakurikulerController;
 use App\Http\Controllers\AbsensiController;
@@ -16,6 +18,7 @@ use App\Http\Controllers\ProfilePhotoController;
 
 use App\Models\PasswordRequest;
 use App\Models\Ekstrakurikuler;
+use App\Models\User;
 
 /*
 |--------------------------------------------------------------------------
@@ -142,17 +145,41 @@ Route::prefix('admin')
             'show',
         ])->whereNumber('id')->name('ekstrakurikuler.show');
 
+        // AKUN GURU
+
+        Route::get('/guru', [
+            AdminGuruController::class,
+            'index',
+        ])->name('guru.index');
+
+        Route::post('/guru', [
+            AdminGuruController::class,
+            'store',
+        ])->name('guru.store');
+
+        Route::put('/guru/{id}/reset-password', [
+            AdminGuruController::class,
+            'resetPassword',
+        ])->whereNumber('id')->name('guru.reset');
+
+        Route::delete('/guru/{id}', [
+            AdminGuruController::class,
+            'destroy',
+        ])->whereNumber('id')->name('guru.destroy');
+
         // PENILAIAN
 
-        Route::get('/penilaian', function () {
-            return view('admin.penilaian');
-        })->name('penilaian');
+        Route::get('/penilaian', [
+            PenilaianController::class,
+            'adminIndex',
+        ])->name('penilaian');
 
         // LAPORAN
 
-        Route::get('/laporan', function () {
-            return view('admin.laporan');
-        })->name('laporan');
+        Route::get('/laporan', [
+            EkstrakurikulerController::class,
+            'laporanAdmin',
+        ])->name('laporan');
 
         // PROFIL
 
@@ -162,11 +189,20 @@ Route::prefix('admin')
 
         // PERMINTAAN PASSWORD
 
-        Route::get('/password-requests', function () {
-            $requests = PasswordRequest::latest()->get();
+        Route::get('/password-requests', [
+            AdminPasswordRequestController::class,
+            'index',
+        ])->name('password.requests');
 
-            return view('password-requests', compact('requests'));
-        })->name('password.requests');
+        Route::put('/password-requests/{id}/reset', [
+            AdminPasswordRequestController::class,
+            'reset',
+        ])->whereNumber('id')->name('password.requests.reset');
+
+        Route::delete('/password-requests/{id}', [
+            AdminPasswordRequestController::class,
+            'destroy',
+        ])->whereNumber('id')->name('password.requests.destroy');
 
         // ABSENSI
 
@@ -291,6 +327,30 @@ Route::prefix('guru')
             AbsensiController::class,
             'simpan',
         ])->name('absensi.simpan');
+
+        // JADWAL KEGIATAN
+
+        Route::get('/jadwal', [
+            JadwalEkstrakurikulerController::class,
+            'index',
+        ])->name('jadwal.index');
+
+        Route::post('/jadwal', [
+            JadwalEkstrakurikulerController::class,
+            'store',
+        ])->name('jadwal.store');
+
+        Route::put('/jadwal/{id}', [
+            JadwalEkstrakurikulerController::class,
+            'update',
+        ])->whereNumber('id')
+          ->name('jadwal.update');
+
+        Route::delete('/jadwal/{id}', [
+            JadwalEkstrakurikulerController::class,
+            'destroy',
+        ])->whereNumber('id')
+          ->name('jadwal.destroy');
     });
 
 /*
@@ -307,6 +367,18 @@ Route::middleware('role:siswa')->group(function () {
         EkstrakurikulerController::class,
         'ekstrakurikuler',
     ])->name('ekstrakurikuler');
+
+    // SIMPAN / HAPUS PILIHAN EKSTRAKURIKULER
+
+    Route::post('/ekstrakurikuler/pilih', [
+        EkstrakurikulerController::class,
+        'simpanPilihan',
+    ])->name('ekstrakurikuler.simpan');
+
+    Route::post('/ekstrakurikuler/batal', [
+        EkstrakurikulerController::class,
+        'batalkanPilihan',
+    ])->name('ekstrakurikuler.batal');
 
     // DETAIL EKSTRAKURIKULER
 
@@ -326,7 +398,28 @@ Route::middleware('role:siswa')->group(function () {
         return view('siswa.profil');
     })->name('siswa.profil');
 
-    // FOTO PROFIL
+    // PENILAIAN SISWA
+
+    Route::get('/penilaian', [
+        EkstrakurikulerController::class,
+        'penilaian',
+    ])->name('penilaian');
+
+    Route::get('/penilaian/{id}', [
+        EkstrakurikulerController::class,
+        'detailNilai',
+    ])->whereNumber('id')->name('penilaian.detail');
+});
+
+/*
+|--------------------------------------------------------------------------
+| FOTO PROFIL (ADMIN, GURU, SISWA)
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware('role:admin,guru,siswa')->group(function () {
+
+    // TAMPILKAN FOTO PROFIL
 
     Route::get('/profil/foto/{filename}', function ($filename) {
         $filename = basename($filename);
@@ -345,18 +438,6 @@ Route::middleware('role:siswa')->group(function () {
         ProfilePhotoController::class,
         'upload',
     ])->name('profil.foto.upload');
-
-    // PENILAIAN SISWA
-
-    Route::get('/penilaian', [
-        EkstrakurikulerController::class,
-        'penilaian',
-    ])->name('penilaian');
-
-    Route::get('/penilaian/{id}', [
-        EkstrakurikulerController::class,
-        'detailNilai',
-    ])->whereNumber('id')->name('penilaian.detail');
 });
 
 /*
@@ -384,8 +465,40 @@ Route::post('/lupa-password', function (Request $request) {
 
     $validated = $request->validate([
         'username' => 'required|string|max:255',
-        'role' => 'required|in:admin,guru,siswa',
+        'role' => 'required|in:guru,siswa',
     ]);
+
+    $user = User::where('username', $validated['username'])
+        ->where('role', $validated['role'])
+        ->first();
+
+    if (! $user) {
+        return back()
+            ->withInput()
+            ->withErrors([
+                'username' => 'Akun dengan username dan role tersebut tidak ditemukan.',
+            ]);
+    }
+
+    if (! $user->email) {
+        return back()
+            ->withInput()
+            ->withErrors([
+                'username' => 'Akun tersebut belum memiliki email terdaftar. Hubungi admin.',
+            ]);
+    }
+
+    $sudahAda = PasswordRequest::where('username', $validated['username'])
+        ->where('role', $validated['role'])
+        ->where('status', 'menunggu')
+        ->exists();
+
+    if ($sudahAda) {
+        return back()->with(
+            'success',
+            'Permintaan ubah password kamu masih diproses admin. Silakan cek email secara berkala.'
+        );
+    }
 
     PasswordRequest::create([
         'username' => $validated['username'],
@@ -395,7 +508,7 @@ Route::post('/lupa-password', function (Request $request) {
 
     return back()->with(
         'success',
-        'Permintaan ubah password berhasil dikirim kepada Admin.'
+        'Permintaan ubah password berhasil dikirim. Password baru akan dikirim ke email terdaftar setelah diproses admin.'
     );
 
 })->name('password.email');

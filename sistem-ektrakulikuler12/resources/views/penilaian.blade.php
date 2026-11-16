@@ -28,7 +28,7 @@
             top: 0;
             width: 250px;
             height: 100vh;
-            background: linear-gradient(180deg, #0d6efd, #084298);
+            background: linear-gradient(180deg, #208351, #089844);
             color: white;
             padding: 25px 18px;
             z-index: 10;
@@ -109,7 +109,7 @@
         }
 
         .card-title i {
-            color: #0d6efd;
+            color: #148343;
         }
 
         .form-grid {
@@ -149,7 +149,7 @@
 
         .btn {
             border: none;
-            background: #0d6efd;
+            background: #0db03b;
             color: white;
             text-decoration: none;
             padding: 9px 14px;
@@ -161,7 +161,7 @@
         }
 
         .btn:hover {
-            background: #084298;
+            background: #08985e;
         }
 
         .btn-danger {
@@ -200,7 +200,7 @@
         }
 
         th {
-            background: #0d6efd;
+            background: #11863a;
             color: white;
             padding: 14px;
             text-align: left;
@@ -219,7 +219,7 @@
 
         .nilai {
             font-weight: 700;
-            color: #0d6efd;
+            color: #0dfd4d;
         }
 
         .badge {
@@ -285,9 +285,14 @@
             }
         }
     </style>
+    <link rel="stylesheet" href="{{ asset('css/mobile.css') }}">
 </head>
 
 <body>
+@php
+    $dataSiswa = $dataSiswa ?? collect($siswa ?? [])->keyBy('username');
+    $ekskul = $ekskul ?? collect();
+@endphp
 
     <aside class="sidebar">
         <div class="logo">
@@ -304,6 +309,11 @@
             <a href="{{ route('guru.kegiatan') }}">
                 <i class="fa-solid fa-users"></i>
                 <span>Ekstrakurikuler</span>
+            </a>
+
+            <a href="{{ route('guru.jadwal.index') }}">
+                <i class="fa-solid fa-calendar-days"></i>
+                <span>Jadwal Kegiatan</span>
             </a>
 
             <a href="{{ route('guru.penilaian') }}" class="active">
@@ -369,13 +379,22 @@
                     <div class="form-group">
                         <label>Nama Siswa</label>
 
-                        <select name="username" required>
+                        <select name="username" id="pilihSiswa" required>
                             <option value="">-- Pilih Siswa --</option>
 
                             @forelse(($siswa ?? collect()) as $user)
+                                @php
+                                    $ekskulSiswa = $user->pendaftaranEkstrakurikuler
+                                        ->pluck('ekstrakurikuler.nama_ekstrakurikuler')
+                                        ->filter()
+                                        ->values();
+                                @endphp
+
                                 <option value="{{ $user->username }}"
+                                    data-kelas="{{ $user->kelas_saat_ini ?? '-' }}"
+                                    data-ekskul="{{ $ekskulSiswa->implode('|') }}"
                                     {{ old('username') == $user->username ? 'selected' : '' }}>
-                                    {{ $user->name }} ({{ $user->username }})
+                                    {{ $user->name }} ({{ $user->username }}) - Kelas {{ $user->kelas_saat_ini ?? '-' }}
                                 </option>
                             @empty
                                 <option value="" disabled>Belum ada akun siswa</option>
@@ -384,13 +403,28 @@
                     </div>
 
                     <div class="form-group">
-                        <label>Nama Ekstrakurikuler</label>
+                        <label>Kelas</label>
                         <input type="text"
-                               name="nama_kegiatan"
-                               value="{{ old('nama_kegiatan') }}"
-                               placeholder="Contoh: Futsal"
-                               maxlength="100"
-                               required>
+                               id="kelasSiswa"
+                               value="-"
+                               readonly
+                               style="background:#f3f4f6;">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Nama Ekstrakurikuler</label>
+                        <select name="nama_kegiatan" id="namaKegiatan" required>
+                            <option value="">-- Pilih Ekstrakurikuler --</option>
+                            @foreach($ekskul as $item)
+                                <option value="{{ $item->nama_ekstrakurikuler }}"
+                                    {{ old('nama_kegiatan') == $item->nama_ekstrakurikuler ? 'selected' : '' }}>
+                                    {{ $item->nama_ekstrakurikuler }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <small style="color:#6b7280;">
+                            Otomatis mengikuti ekstrakurikuler siswa yang dipilih.
+                        </small>
                     </div>
 
                     <div class="form-group">
@@ -432,7 +466,8 @@
                 <thead>
                     <tr>
                         <th>No</th>
-                        <th>Username</th>
+                        <th>Nama Siswa</th>
+                        <th>Kelas</th>
                         <th>Ekstrakurikuler</th>
                         <th>Nilai</th>
                         <th>Predikat</th>
@@ -444,9 +479,14 @@
 
                 <tbody>
                     @forelse(($nilai ?? collect()) as $index => $item)
+                        @php
+                            $siswaNilai = $dataSiswa->get($item->username);
+                        @endphp
+
                         <tr>
                             <td>{{ $index + 1 }}</td>
-                            <td>{{ $item->username }}</td>
+                            <td>{{ $siswaNilai->name ?? $item->username }}</td>
+                            <td>{{ $siswaNilai->kelas_saat_ini ?? '-' }}</td>
                             <td>{{ $item->nama_kegiatan }}</td>
                             <td class="nilai">{{ $item->nilai }}</td>
 
@@ -489,7 +529,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" class="empty">
+                            <td colspan="9" class="empty">
                                 Belum ada data penilaian siswa.
                             </td>
                         </tr>
@@ -539,6 +579,66 @@
     </main>
 
     <script>
+        (function () {
+            const siswa = document.getElementById('pilihSiswa');
+            const kelas = document.getElementById('kelasSiswa');
+            const kegiatan = document.getElementById('namaKegiatan');
+
+            if (!siswa || !kelas || !kegiatan) {
+                return;
+            }
+
+            // Semua pilihan ekskul dari server.
+            const semuaEkskul = Array.from(kegiatan.options)
+                .map(function (opsi) {
+                    return opsi.value;
+                })
+                .filter(Boolean);
+
+            let pertamaKali = true;
+
+            function isiDataSiswa() {
+                const opsi = siswa.options[siswa.selectedIndex];
+                const daftarEkskul = opsi && opsi.dataset.ekskul
+                    ? opsi.dataset.ekskul.split('|').filter(Boolean)
+                    : [];
+
+                kelas.value = opsi && opsi.dataset.kelas ? opsi.dataset.kelas : '-';
+
+                if (!opsi || !opsi.value) {
+                    pertamaKali = false;
+                    return;
+                }
+
+                const nilaiLama = pertamaKali ? kegiatan.value : '';
+                pertamaKali = false;
+
+                // Ekskul yang diikuti siswa; jika belum ada, tampilkan semua ekskul.
+                const daftarTampil = daftarEkskul.length > 0
+                    ? daftarEkskul
+                    : semuaEkskul;
+
+                kegiatan.innerHTML = '';
+
+                daftarTampil.forEach(function (nama) {
+                    const pilihan = document.createElement('option');
+                    pilihan.value = nama;
+                    pilihan.textContent = nama;
+                    kegiatan.appendChild(pilihan);
+                });
+
+                // Langsung pilih ekskul siswa tanpa perlu klik ulang.
+                if (nilaiLama && daftarTampil.indexOf(nilaiLama) !== -1) {
+                    kegiatan.value = nilaiLama;
+                } else if (daftarTampil.length > 0) {
+                    kegiatan.selectedIndex = 0;
+                }
+            }
+
+            siswa.addEventListener('change', isiDataSiswa);
+            isiDataSiswa();
+        })();
+
         function editNilai(button) {
             const id = button.dataset.id;
 
@@ -561,5 +661,6 @@
         }
     </script>
 
+    <script src="{{ asset('js/mobile.js') }}"></script>
 </body>
 </html>

@@ -10,12 +10,16 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
+    public const DAFTAR_KELAS = ['X', 'XI', 'XII'];
+
     protected $fillable = [
         'name',
         'username',
         'email',
         'password',
         'role',
+        'kelas',
+        'tahun_masuk',
     ];
 
     protected $hidden = [
@@ -29,5 +33,55 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Tahun ajaran berjalan. Tahun ajaran baru dimulai bulan Juli.
+     */
+    public static function tahunAjaranSekarang(): int
+    {
+        return now()->month >= 7 ? now()->year : now()->year - 1;
+    }
+
+    /**
+     * Hitung tahun masuk (saat kelas X) dari kelas yang dipilih saat daftar.
+     */
+    public static function tahunMasukDariKelas(string $kelas): int
+    {
+        $mundur = ['X' => 0, 'XI' => 1, 'XII' => 2];
+
+        return static::tahunAjaranSekarang()
+            - ($mundur[strtoupper(trim($kelas))] ?? 0);
+    }
+
+    /**
+     * Kelas siswa saat ini. Otomatis naik setiap tahun ajaran baru
+     * tanpa perlu mengubah data absensi atau penilaiannya.
+     */
+    public function getKelasSaatIniAttribute(): ?string
+    {
+        if (! $this->tahun_masuk) {
+            return $this->kelas;
+        }
+
+        $tingkat = 1 + max(
+            0,
+            static::tahunAjaranSekarang() - (int) $this->tahun_masuk
+        );
+
+        return match (true) {
+            $tingkat <= 1 => 'X',
+            $tingkat === 2 => 'XI',
+            $tingkat === 3 => 'XII',
+            default => 'Lulus',
+        };
+    }
+
+    /**
+     * Pilihan ekstrakurikuler milik siswa (dihubungkan lewat username).
+     */
+    public function pendaftaranEkstrakurikuler()
+    {
+        return $this->hasMany(PendaftaranEkstrakurikuler::class, 'username', 'username');
     }
 }

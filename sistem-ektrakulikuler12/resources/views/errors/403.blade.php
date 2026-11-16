@@ -26,6 +26,7 @@
             color: white; text-decoration: none; border-radius: 8px;
         }
     </style>
+    <link rel="stylesheet" href="{{ asset('css/mobile.css') }}">
 </head>
 <body>
     <div class="card">
@@ -34,5 +35,6 @@
         <p>Kamu tidak memiliki izin untuk membuka halaman ini.</p>
         <a href="{{ route('login') }}">Kembali ke Login</a>
     </div>
+    <script src="{{ asset('js/mobile.js') }}"></script>
 </body>
 </html>

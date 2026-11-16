@@ -166,6 +166,13 @@
             align-items: center;
             justify-content: center;
             font-size: 23px;
+            overflow: hidden;
+        }
+
+        .profile-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         /* RINGKASAN */
@@ -289,6 +296,42 @@
             padding: 35px;
         }
 
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            background: #e8edf1;
+            color: #4a5568;
+            font-size: 11px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .badge.sangat-baik {
+            background: #d9f7e7;
+            color: #116b43;
+        }
+
+        .badge.baik {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .badge.cukup {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge.perlu-bimbingan {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .nilai {
+            font-weight: 700;
+            color: #116b43;
+        }
+
         .report-note {
             margin-top: 20px;
             color: #718096;
@@ -351,6 +394,7 @@
             }
         }
     </style>
+    <link rel="stylesheet" href="{{ asset('css/mobile.css') }}">
 </head>
 
 <body>
@@ -369,6 +413,19 @@
     $totalSiswa = $totalSiswa ?? count($siswaList);
     $totalKegiatan = $totalKegiatan ?? 0;
     $totalPenilaian = $totalPenilaian ?? 0;
+
+    // Profil guru yang sedang login.
+    $usernameGuru = session('username', 'guru');
+
+    $guru = \App\Models\User::where('username', $usernameGuru)
+        ->where('role', 'guru')
+        ->first();
+
+    $namaGuru = $guru->name ?? 'Guru Pembimbing';
+
+    $fotoGuru = \App\Models\ProfilePhoto::where('username', $usernameGuru)
+        ->where('role', 'guru')
+        ->first();
 @endphp
 
 <!-- SIDEBAR GURU -->
@@ -392,6 +449,11 @@
         <a href="{{ route('guru.kegiatan') }}">
             <span class="menu-icon"><i class="fa-solid fa-users"></i></span>
             Data Kegiatan
+        </a>
+
+        <a href="{{ route('guru.jadwal.index') }}">
+            <span class="menu-icon"><i class="fa-solid fa-calendar-days"></i></span>
+            Jadwal Kegiatan
         </a>
 
         <a href="{{ route('guru.penilaian') }}">
@@ -428,12 +490,19 @@
 
         <div class="guru-profile">
             <div class="guru-info">
-                <strong>Guru Pembimbing</strong>
-                <span>Sistem Ekstrakurikuler</span>
+                <strong>{{ $namaGuru }}</strong>
+                <span>Guru Pembimbing</span>
             </div>
 
             <div class="profile-icon">
-                <i class="fa-solid fa-chalkboard-user"></i>
+                @if ($fotoGuru && $fotoGuru->photo_path)
+                    <img
+                        src="{{ asset('storage/' . $fotoGuru->photo_path) }}"
+                        alt="Foto Profil {{ $namaGuru }}"
+                    >
+                @else
+                    <i class="fa-solid fa-chalkboard-user"></i>
+                @endif
             </div>
 
         </div>
@@ -490,11 +559,17 @@
                         <th>Nama Siswa</th>
                         <th>Kelas</th>
                         <th>Ekstrakurikuler</th>
+                        <th>Nilai</th>
+                        <th>Predikat</th>
                     </tr>
                 </thead>
 
                 <tbody>
                     @forelse ($siswaList as $index => $item)
+                        @php
+                            $predikat = data_get($item, 'predikat', '-');
+                        @endphp
+
                         <tr>
                             <td>{{ $index + 1 }}</td>
                             <td>
@@ -506,10 +581,18 @@
                             <td>
                                 {{ data_get($item, 'ekstrakurikuler', '-') }}
                             </td>
+                            <td class="nilai">
+                                {{ data_get($item, 'nilai', '-') }}
+                            </td>
+                            <td>
+                                <span class="badge {{ \Illuminate\Support\Str::slug($predikat) }}">
+                                    {{ $predikat }}
+                                </span>
+                            </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="4" class="empty">
+                            <td colspan="6" class="empty">
                                 Belum ada data siswa untuk ditampilkan.
                             </td>
                         </tr>
@@ -519,13 +602,15 @@
         </div>
 
         <p class="report-note">
-            Laporan ini menampilkan data yang dikirim dari sistem.
-            Gunakan tombol Cetak Laporan untuk mencetak halaman.
+            Laporan ini menampilkan data siswa, ekstrakurikuler, dan nilai
+            terbaru dari database. Gunakan tombol Cetak Laporan untuk
+            mencetak halaman.
         </p>
 
     </section>
 
 </main>
 
+    <script src="{{ asset('js/mobile.js') }}"></script>
 </body>
 </html>

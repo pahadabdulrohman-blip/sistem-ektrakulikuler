@@ -108,7 +108,7 @@
     <div class="card">
 
         <p style="
-            color:#66869a;
+            color:#669a89;
             line-height:1.6;
         ">
             Terus tingkatkan keaktifan dan konsistensi latihan.

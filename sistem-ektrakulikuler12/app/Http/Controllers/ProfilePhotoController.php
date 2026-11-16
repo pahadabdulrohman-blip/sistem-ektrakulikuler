@@ -27,9 +27,18 @@ class ProfilePhotoController extends Controller
             ]);
         }
 
-        // Cari foto profil siswa sebelumnya
+        // Gunakan role pengguna yang sedang login (admin, guru, atau siswa)
+        $role = strtolower(trim((string) session('role')));
+
+        if (!in_array($role, ['admin', 'guru', 'siswa'], true)) {
+            return back()->withErrors([
+                'foto' => 'Role pengguna tidak dikenali. Silakan login kembali.'
+            ]);
+        }
+
+        // Cari foto profil sebelumnya sesuai role pengguna
         $fotoLama = ProfilePhoto::where('username', $username)
-            ->where('role', 'siswa')
+            ->where('role', $role)
             ->first();
 
         // Simpan foto baru ke storage/app/public/foto-profil
@@ -43,7 +52,7 @@ class ProfilePhotoController extends Controller
         ProfilePhoto::updateOrCreate(
             [
                 'username' => $username,
-                'role' => 'siswa',
+                'role' => $role,
             ],
             [
                 'photo_path' => $pathBaru,

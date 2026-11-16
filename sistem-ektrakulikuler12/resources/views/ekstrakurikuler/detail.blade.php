@@ -150,6 +150,7 @@
             }
         }
     </style>
+    <link rel="stylesheet" href="{{ asset('css/mobile.css') }}">
 </head>
 
 <body>
@@ -166,6 +167,10 @@
 
         <a href="{{ route('ekstrakurikuler') }}" class="menu">
             <i class="fa-solid fa-users"></i>Ekstrakurikuler
+        </a>
+
+        <a href="{{ route('jadwal.ekstrakurikuler') }}" class="menu">
+            <i class="fa-solid fa-calendar-days"></i>Jadwal Kegiatan
         </a>
 
         <a href="{{ route('penilaian') }}" class="menu">
@@ -220,5 +225,6 @@
 
     </main>
 
+    <script src="{{ asset('js/mobile.js') }}"></script>
 </body>
 </html>
