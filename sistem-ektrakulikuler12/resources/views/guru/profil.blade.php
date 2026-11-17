@@ -329,7 +329,9 @@
     <a href="/guru/penilaian"><i class="fa-solid fa-star"></i>Penilaian Siswa</a>
     <a href="/guru/laporan"><i class="fa-solid fa-file-lines"></i>Laporan</a>
     <a href="/guru/profil" class="active"><i class="fa-solid fa-user"></i>Profil Guru</a>
-    <a href="/logout"><i class="fa-solid fa-right-from-bracket"></i>Logout</a>
+    <a href="{{ route('logout.confirm') }}" data-logout><i class="fa-solid fa-right-from-bracket"></i>Logout</a>
+
+@include('partials.logout-form')
 
 </aside>
 

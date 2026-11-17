@@ -75,14 +75,6 @@ class AdminPasswordRequestController extends Controller
             ? $data['password']
             : Str::random(10);
 
-        $user->update([
-            'password' => $password,
-        ]);
-
-        $permintaan->update([
-            'status' => 'selesai',
-        ]);
-
         $mailer = config('mail.default');
         $mailerConfig = config('mail.mailers.' . $mailer, []);
 
@@ -91,6 +83,26 @@ class AdminPasswordRequestController extends Controller
         $pengirimanAktif = ! in_array($mailer, ['log', 'array'], true)
             && filled($mailerConfig['username'] ?? null)
             && filled($mailerConfig['password'] ?? null);
+
+        // Di server produksi, password baru tidak boleh ditampilkan di layar.
+        // Jadi reset ditolak sampai email benar-benar bisa mengirim password.
+        if (! $pengirimanAktif && ! app()->environment('local')) {
+            return redirect()
+                ->route('admin.password.requests')
+                ->withErrors([
+                    'password' => 'Email belum aktif. Atur SMTP di file .env '
+                        . 'sebelum mereset password agar password baru bisa '
+                        . 'dikirim ke pengguna.',
+                ]);
+        }
+
+        $user->update([
+            'password' => $password,
+        ]);
+
+        $permintaan->update([
+            'status' => 'selesai',
+        ]);
 
         $terkirim = $pengirimanAktif;
 
@@ -109,12 +121,14 @@ class AdminPasswordRequestController extends Controller
 
         if ($terkirim) {
             $pesan .= ' Password baru sudah dikirim ke ' . $user->email . '.';
-        } elseif (! $pengirimanAktif) {
+        } elseif (! $pengirimanAktif && app()->environment('local')) {
+            // Hanya untuk pengembangan lokal agar admin tetap bisa login.
             $pesan .= ' Email belum aktif (MAIL_MAILER=' . $mailer
                 . ' atau kredensial SMTP belum diisi), password baru: ' . $password
                 . '. Atur Gmail SMTP di file .env agar email benar-benar terkirim.';
         } else {
-            $pesan .= ' Email gagal dikirim, password baru: ' . $password;
+            $pesan .= ' Email gagal dikirim. Password baru tidak ditampilkan; '
+                . 'silakan reset ulang setelah SMTP diperbaiki.';
         }
 
         return redirect()

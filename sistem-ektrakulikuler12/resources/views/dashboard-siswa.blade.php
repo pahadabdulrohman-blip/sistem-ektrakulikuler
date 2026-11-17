@@ -269,10 +269,12 @@ body {
             <span>Profil</span>
         </a>
 
-        <a href="{{ route('login') }}">
+        <a href="{{ route('logout.confirm') }}" data-logout>
             <i class="fa-solid fa-right-from-bracket"></i>
             <span>Logout</span>
         </a>
+
+@include('partials.logout-form')
 
     </div>
 

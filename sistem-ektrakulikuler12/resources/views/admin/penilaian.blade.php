@@ -237,8 +237,16 @@
                 <i class="fa-solid fa-futbol"></i>Ekstrakurikuler
             </a>
 
-            <a href="{{ route('admin.guru.index') }}">
-                <i class="fa-solid fa-chalkboard-user"></i>Akun Guru
+            <a href="{{ route('admin.data.guru') }}">
+                <i class="fa-solid fa-chalkboard-user"></i>Data Guru
+            </a>
+
+            <a href="{{ route('admin.data.siswa') }}">
+                <i class="fa-solid fa-users"></i>Data Siswa
+            </a>
+
+            <a href="{{ route('admin.penerimaan-siswa.index') }}">
+                <i class="fa-solid fa-user-check"></i>Penerimaan Siswa
             </a>
 
             <a href="{{ route('admin.penilaian') }}" class="active">
@@ -253,9 +261,11 @@
                 <i class="fa-solid fa-user"></i>Profil
             </a>
 
-            <a href="{{ route('login') }}">
+            <a href="{{ route('logout.confirm') }}" data-logout>
                 <i class="fa-solid fa-right-from-bracket"></i>Logout
             </a>
+
+@include('partials.logout-form')
 
         </div>
 

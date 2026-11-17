@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\JadwalEkstrakurikuler;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class JadwalEkstrakurikulerController extends Controller
 {
@@ -45,7 +46,11 @@ class JadwalEkstrakurikulerController extends Controller
 
     public function store(Request $request)
     {
-        JadwalEkstrakurikuler::create($this->validatedData($request));
+        $data = $this->validatedData($request);
+
+        $this->tolakJadwalGanda($data);
+
+        JadwalEkstrakurikuler::create($data);
 
         return redirect()
             ->route('jadwal.ekstrakurikuler')
@@ -56,7 +61,11 @@ class JadwalEkstrakurikulerController extends Controller
     {
         $jadwal = JadwalEkstrakurikuler::findOrFail($id);
 
-        $jadwal->update($this->validatedData($request));
+        $data = $this->validatedData($request);
+
+        $this->tolakJadwalGanda($data, $jadwal->id);
+
+        $jadwal->update($data);
 
         return redirect()
             ->route('jadwal.ekstrakurikuler')
@@ -76,7 +85,7 @@ class JadwalEkstrakurikulerController extends Controller
 
     private function validatedData(Request $request): array
     {
-        return $request->validate([
+        $data = $request->validate([
             'nama_kegiatan' => 'required|string|max:255',
             'jenis' => 'required|in:wajib,gabungan',
             'tanggal' => 'required|date',
@@ -99,5 +108,35 @@ class JadwalEkstrakurikulerController extends Controller
             'lokasi.required' => 'Lokasi kegiatan wajib diisi.',
             'lokasi.max' => 'Lokasi maksimal 255 karakter.',
         ]);
+
+        // Rapikan nama kegiatan supaya variasi spasi tidak membuat jadwal ganda.
+        $data['nama_kegiatan'] = JadwalEkstrakurikuler::rapikanNama(
+            $data['nama_kegiatan']
+        );
+
+        return $data;
+    }
+
+    /**
+     * Tolak jadwal yang sama persis (kegiatan + tanggal + jam mulai).
+     */
+    private function tolakJadwalGanda(array $data, ?int $abaikanId = null): void
+    {
+        $query = JadwalEkstrakurikuler::where(
+            'nama_kegiatan',
+            $data['nama_kegiatan']
+        )
+            ->whereDate('tanggal', $data['tanggal'])
+            ->where('jam_mulai', $data['jam_mulai']);
+
+        if ($abaikanId !== null) {
+            $query->whereKeyNot($abaikanId);
+        }
+
+        if ($query->exists()) {
+            throw ValidationException::withMessages([
+                'nama_kegiatan' => 'Jadwal kegiatan ini sudah ada pada tanggal dan jam yang sama.',
+            ]);
+        }
     }
 }

@@ -220,6 +220,15 @@ body{
     border-bottom:1px solid #eee;
 }
 
+a.item{
+    text-decoration:none;
+    color:inherit;
+}
+
+a.item:hover strong{
+    color:#08718b;
+}
+
 
 /* VISUALISASI STATISTIK */
 
@@ -449,9 +458,16 @@ body{
     )->count();
 
     // Statistik diambil langsung dari database agar selalu mengikuti data terbaru.
-    $totalSiswa = \App\Models\User::where('role', 'siswa')->count();
+    // Total siswa hanya menghitung akun yang sudah diterima admin.
+    $totalSiswa = \App\Models\User::where('role', 'siswa')
+        ->where('status_pendaftaran', 'diterima')
+        ->count();
 
     $totalGuru = \App\Models\User::where('role', 'guru')->count();
+
+    $totalMenunggu = \App\Models\User::where('role', 'siswa')
+        ->where('status_pendaftaran', 'menunggu')
+        ->count();
 
     $totalEkskul = \App\Models\Ekstrakurikuler::count();
 
@@ -507,10 +523,11 @@ body{
         ->all();
 
     // Data visualisasi: sebaran siswa per kelas.
+    // Memakai accessor kelas_saat_ini agar otomatis mengikuti kenaikan kelas.
     $sebaranKelas = \App\Models\User::where('role', 'siswa')
-        ->pluck('kelas')
-        ->map(function ($kelas) {
-            $kelas = trim((string) $kelas);
+        ->get()
+        ->map(function ($siswa) {
+            $kelas = trim((string) $siswa->kelas_saat_ini);
 
             return $kelas !== '' ? $kelas : 'Belum diisi';
         })
@@ -556,10 +573,26 @@ body{
         </a>
 
 
-        <a href="{{ route('admin.guru.index') }}">
+        <a href="{{ route('admin.data.guru') }}">
             <i class="fa-solid fa-chalkboard-user"></i>
 
-            <span>Akun Guru</span>
+            <span>Data Guru</span>
+
+        </a>
+
+
+        <a href="{{ route('admin.data.siswa') }}">
+            <i class="fa-solid fa-users"></i>
+
+            <span>Data Siswa</span>
+
+        </a>
+
+
+        <a href="{{ route('admin.penerimaan-siswa.index') }}">
+            <i class="fa-solid fa-user-check"></i>
+
+            <span>Penerimaan Siswa</span>
 
         </a>
 
@@ -612,13 +645,15 @@ body{
         </a>
 
 
-        <a href="{{ route('login') }}">
+        <a href="{{ route('logout.confirm') }}" data-logout>
 
             <i class="fa-solid fa-right-from-bracket"></i>
 
             <span>Logout</span>
 
         </a>
+
+@include('partials.logout-form')
 
 
     </div>
@@ -871,22 +906,31 @@ body{
             <h2>Data Sistem</h2>
 
 
-            <div class="item">
+            <a class="item" href="{{ route('admin.data.siswa') }}">
 
                 <span>Total Siswa</span>
 
                 <strong>{{ $totalSiswa }}</strong>
 
-            </div>
+            </a>
 
 
-            <div class="item">
+            <a class="item" href="{{ route('admin.data.guru') }}">
 
                 <span>Total Guru</span>
 
                 <strong>{{ $totalGuru }}</strong>
 
-            </div>
+            </a>
+
+
+            <a class="item" href="{{ route('admin.penerimaan-siswa.index', ['status' => 'menunggu']) }}">
+
+                <span>Pendaftaran Menunggu</span>
+
+                <strong>{{ $totalMenunggu }}</strong>
+
+            </a>
 
 
             <div class="item">

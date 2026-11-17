@@ -292,9 +292,19 @@
                 Ekstrakurikuler
             </a>
 
-            <a href="{{ route('admin.guru.index') }}">
+            <a href="{{ route('admin.data.guru') }}">
                 <span class="menu-icon"><i class="fa-solid fa-chalkboard-user"></i></span>
-                Akun Guru
+                Data Guru
+            </a>
+
+            <a href="{{ route('admin.data.siswa') }}">
+                <span class="menu-icon"><i class="fa-solid fa-users"></i></span>
+                Data Siswa
+            </a>
+
+            <a href="{{ route('admin.penerimaan-siswa.index') }}">
+                <span class="menu-icon"><i class="fa-solid fa-user-check"></i></span>
+                Penerimaan Siswa
             </a>
 
             <a href="{{ route('admin.penilaian') }}">
@@ -329,10 +339,12 @@
                 @endif
             </a>
 
-            <a href="{{ route('logout') }}">
+            <a href="{{ route('logout.confirm') }}" data-logout>
                 <span class="menu-icon"><i class="fa-solid fa-right-from-bracket"></i></span>
                 Logout
             </a>
+
+@include('partials.logout-form')
 
         </div>
     </div>

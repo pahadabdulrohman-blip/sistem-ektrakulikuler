@@ -184,11 +184,15 @@
     <div class="menu">
         <a href="{{ route('dashboard.admin') }}"><i class="fa-solid fa-house"></i>Dashboard</a>
         <a href="{{ route('admin.ekstrakurikuler') }}"><i class="fa-solid fa-futbol"></i>Ekstrakurikuler</a>
-        <a href="{{ route('admin.guru.index') }}"><i class="fa-solid fa-chalkboard-user"></i>Akun Guru</a>
+        <a href="{{ route('admin.data.guru') }}"><i class="fa-solid fa-chalkboard-user"></i>Data Guru</a>
+        <a href="{{ route('admin.data.siswa') }}"><i class="fa-solid fa-users"></i>Data Siswa</a>
+        <a href="{{ route('admin.penerimaan-siswa.index') }}"><i class="fa-solid fa-user-check"></i>Penerimaan Siswa</a>
         <a href="{{ route('admin.penilaian') }}"><i class="fa-solid fa-star"></i>Penilaian</a>
         <a href="{{ route('admin.laporan') }}"><i class="fa-solid fa-file-lines"></i>Laporan</a>
         <a href="{{ route('admin.profil') }}"><i class="fa-solid fa-user"></i>Profil</a>
-        <a href="{{ route('login') }}"><i class="fa-solid fa-right-from-bracket"></i>Logout</a>
+        <a href="{{ route('logout.confirm') }}" data-logout><i class="fa-solid fa-right-from-bracket"></i>Logout</a>
+
+@include('partials.logout-form')
     </div>
 </div>
 

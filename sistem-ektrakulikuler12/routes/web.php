@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\EkstrakurikulerController;
 use App\Http\Controllers\AdminEkstrakurikulerController;
 use App\Http\Controllers\AdminGuruController;
+use App\Http\Controllers\AdminDataController;
+use App\Http\Controllers\AdminPenerimaanSiswaController;
 use App\Http\Controllers\AdminPasswordRequestController;
 use App\Http\Controllers\GuruEkstrakurikulerController;
 use App\Http\Controllers\JadwalEkstrakurikulerController;
@@ -144,6 +146,35 @@ Route::prefix('admin')
             AdminEkstrakurikulerController::class,
             'show',
         ])->whereNumber('id')->name('ekstrakurikuler.show');
+
+        // DATA GURU & SISWA
+
+        Route::get('/data-guru', [
+            AdminDataController::class,
+            'guru',
+        ])->name('data.guru');
+
+        Route::get('/data-siswa', [
+            AdminDataController::class,
+            'siswa',
+        ])->name('data.siswa');
+
+        // PENERIMAAN SISWA
+
+        Route::get('/penerimaan-siswa', [
+            AdminPenerimaanSiswaController::class,
+            'index',
+        ])->name('penerimaan-siswa.index');
+
+        Route::put('/penerimaan-siswa/{id}/terima', [
+            AdminPenerimaanSiswaController::class,
+            'terima',
+        ])->whereNumber('id')->name('penerimaan-siswa.terima');
+
+        Route::put('/penerimaan-siswa/{id}/tolak', [
+            AdminPenerimaanSiswaController::class,
+            'tolak',
+        ])->whereNumber('id')->name('penerimaan-siswa.tolak');
 
         // AKUN GURU
 
@@ -527,21 +558,32 @@ Route::get('/hubungi-admin', function () {
 |--------------------------------------------------------------------------
 | LOGOUT
 |--------------------------------------------------------------------------
+|
+| Logout hanya boleh lewat POST + token CSRF supaya tidak bisa dipicu
+| otomatis dari halaman lain (CSRF logout). Tautan "Logout" di view
+| mengirim form tersembunyi, sedangkan GET hanya menampilkan konfirmasi.
+|
 */
 
-Route::get('/logout', function () {
+Route::post('/logout', function () {
     session()->invalidate();
     session()->regenerateToken();
 
     return redirect()->route('login');
 })->name('logout');
 
+Route::get('/logout', function () {
+    return view('logout');
+})->name('logout.confirm');
+
 /*
 |--------------------------------------------------------------------------
-| TES ERROR
+| TES ERROR (HANYA UNTUK PENGEMBANGAN LOKAL)
 |--------------------------------------------------------------------------
 */
 
-Route::get('/tes-error-500', function () {
-    abort(500);
-});
+if (app()->environment('local')) {
+    Route::get('/tes-error-500', function () {
+        abort(500);
+    });
+}

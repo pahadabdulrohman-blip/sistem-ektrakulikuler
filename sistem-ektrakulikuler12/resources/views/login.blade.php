@@ -351,6 +351,27 @@
             gap: 10px;
         }
 
+        .alert-success {
+
+            background: #ecfdf3;
+
+            border-radius: 13px;
+
+            padding: 16px 18px;
+
+            color: #148f5a;
+
+            font-size: 14px;
+
+            margin-bottom: 22px;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+        }
+
 
         /* =========================
            FORM
@@ -877,65 +898,28 @@
         @endif
 
 
+        <!-- SUCCESS -->
+
+        @if(session('success'))
+
+            <div class="alert-success">
+
+                <i class="fa-solid fa-circle-check"></i>
+
+                <span>
+                    {{ session('success') }}
+                </span>
+
+            </div>
+
+        @endif
+
+
 
         <!-- FORM LOGIN -->
 
        <form action="{{ route('login.process') }}" method="POST">
     @csrf
-
-
-            <!-- ROLE -->
-
-            <div class="form-group">
-
-                <label for="role">
-                    Login sebagai
-                </label>
-
-                <div class="input-wrapper">
-
-                    <i class="fa-solid fa-user-tag left-icon"></i>
-
-                    <select
-                        name="role"
-                        id="role"
-                        class="form-control"
-                        required
-                    >
-
-                        <option value="">
-                            Pilih Admin / Guru / Siswa
-                        </option>
-
-                        <option
-                            value="admin"
-                            {{ old('role') == 'admin' ? 'selected' : '' }}
-                        >
-                            Admin
-                        </option>
-
-                        <option
-                            value="guru"
-                            {{ old('role') == 'guru' ? 'selected' : '' }}
-                        >
-                            Guru
-                        </option>
-
-                        <option
-                            value="siswa"
-                            {{ old('role') == 'siswa' ? 'selected' : '' }}
-                        >
-                            Siswa
-                        </option>
-
-                    </select>
-
-                    <i class="fa-solid fa-chevron-down select-arrow"></i>
-
-                </div>
-
-            </div>
-
 
 
             <!-- USERNAME -->

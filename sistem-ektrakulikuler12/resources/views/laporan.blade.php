@@ -473,10 +473,12 @@
             Profil Guru
         </a>
 
-        <a href="{{ route('logout') }}">
+        <a href="{{ route('logout.confirm') }}" data-logout>
             <span class="menu-icon"><i class="fa-solid fa-right-from-bracket"></i></span>
             Logout
         </a>
+
+@include('partials.logout-form')
 
     </nav>
 </aside>

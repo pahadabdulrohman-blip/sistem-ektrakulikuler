@@ -38,6 +38,10 @@ class AbsensiController extends Controller
             'status' => 'required|in:hadir,izin,sakit,alpa',
         ]);
 
+        // Rapikan nama kegiatan supaya variasi spasi/huruf besar tidak
+        // menghasilkan baris absensi ganda.
+        $data['nama_kegiatan'] = AbsensiSiswa::rapikanNama($data['nama_kegiatan']);
+
         $siswa = User::where('username', $data['username'])
             ->where('role', 'siswa')
             ->first();
@@ -48,6 +52,8 @@ class AbsensiController extends Controller
             ])->withInput();
         }
 
+        // updateOrCreate: absensi yang sama (siswa + kegiatan + tanggal)
+        // hanya diperbarui, tidak dibuat baris baru.
         AbsensiSiswa::updateOrCreate(
             [
                 'username' => $data['username'],

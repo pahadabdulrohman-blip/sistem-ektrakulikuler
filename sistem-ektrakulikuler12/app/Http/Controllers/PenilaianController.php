@@ -75,6 +75,9 @@ class PenilaianController extends Controller
             'keterangan' => 'nullable|string|max:1000',
         ]);
 
+        // Rapikan nama kegiatan supaya "Futsal" dan " futsal  " dianggap sama.
+        $data['nama_kegiatan'] = Penilaian::rapikanNama($data['nama_kegiatan']);
+
         $siswa = User::where('username', $data['username'])
             ->where('role', 'siswa')
             ->first();
@@ -82,6 +85,20 @@ class PenilaianController extends Controller
         if (!$siswa) {
             return back()->withErrors([
                 'username' => 'Akun yang dipilih bukan akun siswa.'
+            ])->withInput();
+        }
+
+        // Tolak penilaian dobel untuk siswa & kegiatan yang sama.
+        $sudahAda = Penilaian::where('username', $data['username'])
+            ->whereRaw(
+                'LOWER(TRIM(nama_kegiatan)) = ?',
+                [Penilaian::normalisasiNama($data['nama_kegiatan'])]
+            )
+            ->exists();
+
+        if ($sudahAda) {
+            return back()->withErrors([
+                'nama_kegiatan' => 'Penilaian untuk siswa dan kegiatan ini sudah ada. Gunakan tombol Edit pada data yang sudah tercatat.'
             ])->withInput();
         }
 
@@ -101,6 +118,10 @@ class PenilaianController extends Controller
         ]);
 
         $penilaian = Penilaian::findOrFail($id);
+
+        // Guru hanya boleh mengubah penilaian yang ia catat sendiri.
+        $this->pastikanPemilik($penilaian);
+
         $penilaian->update($data);
 
         return redirect()->route('guru.penilaian')
@@ -110,9 +131,23 @@ class PenilaianController extends Controller
     public function hapus($id)
     {
         $penilaian = Penilaian::findOrFail($id);
+
+        // Guru hanya boleh menghapus penilaian yang ia catat sendiri.
+        $this->pastikanPemilik($penilaian);
+
         $penilaian->delete();
 
         return redirect()->route('guru.penilaian')
             ->with('success', 'Penilaian berhasil dihapus.');
+    }
+
+    /**
+     * Cegah guru lain mengubah/menghapus nilai dengan menebak id.
+     */
+    private function pastikanPemilik(Penilaian $penilaian): void
+    {
+        if ($penilaian->dicatat_oleh !== session('username')) {
+            abort(403, 'Anda tidak berhak mengubah penilaian milik guru lain.');
+        }
     }
 }

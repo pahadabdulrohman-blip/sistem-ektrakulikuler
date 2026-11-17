@@ -570,10 +570,11 @@
         ->all();
 
     // Data visualisasi: sebaran siswa per kelas.
+    // Memakai accessor kelas_saat_ini agar otomatis mengikuti kenaikan kelas.
     $sebaranKelas = \App\Models\User::where('role', 'siswa')
-        ->pluck('kelas')
-        ->map(function ($kelas) {
-            $kelas = trim((string) $kelas);
+        ->get()
+        ->map(function ($siswa) {
+            $kelas = trim((string) $siswa->kelas_saat_ini);
 
             return $kelas !== '' ? $kelas : 'Belum diisi';
         })
@@ -639,10 +640,12 @@
                 <span class="menu-text">Profil Guru</span>
             </a>
 
-            <a href="{{ route('login') }}">
+            <a href="{{ route('logout.confirm') }}" data-logout>
                 <span class="menu-icon"><i class="fa-solid fa-right-from-bracket"></i></span>
                 <span class="menu-text">Logout</span>
             </a>
+
+@include('partials.logout-form')
 
         </nav>
     </aside>

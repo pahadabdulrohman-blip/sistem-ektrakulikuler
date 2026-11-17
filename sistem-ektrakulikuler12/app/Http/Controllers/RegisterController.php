@@ -20,11 +20,13 @@ class RegisterController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
+            'nama_sekolah' => 'required|string|max:255',
             'username' => 'required|string|max:50|unique:users,username',
             'email' => 'required|email|ends_with:gmail.com|unique:users,email',
             'kelas' => 'required|in:X,XI,XII',
             'password' => 'required|min:8|confirmed',
         ], [
+            'nama_sekolah.required' => 'Nama sekolah wajib diisi.',
             'kelas.required' => 'Kelas wajib dipilih untuk siswa.',
             'kelas.in' => 'Kelas harus salah satu dari X, XI, atau XII.',
         ]);
@@ -33,16 +35,18 @@ class RegisterController extends Controller
 
         User::create([
             'name' => $request->name,
+            'nama_sekolah' => $request->nama_sekolah,
             'username' => $request->username,
             'email' => $request->email,
             'password' => $request->password,
             'role' => 'siswa',
+            'status_pendaftaran' => 'menunggu',
             'kelas' => $kelas,
             'tahun_masuk' => User::tahunMasukDariKelas($kelas),
         ]);
 
         return redirect()
             ->route('login')
-            ->with('success', 'Registrasi berhasil. Silakan login.');
+            ->with('success', 'Registrasi berhasil. Akun Anda menunggu persetujuan admin sebelum dapat login.');
     }
 }

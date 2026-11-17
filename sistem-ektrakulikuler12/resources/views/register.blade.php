@@ -148,6 +148,15 @@
             required
         >
 
+        <label>Nama Sekolah</label>
+        <input
+            type="text"
+            name="nama_sekolah"
+            placeholder= "Masukkan nama sekolah"
+            value="{{ old('nama_sekolah') }}"
+            required
+        >
+
         <label>Username</label>
         <input
             type="text"

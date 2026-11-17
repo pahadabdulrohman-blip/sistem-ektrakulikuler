@@ -187,8 +187,16 @@
         <i class="fa-solid fa-futbol"></i>Ekstrakurikuler
     </a>
 
-    <a href="{{ route('admin.guru.index') }}" class="menu">
-        <i class="fa-solid fa-chalkboard-user"></i>Akun Guru
+    <a href="{{ route('admin.data.guru') }}" class="menu">
+        <i class="fa-solid fa-chalkboard-user"></i>Data Guru
+    </a>
+
+    <a href="{{ route('admin.data.siswa') }}" class="menu">
+        <i class="fa-solid fa-users"></i>Data Siswa
+    </a>
+
+    <a href="{{ route('admin.penerimaan-siswa.index') }}" class="menu">
+        <i class="fa-solid fa-user-check"></i>Penerimaan Siswa
     </a>
 
     <a href="{{ route('admin.penilaian') }}" class="menu">

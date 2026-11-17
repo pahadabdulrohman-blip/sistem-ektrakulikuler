@@ -10,6 +10,8 @@ use App\Models\Ekstrakurikuler;
 use App\Models\PendaftaranEkstrakurikuler;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Str;
 
 class EkstrakurikulerController extends Controller
 {
@@ -33,20 +35,56 @@ class EkstrakurikulerController extends Controller
     public function prosesLogin(Request $request)
     {
         $request->validate([
-            'role' => 'required|in:admin,guru,siswa',
             'username' => 'required|string',
             'password' => 'required|string',
         ]);
 
-        $user = User::where('username', $request->username)
-            ->where('role', $request->role)
-            ->first();
+        // Batasi percobaan login: maksimal 5 kali per menit untuk
+        // kombinasi username + alamat IP. Mencegah brute force password.
+        $kunciThrottle = 'login:' . Str::lower((string) $request->username)
+            . '|' . $request->ip();
+
+        if (RateLimiter::tooManyAttempts($kunciThrottle, 5)) {
+            $detik = RateLimiter::availableIn($kunciThrottle);
+
+            return back()
+                ->withInput($request->only('username'))
+                ->with(
+                    'error',
+                    'Terlalu banyak percobaan login. Coba lagi dalam '
+                        . $detik . ' detik.'
+                );
+        }
+
+        $user = User::where('username', $request->username)->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
+            // Hitung percobaan gagal, reset otomatis setelah 1 menit.
+            RateLimiter::hit($kunciThrottle, 60);
+
             return back()
-                ->withInput($request->only('username', 'role'))
-                ->with('error', 'Username, password, atau role salah!');
+                ->withInput($request->only('username'))
+                ->with('error', 'Username atau password salah!');
         }
+
+        if ($user->role === 'siswa') {
+            $status = $user->status_pendaftaran ?? 'diterima';
+
+            if ($status === 'menunggu') {
+                return back()
+                    ->withInput($request->only('username'))
+                    ->with('error', 'Pendaftaran Anda masih menunggu persetujuan admin.');
+            }
+
+            if ($status === 'ditolak') {
+                return back()
+                    ->withInput($request->only('username'))
+                    ->with('error', 'Pendaftaran Anda telah ditolak. Silakan hubungi admin.');
+            }
+        }
+
+        // Login berhasil: bersihkan hitungan percobaan gagal.
+        RateLimiter::clear($kunciThrottle);
 
         $request->session()->regenerate();
 
@@ -61,6 +99,8 @@ class EkstrakurikulerController extends Controller
             'admin' => redirect()->route('dashboard.admin'),
             'guru' => redirect()->route('dashboard.guru'),
             'siswa' => redirect()->route('dashboard.siswa'),
+            default => redirect()->route('login')
+                ->with('error', 'Role pengguna tidak dikenali.'),
         };
     }
 

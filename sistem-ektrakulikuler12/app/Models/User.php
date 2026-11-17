@@ -18,6 +18,8 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'status_pendaftaran',
+        'nama_sekolah',
         'kelas',
         'tahun_masuk',
     ];

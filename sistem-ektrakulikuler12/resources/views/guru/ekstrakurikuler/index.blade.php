@@ -353,10 +353,11 @@
         <i class="fa-solid fa-user"></i>Profil
     </a>
 
-    <a href="{{ route('logout') }}" class="menu"
-       onclick="return confirm('Yakin ingin keluar?')">
+    <a href="{{ route('logout.confirm') }}" class="menu" data-logout="konfirmasi">
         <i class="fa-solid fa-right-from-bracket"></i>Logout
     </a>
+
+@include('partials.logout-form')
 
 </aside>
 
