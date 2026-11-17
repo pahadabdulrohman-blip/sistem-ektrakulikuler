@@ -8,7 +8,7 @@
         ->first();
 
     $fotoUrl = ($fotoProfil && $fotoProfil->photo_path)
-        ? asset('storage/' . $fotoProfil->photo_path)
+        ? $fotoProfil->url
         : null;
 
     $inisial = strtoupper(substr($username, 0, 1));

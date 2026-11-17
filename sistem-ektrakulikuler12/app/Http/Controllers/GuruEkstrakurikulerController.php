@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Ekstrakurikuler;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
 class GuruEkstrakurikulerController extends Controller
@@ -80,6 +81,7 @@ class GuruEkstrakurikulerController extends Controller
             'judul' => 'Edit Ekstrakurikuler',
             'action' => route('guru.ekstrakurikuler.update', $id),
             'method' => 'PUT',
+            'fotos' => $item->fotoKegiatan()->latest()->get(),
         ]);
     }
 
@@ -98,6 +100,10 @@ class GuruEkstrakurikulerController extends Controller
     public function destroy($id)
     {
         $item = Ekstrakurikuler::findOrFail($id);
+
+        // Hapus juga semua file foto kegiatan milik ekskul ini.
+        Storage::disk('public')->deleteDirectory('foto-kegiatan/' . $item->id);
+
         $item->delete();
 
         return redirect()->route('guru.ekstrakurikuler.index')

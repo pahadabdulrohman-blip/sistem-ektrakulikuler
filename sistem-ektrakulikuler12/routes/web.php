@@ -17,6 +17,7 @@ use App\Http\Controllers\AbsensiController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\PenilaianController;
 use App\Http\Controllers\ProfilePhotoController;
+use App\Http\Controllers\FotoKegiatanController;
 
 use App\Models\PasswordRequest;
 use App\Models\Ekstrakurikuler;
@@ -56,7 +57,7 @@ Route::get('/register', [
 Route::post('/register', [
     RegisterController::class,
     'store',
-])->name('register.store');
+])->middleware('throttle:6,1')->name('register.store');
 
 /*
 |--------------------------------------------------------------------------
@@ -456,11 +457,11 @@ Route::middleware('role:admin,guru,siswa')->group(function () {
         $filename = basename($filename);
         $path = 'foto-profil/' . $filename;
 
-        if (!Storage::disk('public')->exists($path)) {
+        if (!Storage::disk('local')->exists($path)) {
             abort(404, 'Foto profil tidak ditemukan.');
         }
 
-        return Storage::disk('public')->response($path);
+        return Storage::disk('local')->response($path);
     })->name('profil.foto');
 
     // UPLOAD FOTO PROFIL
@@ -469,6 +470,31 @@ Route::middleware('role:admin,guru,siswa')->group(function () {
         ProfilePhotoController::class,
         'upload',
     ])->name('profil.foto.upload');
+});
+
+/*
+|--------------------------------------------------------------------------
+| FOTO KEGIATAN EKSTRAKURIKULER (ADMIN & GURU)
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware('role:admin,guru')->group(function () {
+
+    // UNGGAH FOTO KEGIATAN
+
+    Route::post('/ekstrakurikuler/{id}/foto', [
+        FotoKegiatanController::class,
+        'store',
+    ])->whereNumber('id')->name('ekstrakurikuler.foto.store');
+
+    // HAPUS FOTO KEGIATAN
+
+    Route::delete('/ekstrakurikuler/{id}/foto/{foto}', [
+        FotoKegiatanController::class,
+        'destroy',
+    ])->whereNumber('id')
+      ->whereNumber('foto')
+      ->name('ekstrakurikuler.foto.hapus');
 });
 
 /*
@@ -542,7 +568,7 @@ Route::post('/lupa-password', function (Request $request) {
         'Permintaan ubah password berhasil dikirim. Password baru akan dikirim ke email terdaftar setelah diproses admin.'
     );
 
-})->name('password.email');
+})->middleware('throttle:5,1')->name('password.email');
 
 /*
 |--------------------------------------------------------------------------

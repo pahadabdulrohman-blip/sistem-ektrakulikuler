@@ -192,6 +192,14 @@
 
         </form>
 
+        @if($item->exists)
+            @include('partials.foto-kegiatan', [
+                'ekskul' => $item,
+                'fotos' => $fotos ?? collect(),
+                'bisaKelola' => true,
+            ])
+        @endif
+
     </div>
 </div>
 

@@ -41,9 +41,10 @@ class ProfilePhotoController extends Controller
             ->where('role', $role)
             ->first();
 
-        // Simpan foto baru ke storage/app/public/foto-profil
+        // Simpan foto baru ke storage/app/private/foto-profil (tidak bisa
+        // diakses langsung dari browser; disajikan lewat route terautentikasi).
         $pathBaru = $request->file('foto')
-            ->store('foto-profil', 'public');
+            ->store('foto-profil', 'local');
 
         // Ambil lokasi foto lama
         $pathLama = $fotoLama?->photo_path;
@@ -59,9 +60,13 @@ class ProfilePhotoController extends Controller
             ]
         );
 
-        // Hapus foto lama setelah data berhasil diperbarui
-        if ($pathLama && Storage::disk('public')->exists($pathLama)) {
-            Storage::disk('public')->delete($pathLama);
+        // Hapus foto lama setelah data berhasil diperbarui.
+        if ($pathLama) {
+            foreach (['local', 'public'] as $disk) {
+                if (Storage::disk($disk)->exists($pathLama)) {
+                    Storage::disk($disk)->delete($pathLama);
+                }
+            }
         }
 
         return back()->with('success', 'Foto profil berhasil diperbarui!');

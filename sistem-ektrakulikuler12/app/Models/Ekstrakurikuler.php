@@ -26,6 +26,17 @@ class Ekstrakurikuler extends Model
     }
 
     /**
+     * Galeri foto kegiatan milik ekstrakurikuler ini.
+     */
+    public function fotoKegiatan()
+    {
+        return $this->hasMany(
+            EkstrakurikulerFoto::class,
+            'ekstrakurikuler_id'
+        );
+    }
+
+    /**
      * Rapikan nama: hapus spasi berlebih dan spasi tersembunyi (NBSP).
      */
     public static function rapikanNama(?string $nama): string

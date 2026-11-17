@@ -229,6 +229,12 @@
             </div>
         </div>
 
+        @include('partials.foto-kegiatan', [
+            'ekskul' => $ekskul,
+            'fotos' => $fotos ?? collect(),
+            'bisaKelola' => true,
+        ])
+
         <div class="buttons">
             <a href="{{ route('admin.ekstrakurikuler') }}" class="btn back-list">
                 <i class="fa-solid fa-arrow-left"></i> Daftar Ekskul

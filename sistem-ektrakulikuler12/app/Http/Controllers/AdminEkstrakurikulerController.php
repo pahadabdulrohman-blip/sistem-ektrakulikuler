@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Ekstrakurikuler;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
 class AdminEkstrakurikulerController extends Controller
@@ -191,6 +192,7 @@ class AdminEkstrakurikulerController extends Controller
         return view('admin.ekstrakurikuler-detail', [
             'ekskul' => $ekskul,
             'ekstrakurikuler' => $ekskul,
+            'fotos' => $item->fotoKegiatan()->latest()->get(),
         ]);
     }
 
@@ -212,6 +214,7 @@ class AdminEkstrakurikulerController extends Controller
         return view('admin.ekstrakurikuler-edit', [
             'ekskul' => $ekskul,
             'ekstrakurikuler' => $ekskul,
+            'fotos' => $item->fotoKegiatan()->latest()->get(),
         ]);
     }
 
@@ -256,6 +259,9 @@ class AdminEkstrakurikulerController extends Controller
                 ->route('admin.ekstrakurikuler')
                 ->with('error', 'Data ekstrakurikuler tidak ditemukan.');
         }
+
+        // Hapus juga semua file foto kegiatan milik ekskul ini.
+        Storage::disk('public')->deleteDirectory('foto-kegiatan/' . $item->id);
 
         $item->delete();
 

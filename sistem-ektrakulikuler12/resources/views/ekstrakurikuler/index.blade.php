@@ -272,6 +272,33 @@
             cursor: not-allowed;
         }
 
+        .aksi-kartu {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: stretch;
+        }
+
+        .btn-detail {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            background: #e0f2fe;
+            color: #0369a1;
+            text-decoration: none;
+            padding: 9px 14px;
+            border-radius: 9px;
+            font-size: 12.5px;
+            font-weight: 600;
+            min-width: 90px;
+            transition: .2s;
+        }
+
+        .btn-detail:hover {
+            background: #bae6fd;
+        }
+
         .aksi-pilihan {
             display: flex;
             flex-wrap: wrap;
@@ -425,6 +452,16 @@
                 font-size: 19px;
             }
 
+            .aksi-kartu {
+                width: 100%;
+                flex-direction: row;
+            }
+
+            .aksi-kartu .btn-pilih,
+            .aksi-kartu .btn-detail {
+                flex: 1;
+            }
+
             .aksi-pilihan {
                 align-items: stretch;
                 flex-direction: column;
@@ -547,12 +584,21 @@
 
                     </div>
 
-                    <button
-                        type="button"
-                        class="btn-pilih"
-                        onclick="pilihEkskul(this)">
-                        Pilih
-                    </button>
+                    <div class="aksi-kartu">
+
+                        <button
+                            type="button"
+                            class="btn-pilih"
+                            onclick="pilihEkskul(this)">
+                            Pilih
+                        </button>
+
+                        <a href="{{ route('ekstrakurikuler.detail', $item->id) }}"
+                           class="btn-detail">
+                            <i class="fa-solid fa-images"></i> Foto
+                        </a>
+
+                    </div>
 
                 </div>
 

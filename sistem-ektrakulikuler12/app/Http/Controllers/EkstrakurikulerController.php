@@ -56,11 +56,28 @@ class EkstrakurikulerController extends Controller
                 );
         }
 
+        // Batasi juga per alamat IP supaya penyerang tidak bisa mencoba
+        // banyak username berbeda dari satu jaringan (password spraying).
+        $kunciIp = 'login-ip:' . $request->ip();
+
+        if (RateLimiter::tooManyAttempts($kunciIp, 30)) {
+            $detik = RateLimiter::availableIn($kunciIp);
+
+            return back()
+                ->withInput($request->only('username'))
+                ->with(
+                    'error',
+                    'Terlalu banyak percobaan login dari jaringan ini. '
+                        . 'Coba lagi dalam ' . $detik . ' detik.'
+                );
+        }
+
         $user = User::where('username', $request->username)->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
             // Hitung percobaan gagal, reset otomatis setelah 1 menit.
             RateLimiter::hit($kunciThrottle, 60);
+            RateLimiter::hit($kunciIp, 60);
 
             return back()
                 ->withInput($request->only('username'))
@@ -240,7 +257,9 @@ class EkstrakurikulerController extends Controller
         // Mengambil detail berdasarkan ID dari database
         $ekskul = Ekstrakurikuler::findOrFail($id);
 
-        return view('ekstrakurikuler.detail', compact('ekskul'));
+        $fotos = $ekskul->fotoKegiatan()->latest()->get();
+
+        return view('ekstrakurikuler.detail', compact('ekskul', 'fotos'));
     }
 
     /*

@@ -324,7 +324,7 @@
 <div style="margin: 20px 0;">
     @if ($fotoProfil)
         <img
-            src="{{ asset('storage/' . $fotoProfil->photo_path) }}"
+            src="{{ $fotoProfil->url }}"
             alt="Foto Profil"
             style="width:130px;height:130px;object-fit:cover;border-radius:50%;"
         >

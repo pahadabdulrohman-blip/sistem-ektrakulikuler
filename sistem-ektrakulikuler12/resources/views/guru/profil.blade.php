@@ -356,7 +356,7 @@
             <div class="avatar">
                 @if ($fotoProfil && $fotoProfil->photo_path)
                     <img
-                        src="{{ asset('storage/' . $fotoProfil->photo_path) }}"
+                        src="{{ $fotoProfil->url }}"
                         alt="Foto Profil Guru"
                     >
                 @else

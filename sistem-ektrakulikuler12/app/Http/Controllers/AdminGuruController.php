@@ -86,7 +86,11 @@ class AdminGuruController extends Controller
             ->first();
 
         if ($foto && $foto->photo_path) {
-            Storage::disk('public')->delete($foto->photo_path);
+            foreach (['local', 'public'] as $disk) {
+                if (Storage::disk($disk)->exists($foto->photo_path)) {
+                    Storage::disk($disk)->delete($foto->photo_path);
+                }
+            }
         }
 
         ProfilePhoto::where('username', $guru->username)

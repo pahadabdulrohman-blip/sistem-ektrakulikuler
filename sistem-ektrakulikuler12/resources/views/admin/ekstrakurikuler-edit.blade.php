@@ -221,6 +221,12 @@
 
     </form>
 
+    @include('partials.foto-kegiatan', [
+        'ekskul' => $ekstrakurikuler,
+        'fotos' => $fotos ?? collect(),
+        'bisaKelola' => true,
+    ])
+
 </div>
 
     <script src="{{ asset('js/mobile.js') }}"></script>

@@ -15,6 +15,9 @@ return Application::configure(
 
     ->withMiddleware(function (Middleware $middleware) {
 
+        // Header keamanan untuk semua respons.
+        $middleware->append(\App\Http\Middleware\SecurityHeaders::class);
+
         $middleware->alias([
             'role' => \App\Http\Middleware\RoleMiddleware::class,
         ]);

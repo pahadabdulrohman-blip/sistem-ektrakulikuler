@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>{{ $ekskul['nama'] }}</title>
+    <title>{{ $ekskul->nama_ekstrakurikuler }}</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
@@ -193,15 +193,15 @@
         <div class="card">
 
             <div class="icon">
-                @include('partials.ekskul-icon', ['ikon' => $ekskul['icon'] ?? null, 'nama' => $ekskul['nama'] ?? ''])
+                @include('partials.ekskul-icon', ['ikon' => $ekskul->ikon, 'nama' => $ekskul->nama_ekstrakurikuler])
             </div>
 
             <h1>
-                {{ $ekskul['nama'] }}
+                {{ $ekskul->nama_ekstrakurikuler }}
             </h1>
 
             <p class="description">
-                {{ $ekskul['deskripsi'] }}
+                {{ $ekskul->deskripsi ?: 'Belum ada deskripsi.' }}
             </p>
 
             <div class="info">
@@ -209,17 +209,29 @@
                 <h3>Informasi Ekstrakurikuler</h3>
 
                 <p>
-                    Kegiatan {{ $ekskul['nama'] }}
+                    Kegiatan {{ $ekskul->nama_ekstrakurikuler }}
                     merupakan salah satu kegiatan ekstrakurikuler
                     yang tersedia di sekolah.
                 </p>
 
                 <p>
-                    Siswa dapat mengikuti kegiatan sesuai jadwal
-                    yang telah ditentukan oleh sekolah.
+                    <strong>Pembina:</strong>
+                    {{ $ekskul->pembina ?: 'Belum ditentukan' }}<br>
+
+                    <strong>Jadwal:</strong>
+                    {{ $ekskul->jadwal ?: 'Belum ditentukan' }}<br>
+
+                    <strong>Tempat:</strong>
+                    {{ $ekskul->tempat ?: 'Belum ditentukan' }}
                 </p>
 
             </div>
+
+            @include('partials.foto-kegiatan', [
+                'ekskul' => $ekskul,
+                'fotos' => $fotos ?? collect(),
+                'bisaKelola' => false,
+            ])
 
         </div>
 

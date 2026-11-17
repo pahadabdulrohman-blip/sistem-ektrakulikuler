@@ -501,7 +501,7 @@
             <div class="profile-icon">
                 @if ($fotoGuru && $fotoGuru->photo_path)
                     <img
-                        src="{{ asset('storage/' . $fotoGuru->photo_path) }}"
+                        src="{{ $fotoGuru->url }}"
                         alt="Foto Profil {{ $namaGuru }}"
                     >
                 @else
