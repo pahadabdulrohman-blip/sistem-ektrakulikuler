@@ -258,22 +258,72 @@
 
         @media(max-width: 768px) {
             .sidebar {
-                width: 70px;
-                padding: 20px 10px;
+                position: sticky;
+                top: 0;
+                width: 100%;
+                height: auto;
+                padding: 12px 14px;
+                z-index: 100;
+                box-shadow: 0 6px 18px rgba(0, 0, 0, .18);
             }
 
-            .logo h2,
-            .menu span {
-                display: none;
+            .logo {
+                display: flex;
+                align-items: center;
+                gap: 9px;
+                text-align: left;
+                margin-bottom: 9px;
+            }
+
+            .logo i {
+                font-size: 22px;
+                margin-bottom: 0;
+            }
+
+            .logo h2 {
+                display: block;
+                font-size: 18px;
+            }
+
+            .menu {
+                flex-direction: row;
+                gap: 6px;
+                overflow-x: auto;
+                padding-bottom: 3px;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: thin;
             }
 
             .menu a {
-                justify-content: center;
+                flex: 0 0 auto;
+                justify-content: flex-start;
+                padding: 9px 12px;
+                gap: 7px;
+                font-size: 12px;
+                white-space: nowrap;
+                border-radius: 8px;
+            }
+
+            .menu span {
+                display: inline;
+            }
+
+            .menu i {
+                width: auto;
+                font-size: 14px;
             }
 
             .content {
-                margin-left: 70px;
-                padding: 20px;
+                margin-left: 0;
+                padding: 16px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .card {
+                padding: 18px;
             }
 
             .form-grid {
@@ -282,6 +332,38 @@
 
             .full {
                 grid-column: auto;
+            }
+
+            .aksi {
+                flex-wrap: wrap;
+            }
+
+            .aksi .btn {
+                flex: 1 1 auto;
+                text-align: center;
+            }
+
+            table {
+                min-width: 800px;
+            }
+        }
+
+        @media(max-width: 480px) {
+            .content {
+                padding: 12px;
+            }
+
+            .header h1 {
+                font-size: 21px;
+            }
+
+            .card {
+                padding: 14px;
+                border-radius: 13px;
+            }
+
+            .card-title h2 {
+                font-size: 17px;
             }
         }
     </style>

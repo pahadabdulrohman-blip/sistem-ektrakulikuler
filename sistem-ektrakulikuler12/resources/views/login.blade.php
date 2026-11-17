@@ -709,6 +709,8 @@
 
                 max-width: 600px;
 
+                min-height: 0;
+
                 border-radius: 25px;
             }
 
@@ -773,6 +775,60 @@
             .forgot {
 
                 text-align: right;
+            }
+        }
+
+        @media (max-width: 380px) {
+
+            body {
+
+                padding: 6px;
+            }
+
+            .login-wrapper {
+
+                border-radius: 16px;
+            }
+
+            .right-side {
+
+                padding: 28px 16px;
+            }
+
+            .welcome h2 {
+
+                font-size: 25px;
+            }
+
+            .welcome h2 span {
+
+                font-size: 23px;
+            }
+
+            .form-control {
+
+                height: 54px;
+
+                font-size: 14px;
+            }
+
+            .btn-login {
+
+                height: 54px;
+
+                font-size: 14px;
+            }
+
+            .form-options {
+
+                flex-direction: column;
+
+                gap: 8px;
+            }
+
+            .forgot {
+
+                text-align: left;
             }
         }
 

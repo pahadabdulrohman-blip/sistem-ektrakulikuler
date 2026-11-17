@@ -444,10 +444,83 @@
             }
         }
 
-        @media (max-width: 750px) {
+        @media (max-width: 768px) {
+
+            .app {
+                display: block;
+            }
 
             .sidebar {
+                position: sticky;
+                top: 0;
+
+                width: 100%;
+                min-height: 0;
+                height: auto;
+
+                padding: 12px 16px;
+
+                z-index: 30;
+
+                box-shadow: 0 6px 18px rgba(4, 66, 112, 0.18);
+            }
+
+            .brand {
+                padding: 0 0 10px;
+                margin-bottom: 10px;
+                gap: 10px;
+            }
+
+            .brand-icon {
+                width: 34px;
+                height: 34px;
+                border-radius: 10px;
+                font-size: 16px;
+            }
+
+            .brand h2 {
+                font-size: 15px;
+                line-height: 1.2;
+            }
+
+            .brand h2 br {
                 display: none;
+            }
+
+            .menu {
+                display: flex;
+                gap: 6px;
+
+                margin-top: 0;
+
+                overflow-x: auto;
+                padding-bottom: 4px;
+
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: thin;
+            }
+
+            .menu-title {
+                display: none;
+            }
+
+            .menu a {
+                flex: 0 0 auto;
+
+                margin-bottom: 0;
+                padding: 9px 13px;
+
+                gap: 8px;
+
+                font-size: 13px;
+                white-space: nowrap;
+
+                border-radius: 9px;
+            }
+
+            .menu a i {
+                width: auto;
+                font-size: 14px;
             }
 
             .main {
@@ -456,6 +529,8 @@
             }
 
             .topbar {
+                position: static;
+
                 height: 62px;
                 padding: 0 18px;
 
@@ -464,10 +539,7 @@
             }
 
             .mobile-menu {
-                display: block;
-
-                font-size: 22px;
-                color: white;
+                display: none;
             }
 
             .page-title h1 {

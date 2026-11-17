@@ -242,29 +242,105 @@
             }
         }
 
-        @media(max-width: 700px) {
+        @media(max-width: 768px) {
             .sidebar {
-                position: relative;
+                position: sticky;
+                top: 0;
                 width: 100%;
                 height: auto;
+                padding: 12px 14px;
+                z-index: 100;
+                overflow: visible;
+                box-shadow: 0 6px 18px rgba(0, 0, 0, .2);
+            }
+
+            .logo {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                text-align: left;
+                margin-bottom: 9px;
+            }
+
+            .logo h2 {
+                font-size: 17px;
+            }
+
+            .logo p {
+                display: none;
+            }
+
+            .menu {
+                display: flex;
+                gap: 6px;
+                overflow-x: auto;
+                padding-bottom: 3px;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: thin;
+            }
+
+            .menu a {
+                flex: 0 0 auto;
+                margin-bottom: 0;
+                padding: 9px 12px;
+                font-size: 12px;
+                white-space: nowrap;
+            }
+
+            .badge {
+                margin-left: 4px;
+                min-width: 19px;
+                height: 19px;
+                font-size: 10px;
             }
 
             .content {
                 margin-left: 0;
-                padding: 25px 18px;
+                padding: 18px;
             }
 
             .header {
                 flex-direction: column;
                 align-items: flex-start;
+                gap: 14px;
+                margin-bottom: 20px;
             }
 
             .header h1 {
-                font-size: 28px;
+                font-size: 25px;
+            }
+
+            .header p {
+                font-size: 14px;
             }
 
             .grid {
                 grid-template-columns: 1fr;
+                gap: 14px;
+            }
+
+            .card {
+                min-height: 0;
+                padding: 22px;
+            }
+        }
+
+        @media(max-width: 480px) {
+            .content {
+                padding: 12px;
+            }
+
+            .header h1 {
+                font-size: 22px;
+            }
+
+            .add-btn {
+                width: 100%;
+                text-align: center;
+            }
+
+            .card {
+                padding: 18px;
             }
         }
     </style>

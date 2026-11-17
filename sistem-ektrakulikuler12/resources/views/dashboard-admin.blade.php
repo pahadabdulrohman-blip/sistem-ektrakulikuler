@@ -392,48 +392,154 @@ a.item:hover strong{
 
 }
 
-@media(max-width:600px){
+@media(max-width:768px){
 
     .sidebar{
-        width:70px;
+        position: sticky;
+        top: 0;
+
+        width:100%;
+        height:auto;
+
+        padding:12px 14px;
+
+        z-index:200;
+
+        box-shadow:0 6px 18px rgba(0,0,0,.22);
     }
 
-    .logo h2,
-    .menu span{
-        display:none;
+    .logo{
+        display:flex;
+        align-items:center;
+        gap:10px;
+
+        text-align:left;
+
+        margin-bottom:10px;
+    }
+
+    .logo i{
+        font-size:24px;
+    }
+
+    .logo h2{
+        margin-top:0;
+        font-size:19px;
+    }
+
+    .menu{
+        display:flex;
+        gap:6px;
+
+        overflow-x:auto;
+
+        padding-bottom:3px;
+
+        -webkit-overflow-scrolling:touch;
+        scrollbar-width:thin;
     }
 
     .menu a{
-        justify-content:center;
+        flex:0 0 auto;
+
+        justify-content:flex-start;
+
+        margin-bottom:0;
+
+        padding:9px 12px;
+
+        font-size:12px;
+
+        white-space:nowrap;
     }
 
     .notification-badge{
-        position:absolute;
-        top:0;
-        right:0;
+        position:static;
+
+        margin-left:0;
+
+        min-width:20px;
+        height:20px;
+
+        font-size:10px;
     }
 
     .content{
-        margin-left:70px;
-        padding:20px;
+        margin-left:0;
+
+        padding:16px;
     }
 
     .cards{
-        grid-template-columns:1fr;
+        grid-template-columns:repeat(2, minmax(0, 1fr));
+        gap:12px;
+    }
+
+    .card{
+        padding:17px;
     }
 
     .header{
-        padding:20px;
+        padding:17px;
+
+        gap:12px;
+
+        flex-wrap:wrap;
     }
 
     .header h1{
-        font-size:22px;
+        font-size:21px;
     }
 
     .header p{
         font-size:12px;
     }
 
+    .notification-top{
+        width:42px;
+        height:42px;
+        font-size:18px;
+    }
+
+    .request{
+        gap:11px;
+    }
+
+    .notification-card{
+        padding:17px;
+    }
+}
+
+@media(max-width:480px){
+
+    .content{
+        padding:12px;
+    }
+
+    .cards{
+        grid-template-columns:1fr;
+    }
+
+    .stat h2{
+        font-size:22px;
+    }
+
+    .stat p{
+        font-size:12px;
+    }
+
+    .notification-header h2{
+        font-size:17px;
+    }
+
+    .request-info strong{
+        font-size:13px;
+    }
+
+    .status{
+        font-size:10px;
+        padding:4px 8px;
+    }
 }
 
 </style>

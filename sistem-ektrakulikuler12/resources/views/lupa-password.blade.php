@@ -175,8 +175,44 @@
         }
 
         @media(max-width:600px) {
+            body {
+                align-items: flex-start;
+                padding: 14px;
+            }
+
             .card {
                 padding: 30px 22px;
+                border-radius: 18px;
+                margin: 8px 0;
+            }
+
+            h1 {
+                font-size: 25px;
+            }
+        }
+
+        @media(max-width:380px) {
+            body {
+                padding: 10px;
+            }
+
+            .card {
+                padding: 24px 16px;
+            }
+
+            .icon {
+                width: 62px;
+                height: 62px;
+                font-size: 26px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            .subtitle {
+                font-size: 13px;
+                margin-bottom: 22px;
             }
         }
     </style>

@@ -291,6 +291,51 @@
 
             .card {
                 padding: 20px;
+                border-radius: 14px;
+            }
+
+            h1 {
+                font-size: 25px;
+            }
+
+            .kategori {
+                margin-top: 24px;
+            }
+
+            .kategori h2 {
+                font-size: 20px;
+            }
+
+            .jadwal {
+                padding: 16px;
+            }
+
+            .jadwal h3 {
+                font-size: 17px;
+                overflow-wrap: anywhere;
+            }
+
+            .info {
+                font-size: 14px;
+                overflow-wrap: anywhere;
+            }
+        }
+
+        @media(max-width: 380px) {
+            body {
+                padding: 10px;
+            }
+
+            .card {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 21px;
+            }
+
+            .kategori h2 {
+                font-size: 18px;
             }
         }
     </style>
