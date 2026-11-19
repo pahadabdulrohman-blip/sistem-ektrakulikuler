@@ -110,7 +110,7 @@ Setiap perubahan env var atau Start command **wajib diikuti redeploy**. Config d
    ```bash
    curl -sI https://sistem-ektrakulikuler.ethiodeploy.app/login | grep -i x-aktivia
    ```
-   Nilai yang diharapkan: `x-aktivia-build: 20261119-mig-diag` dan
+   Nilai yang diharapkan: `x-aktivia-build: 20261119-sqlite-tmp` dan
    `x-aktivia-db: sqlite|no-url|file` (fallback aktif) atau
    `mysql|url|<host-addon>` (addon sudah terbaca). Header `x-aktivia-mig`
    menampilkan status auto-migrate; jika ada `users=tidak`, cek baris `err=`.

@@ -100,7 +100,7 @@ Jika addon database EthioDeploy belum terbaca (`DATABASE_URL` kosong dan MySQL m
 
 Header diagnostik produksi:
 
-- `X-AKTIVIA-BUILD: 20261119-mig-diag`
+- `X-AKTIVIA-BUILD: 20261119-sqlite-tmp`
 - `X-AKTIVIA-DB: sqlite|no-url|file` → fallback aktif
 - `X-AKTIVIA-DB: mysql|url|<host-addon>` → addon sudah terbaca (fallback tidak dipakai)
 - `X-AKTIVIA-MIG` → status auto-migrate (sementara, untuk diagnostik deploy)

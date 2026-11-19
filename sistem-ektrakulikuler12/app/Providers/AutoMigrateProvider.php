@@ -37,10 +37,9 @@ class AutoMigrateProvider extends ServiceProvider
 
         $koneksi = (string) config('database.default');
 
-        $folder = storage_path('framework');
-        if (! is_writable($folder)) {
-            $folder = sys_get_temp_dir();
-        }
+        // Sama seperti file SQLite fallback: memakai direktori temp yang
+        // writable di container.
+        $folder = sys_get_temp_dir();
 
         $penanda = $folder.DIRECTORY_SEPARATOR.'.db-siap-'.md5(
             $koneksi.'|'.(string) config('database.connections.'.$koneksi.'.database')

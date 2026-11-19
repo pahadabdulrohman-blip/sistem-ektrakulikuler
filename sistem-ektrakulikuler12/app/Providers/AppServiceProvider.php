@@ -46,12 +46,12 @@ class AppServiceProvider extends ServiceProvider
             return;
         }
 
-        $folder = storage_path('framework');
-        if (! is_writable($folder)) {
-            $folder = sys_get_temp_dir();
-        }
+        // storage/framework di image deploy bisa read-only untuk PHP-FPM.
+        // Direktori temp proses selalu writable dan tetap hilang saat deploy,
+        // sehingga aman untuk fallback sementara.
+        $folder = sys_get_temp_dir();
 
-        $berkas = $folder.DIRECTORY_SEPARATOR.'fallback.sqlite';
+        $berkas = $folder.DIRECTORY_SEPARATOR.'aktivia-fallback.sqlite';
 
         config([
             'database.default' => 'sqlite',
