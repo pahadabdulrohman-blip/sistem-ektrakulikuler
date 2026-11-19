@@ -608,6 +608,8 @@ SESSION_SECURE_COOKIE=true
 
 Document root harus mengarah ke folder `public/`. Folder `storage/` dan `bootstrap/cache/` harus writable.
 
+Untuk deploy di **EthioDeploy**, ikuti [DEPLOY-ETHIODEPLOY.md](DEPLOY-ETHIODEPLOY.md): env var diset di dashboard (bukan `.env`), wajib redeploy setelah mengubahnya, dan Start command harus `php artisan migrate --force && ethiodeploy-start`.
+
 ### 15.3 Izin Folder
 
 Pastikan writable:

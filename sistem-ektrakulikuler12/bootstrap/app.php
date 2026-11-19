@@ -22,6 +22,10 @@ return Application::configure(
 
     ->withMiddleware(function (Middleware $middleware) {
 
+        // Proxy (nginx / platform deploy) menghentikan HTTPS, jadi Laravel
+        // harus mempercayai header X-Forwarded-* agar URL tetap https://.
+        $middleware->trustProxies(at: '*');
+
         // Header keamanan untuk semua respons.
         $middleware->append(\App\Http\Middleware\SecurityHeaders::class);
 

@@ -257,6 +257,8 @@ Pastikan tidak ada file temporary (`temp_*.php`) atau file uji di `public/` yang
 
 ## 12. Error 500 Saat Login Setelah Deploy
 
+> **Deploy di EthioDeploy?** Gunakan panduan khusus [DEPLOY-ETHIODEPLOY.md](DEPLOY-ETHIODEPLOY.md). Di platform itu `.env` tidak dibaca dari repo, env var harus diset di dashboard dan diikuti **redeploy**, serta koneksi DB harus memakai addon MySQL/Postgres (SQLite dihapus setiap deploy).
+
 ### Gejala
 
 - Halaman `GET /login` **tampil normal**, tetapi menekan tombol Login menghasilkan HTTP 500.

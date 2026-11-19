@@ -70,6 +70,8 @@
 | [Bug Fixing Log](docs/BUG-FIXING.md) | Markdown | Sumber catatan perbaikan bug dan hasil verifikasi |
 | [Dokumentasi Proyek](docs/DOKUMENTASI-PROYEK.md) | Markdown | Dokumentasi lengkap gabungan (arsitektur, fitur, rute, database, pengujian) |
 | [Panduan Penggunaan](docs/PANDUAN-PENGGUNAAN.md) | Markdown | Panduan ringkas cara pakai aplikasi |
+| [Panduan Deploy EthioDeploy](docs/AKTIVIA-Deploy-EthioDeploy.docx) | **Word (.docx)** | Langkah deploy produksi, env var, addon DB, dan Start command |
+| [Panduan Deploy EthioDeploy](docs/DEPLOY-ETHIODEPLOY.md) | Markdown | Sumber panduan deploy ke `ethiodeploy.app` |
 | [Troubleshooting](docs/TROUBLESHOOTING.md) | Markdown | Masalah umum dan solusinya |
 | [Diagram Use Case](docs/use-case-diagram.png) | Gambar | Diagram use case sistem (versi HTML: `docs/use-case-diagram.html`) |
 
@@ -159,7 +161,15 @@ tests/
 
 Contoh alamat deployment proyek: `https://sistem-ektrakulikuler.ethiodeploy.app`
 
-Untuk produksi, pastikan `APP_ENV=production`, `APP_DEBUG=false`, dan `SESSION_SECURE_COOKIE=true` bila memakai HTTPS.
+Panduan lengkap: [docs/DEPLOY-ETHIODEPLOY.md](docs/DEPLOY-ETHIODEPLOY.md)
+
+Poin penting untuk EthioDeploy:
+
+- Environment variable diset di **dashboard**, bukan dengan mengedit `.env` (file `.env` tidak ikut ke GitHub).
+- Setelah mengubah env var, **redeploy** wajib karena config di-cache saat container start.
+- Gunakan addon **MySQL/Postgres**, jangan SQLite (datanya hilang tiap deploy).
+- Start command: `php artisan migrate --force && ethiodeploy-start`.
+- Untuk produksi, `APP_ENV=production`, `APP_DEBUG=false`, dan `SESSION_SECURE_COOKIE=true`.
 
 ---
 

@@ -263,3 +263,4 @@ New-Docx (Join-Path $Folder 'MANUAL.md') (Join-Path $Folder 'AKTIVIA-User-Manual
 New-Docx (Join-Path $Folder 'TECH-DOCS.md') (Join-Path $Folder 'AKTIVIA-Technical-Documentation.docx') 'AKTIVIA - Technical Documentation'
 New-Docx (Join-Path $Folder 'API-DOCS.md') (Join-Path $Folder 'AKTIVIA-REST-API.docx') 'AKTIVIA - REST API v1'
 New-Docx (Join-Path $Folder 'BUG-FIXING.md') (Join-Path $Folder 'AKTIVIA-Bug-Fixing.docx') 'AKTIVIA - Bug Fixing Log'
+New-Docx (Join-Path $Folder 'DEPLOY-ETHIODEPLOY.md') (Join-Path $Folder 'AKTIVIA-Deploy-EthioDeploy.docx') 'AKTIVIA - Deploy ke EthioDeploy'
