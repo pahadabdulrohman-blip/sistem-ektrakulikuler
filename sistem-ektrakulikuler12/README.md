@@ -51,12 +51,18 @@
 
 ## 📚 Dokumentasi
 
-| Dokumen | Isi |
-|---|---|
-| [Dokumentasi Proyek](docs/DOKUMENTASI-PROYEK.md) | Arsitektur, struktur, database, daftar rute, alur fitur, keamanan, pengujian |
-| [Panduan Penggunaan](docs/PANDUAN-PENGGUNAAN.md) | Cara pakai aplikasi untuk Admin, Guru, dan Siswa |
-| [Troubleshooting](docs/TROUBLESHOOTING.md) | Masalah umum dan solusinya |
-| [Diagram Use Case](docs/use-case-diagram.png) | Diagram use case sistem (versi HTML: `docs/use-case-diagram.html`) |
+| Dokumen | Format | Isi |
+|---|---|---|
+| [AKTIVIA User Manual](docs/AKTIVIA-User-Manual.docx) | **Word (.docx)** | Manual pengguna akhir — siap dibuka di Microsoft Word dan dicetak (9 halaman) |
+| [AKTIVIA Technical Documentation](docs/AKTIVIA-Technical-Documentation.docx) | **Word (.docx)** | Dokumentasi teknis lengkap — siap dibuka di Word (14 halaman) |
+| [User Manual](docs/MANUAL.md) | Markdown | Sumber manual: prosedur Admin, Guru, Siswa, pengelolaan foto, glosarium |
+| [Technical Docs](docs/TECH-DOCS.md) | Markdown | Sumber tech docs: arsitektur, database, model, controller, middleware, rute, keamanan, deployment |
+| [Dokumentasi Proyek](docs/DOKUMENTASI-PROYEK.md) | Markdown | Dokumentasi lengkap gabungan (arsitektur, fitur, rute, database, pengujian) |
+| [Panduan Penggunaan](docs/PANDUAN-PENGGUNAAN.md) | Markdown | Panduan ringkas cara pakai aplikasi |
+| [Troubleshooting](docs/TROUBLESHOOTING.md) | Markdown | Masalah umum dan solusinya |
+| [Diagram Use Case](docs/use-case-diagram.png) | Gambar | Diagram use case sistem (versi HTML: `docs/use-case-diagram.html`) |
+
+> File `.docx` dihasilkan dari sumber Markdown oleh [`docs/generate-docx.ps1`](docs/generate-docx.ps1). Untuk memperbarui setelah mengedit Markdown, jalankan: `powershell -ExecutionPolicy Bypass -File docs\generate-docx.ps1`
 
 ## 🚀 Quick Start
 
