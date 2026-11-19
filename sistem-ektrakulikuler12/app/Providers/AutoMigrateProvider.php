@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Models\User;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 use Throwable;
@@ -10,9 +12,9 @@ use Throwable;
 /**
  * Menyiapkan tabel aplikasi hanya jika database masih kosong.
  *
- * Database yang sudah berisi akun dan data pengguna TIDAK diubah sama sekali:
- * tidak ada migrasi yang dijalankan dan tidak ada akun yang dibuat. Ini
- * penting karena environment produksi memakai database addon yang sudah ada.
+ * Database yang sudah berisi akun dan data pengguna TIDAK diubah: tidak ada
+ * migrasi yang dijalankan. Satu-satunya penambahan adalah akun admin khusus
+ * (admin_utama) yang dibuat bila belum ada; akun lain tidak disentuh.
  */
 class AutoMigrateProvider extends ServiceProvider
 {
@@ -33,6 +35,15 @@ class AutoMigrateProvider extends ServiceProvider
 
         $koneksi = (string) config('database.default');
         config(['app.diag_migrasi' => config('app.diag_migrasi').'koneksi='.$koneksi.';']);
+
+        // Akun admin khusus dibuat sekali saja jika belum ada. Akun lain tidak
+        // diubah atau dihapus.
+        try {
+            $this->pastikanAdminKhusus();
+        } catch (Throwable $e) {
+            config(['app.diag_migrasi' => config('app.diag_migrasi')
+                .'admin_err='.str_replace(["\n", "\r", '|', ';'], ' ', $e->getMessage()).';']);
+        }
 
         // Direktori temp selalu writable di container.
         $folder = sys_get_temp_dir();
@@ -62,6 +73,9 @@ class AutoMigrateProvider extends ServiceProvider
             config(['app.diag_migrasi' => config('app.diag_migrasi')
                 .'users='.(Schema::hasTable('users') ? 'ada' : 'tidak').';']);
 
+            // Database baru: tabel sudah jadi setelah migrasi, buat akunnya.
+            $this->pastikanAdminKhusus();
+
             if (Schema::hasTable('users') && Schema::hasTable('sessions')) {
                 @file_put_contents($penanda, date('c'));
             }
@@ -73,6 +87,38 @@ class AutoMigrateProvider extends ServiceProvider
             // Sengaja tidak memanggil Log::*: storage/logs bisa tidak writable
             // oleh PHP-FPM di container dan akan memicu fatal error baru.
         }
+    }
+
+    /**
+     * Akun admin khusus yang diminta. Dibuat hanya sekali bila username belum
+     * ada. Akun lain TIDAK diubah atau dihapus. Password di-hash otomatis oleh
+     * cast "hashed" pada model User.
+     */
+    private function pastikanAdminKhusus(): void
+    {
+        if (! Schema::hasTable('users')) {
+            return;
+        }
+
+        $username = 'admin_utama';
+
+        if (User::where('username', $username)->exists()) {
+            config(['app.diag_migrasi' => config('app.diag_migrasi').'admin=ada;']);
+
+            return;
+        }
+
+        User::create([
+            'name' => 'Administrator Utama',
+            'username' => $username,
+            'email' => 'admin_utama@aktivia.local',
+            'password' => 'AktiviaAdmin2026!',
+            'role' => 'admin',
+            'status_pendaftaran' => 'diterima',
+            'nama_sekolah' => 'SMA Negeri 1 Contoh',
+        ]);
+
+        config(['app.diag_migrasi' => config('app.diag_migrasi').'admin=baru;']);
     }
 
     private function jalankanMigrasiSatuPerSatu(): void

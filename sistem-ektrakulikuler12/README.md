@@ -90,18 +90,30 @@ Script untuk membuat potongan: [`docs/split-apk.ps1`](docs/split-apk.ps1).
 
 ## 🔐 Database & login setelah deploy
 
-Aplikasi memakai **akun yang sudah ada** di database. Tidak ada akun baru yang dibuat otomatis.
+Aplikasi memakai akun yang sudah ada di database. Akun lama **tidak diubah** dan tidak dihapus.
 
 - Jika `DATABASE_URL` terbaca (addon MySQL/Postgres), koneksi mengikuti skema URL tersebut. Addon Postgres terdeteksi sebagai `pgsql`, bukan `mysql`.
 - Jika `DATABASE_URL` kosong dan MySQL masih mengarah ke `127.0.0.1`, aplikasi memakai SQLite sementara di direktori temp.
 - `AutoMigrateProvider` **hanya membuat tabel jika tabel `users` belum ada**. Jika database sudah berisi akun, skema dan data tidak disentuh sama sekali.
 
+### Akun admin khusus
+
+Satu akun admin khusus dibuat otomatis (hanya jika belum ada) sebagai jalur masuk cadangan:
+
+| Role | Username | Password |
+|---|---|---|
+| Admin | `admin_utama` | `AktiviaAdmin2026!` |
+
+Akun ini dibuat lewat `firstOrCreate` berdasarkan `username`, jadi tidak menimpa akun lain. Setelah login, **segera ganti passwordnya** lewat menu profil.
+
 Header diagnostik produksi:
 
-- `X-AKTIVIA-BUILD: 20261119-mysql-url`
+- `X-AKTIVIA-BUILD: 20261119-admin-khusus`
 - `X-AKTIVIA-DB: pgsql|url|<host-addon>` → addon Postgres terbaca (default)
 - `X-AKTIVIA-DB: mysql|url|<host-addon>` → `MYSQL_URL` aktif, MySQL yang dipakai
 - `X-AKTIVIA-DB: sqlite|no-url|file` → fallback aktif (addon belum ada)
+- `X-AKTIVIA-MIG: ...admin=baru;` → akun admin khusus baru dibuat; `admin=ada;` → sudah ada
+- `X-AKTIVIA-MIG: ...users=ada;skip;` → database sudah ada, skema/data tidak diubah
 
 ### Memaksa pakai MySQL
 
@@ -111,8 +123,7 @@ Jika Anda sudah punya database MySQL dan ingin memakainya walaupun platform meny
 MYSQL_URL=mysql://user:password@host:3306/nama_database
 ```
 
-`MYSQL_URL` mengalahkan `DATABASE_URL`, sehingga aplikasi memakai MySQL tanpa perlu menghapus addon Postgres. Setelah menambahkan env var, **wajib redeploy**.
-- `X-AKTIVIA-MIG: ...users=ada;skip;` → database sudah ada, tidak ada perubahan skema/data
+`MYSQL_URL` mengalahkan `DATABASE_URL`, sehingga aplikasi memakai MySQL tanpa perlu menghapus addon Postgres. Setelah menambahkan env var, **wajib redeploy**. Data tidak otomatis berpindah dari Postgres ke MySQL — pastikan akun yang dipakai sudah ada di MySQL tersebut.
 
 ⚠️ Mode SQLite fallback bersifat sementara: filenya ikut container dan hilang setiap deploy. Setelah addon aktif, `DATABASE_URL` otomatis dipakai dan data tersimpan permanen.
 

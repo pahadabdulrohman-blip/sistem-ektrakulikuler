@@ -97,16 +97,24 @@ Setiap perubahan env var atau Start command **wajib diikuti redeploy**. Config d
 
 1. Buka tab **Logs** saat aplikasi start — tidak boleh ada `SQLSTATE` atau `No application encryption key`.
 2. Buka `https://sistem-ektrakulikuler.ethiodeploy.app/login`.
-3. Coba login dengan **akun yang sudah ada** di database (admin/guru/siswa). Aplikasi tidak membuat akun baru dan tidak mengubah data yang sudah ada.
+3. Coba login dengan **akun yang sudah ada** di database (admin/guru/siswa). Akun lama tidak diubah. Jika akun sendiri belum bisa dipakai, gunakan akun admin khusus:
+
+   | Role | Username | Password |
+   |---|---|---|
+   | Admin | `admin_utama` | `AktiviaAdmin2026!` |
+
+   Akun ini dibuat otomatis sekali saja bila belum ada, tanpa menimpa akun lain. Segera ganti passwordnya setelah login.
 4. Cek endpoint API: `GET https://.../api/v1/...` dengan header `Authorization: Bearer <token>`.
 5. Pastikan build terbaru aktif:
    ```bash
    curl -sI https://sistem-ektrakulikuler.ethiodeploy.app/login | grep -i x-aktivia
    ```
-   Nilai yang diharapkan: `x-aktivia-build: 20261119-mysql-url` dan
+   Nilai yang diharapkan: `x-aktivia-build: 20261119-admin-khusus` dan
    `x-aktivia-db: pgsql|url|<host-addon>` (addon Postgres terbaca) atau
    `mysql|url|<host-addon>` / `sqlite|no-url|file` (fallback). Header `x-aktivia-mig`
-   menampilkan status auto-migrate; jika ada `users=tidak`, cek baris `err=`.
+   menampilkan status auto-migrate: `admin=baru;` berarti akun admin khusus baru
+   dibuat, `admin=ada;` berarti sudah ada. Jika ada `users=tidak` atau
+   `admin_err=...`, kirim baris tersebut untuk diagnosis.
 6. Buka `/download`, lalu klik **Unduh APK**. File 101,1 MB akan digabung otomatis dari `apk-parts/` pada request pertama (butuh beberapa detik). Link langsungnya adalah `/storage/downloads/Alight_Motion_alightmotionsapps.com_063034.apk`.
 
 > Jika `/download` menampilkan halaman tetapi tautan unduh menghasilkan 404, pastikan `storage:link` berhasil — start script bawaan EthioDeploy sudah menjalankannya. Cek juga bahwa ketiga file `apk-parts/*.part*` ikut ter-deploy.

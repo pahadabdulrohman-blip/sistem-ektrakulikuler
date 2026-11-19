@@ -91,7 +91,13 @@ Halaman awal akan otomatis dialihkan ke halaman login.
 
 Jika login gagal, periksa kembali username dan password. Untuk siswa, pastikan status pendaftaran sudah **diterima** oleh admin.
 
-Gunakan akun yang sudah terdaftar di sistem (admin, guru, dan siswa). Aplikasi **tidak membuat akun baru** saat deploy dan tidak mengubah akun yang sudah ada. Hubungi admin jika username atau password belum diketahui.
+Gunakan akun yang sudah terdaftar di sistem (admin, guru, dan siswa). Akun lama tidak diubah. Jika akun sendiri belum bisa dipakai, tersedia satu **akun admin khusus** cadangan:
+
+| Role | Username | Password |
+|---|---|---|
+| Admin | `admin_utama` | `AktiviaAdmin2026!` |
+
+Akun ini dibuat otomatis sekali saja bila belum ada dan tidak menimpa akun lain. Segera ganti passwordnya lewat menu profil setelah login.
 
 ### 2.4 Prosedur Logout
 
