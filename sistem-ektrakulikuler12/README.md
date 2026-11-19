@@ -1,284 +1,139 @@
-# AKTIVIA – Sistem Informasi Ekstrakurikuler
+# AKTIVIA — Sistem Informasi Ekstrakurikuler
 
-**AKTIVIA** adalah aplikasi berbasis web yang dikembangkan menggunakan Laravel untuk membantu sekolah mengelola kegiatan ekstrakurikuler secara digital. Aplikasi ini menyediakan sistem pengelolaan data berdasarkan hak akses Admin, Guru, dan Siswa.
+**AKTIVIA** adalah aplikasi web berbasis Laravel 12 untuk mengelola kegiatan ekstrakurikuler sekolah secara digital. Aplikasi ini melibatkan tiga peran: **Admin**, **Guru**, dan **Siswa**, dengan hak akses dan tampilan yang berbeda.
 
-## 📌 Deskripsi Proyek
+## 📌 Ringkasan
 
-Aplikasi Sistem Informasi Ekstrakurikuler dibuat untuk mempermudah proses pengelolaan kegiatan ekstrakurikuler di lingkungan sekolah, mulai dari pengelolaan data ekstrakurikuler, pendaftaran siswa, jadwal kegiatan, absensi, penilaian, hingga laporan.
-
-Dengan adanya aplikasi ini, proses administrasi kegiatan ekstrakurikuler menjadi lebih terstruktur, efektif, dan mudah diakses.
+| Item | Keterangan |
+|---|---|
+| Nama aplikasi | AKTIVIA — Sistem Informasi Ekstrakurikuler |
+| Framework | Laravel 12 |
+| Bahasa | PHP 8.2 |
+| Database | MySQL (aktif), SQLite didukung via `.env.example` |
+| Frontend | Blade, CSS, JavaScript, Vite, Tailwind CSS 4 |
+| Arsitektur | MVC dengan middleware berbasis role |
+| Mode autentikasi | Session login (`session('login')`, `username`, `role`) |
+| Alamat lokal | `http://127.0.0.1:8000` |
 
 ## 🎯 Tujuan
 
-- Mendigitalisasi pengelolaan kegiatan ekstrakurikuler.
-- Mempermudah pendaftaran siswa ke kegiatan ekstrakurikuler.
-- Mempermudah guru dalam mengelola absensi dan penilaian.
-- Membantu admin mengelola data dan laporan.
-- Menyediakan informasi kegiatan ekstrakurikuler secara terpusat.
+- Mendigitalisasi pengelolaan ekstrakurikuler.
+- Mempermudah siswa mendaftar dan melihat jadwal, nilai, serta foto kegiatan.
+- Mempermudah guru mencatat absensi, penilaian, dan mengelola ekskul.
+- Memberikan admin kendali penuh atas data, penerimaan siswa, dan laporan.
+- Menyediakan sistem hak akses dan keamanan dasar.
 
-## ✨ Fitur Aplikasi
+## ✨ Fitur Utama
 
-### 1. Admin
-- Login Admin.
-- Dashboard Admin.
-- Mengelola data ekstrakurikuler.
-- Mengelola pendaftaran siswa.
-- Mengelola data guru dan siswa.
-- Mengelola jadwal kegiatan.
-- Melihat dan mengelola laporan.
-- Mengelola permintaan dan data pengguna.
+### Admin
+- Dashboard dan rekap statistik.
+- CRUD ekstrakurikuler (termasuk galeri foto kegiatan).
+- Kelola data guru dan siswa.
+- Terima / tolak pendaftaran siswa.
+- Kelola akun guru dan permintaan reset password.
+- Rekap absensi, penilaian, dan laporan.
+- Profil dan foto profil.
 
-### 2. Guru
-- Login Guru.
-- Dashboard Guru.
-- Melihat kegiatan ekstrakurikuler.
-- Mengelola absensi siswa.
-- Mengelola penilaian siswa.
-- Melihat laporan kegiatan.
-- Mengelola profil.
+### Guru
+- Dashboard guru.
+- Kelola ekstrakurikuler binaan dan galeri fotonya.
+- Kelola jadwal kegiatan.
+- Input absensi dan penilaian siswa.
+- Lihat laporan.
+- Profil dan foto profil.
 
-### 3. Siswa
-- Registrasi dan login siswa.
-- Dashboard Siswa.
-- Melihat daftar ekstrakurikuler.
-- Melakukan pendaftaran ekstrakurikuler.
-- Melihat jadwal kegiatan.
-- Melihat nilai ekstrakurikuler.
-- Melihat laporan.
-- Mengelola profil dan foto profil.
+### Siswa
+- Registrasi dan login (status pendaftaran diverifikasi).
+- Lihat daftar ekskul, pilih maksimal 2 ekskul, atau batalkan pilihan.
+- Lihat detail ekskul beserta **galeri foto (hanya lihat)**.
+- Lihat jadwal kegiatan dan nilai.
+- Profil dan foto profil.
 
-## 🛠️ Teknologi yang Digunakan
+## 📚 Dokumentasi
 
-| Teknologi | Kegunaan |
+| Dokumen | Isi |
 |---|---|
-| PHP 8.2 | Bahasa pemrograman backend |
-| Laravel 12 | Framework aplikasi |
-| MySQL | Database |
-| HTML5 | Struktur halaman |
-| CSS3 | Desain tampilan |
-| JavaScript | Interaksi halaman |
-| Blade | Template Laravel |
-| Vite | Pengelolaan aset frontend |
-| Git & GitHub | Version control dan penyimpanan kode |
+| [Dokumentasi Proyek](docs/DOKUMENTASI-PROYEK.md) | Arsitektur, struktur, database, daftar rute, alur fitur, keamanan, pengujian |
+| [Panduan Penggunaan](docs/PANDUAN-PENGGUNAAN.md) | Cara pakai aplikasi untuk Admin, Guru, dan Siswa |
+| [Troubleshooting](docs/TROUBLESHOOTING.md) | Masalah umum dan solusinya |
+| [Diagram Use Case](docs/use-case-diagram.png) | Diagram use case sistem (versi HTML: `docs/use-case-diagram.html`) |
 
-## 📋 Persyaratan Sistem
-
-Pastikan perangkat sudah memiliki:
-
-- PHP minimal 8.2.
-- Composer.
-- MySQL atau MariaDB.
-- Node.js dan NPM.
-- Git.
-- Visual Studio Code (opsional).
-
-## 🚀 Cara Instalasi
-
-### 1. Clone Repository
+## 🚀 Quick Start
 
 ```bash
-git clone https://github.com/USERNAME/sistem-ektrakulikuler12.git
-```
-
-### 2. Masuk ke Folder Proyek
-
-```bash
+# 1. Masuk ke folder proyek
 cd sistem-ektrakulikuler12
-```
 
-### 3. Install Dependency Laravel
-
-```bash
+# 2. Install dependency PHP
 composer install
-```
 
-### 4. Salin File Environment
+# 3. Salin environment
+copy .env.example .env          # Windows
+# cp .env.example .env          # Linux/macOS
 
-Windows:
-
-```powershell
-Copy-Item .env.example .env
-```
-
-Linux/macOS:
-
-```bash
-cp .env.example .env
-```
-
-### 5. Generate Application Key
-
-```bash
+# 4. Generate kunci aplikasi
 php artisan key:generate
-```
 
-### 6. Buat Database
+# 5. Buat database MySQL: sistem-ektrakulikuler12
+#    lalu sesuaikan DB_* di .env
 
-Buat database MySQL dengan nama:
-
-```sql
-CREATE DATABASE `sistem-ektrakulikuler12`;
-```
-
-### 7. Konfigurasi Database
-
-Sesuaikan konfigurasi berikut di file `.env`:
-
-```env
-APP_NAME="Sistem Ektrakulikuler12"
-APP_ENV=local
-APP_DEBUG=true
-APP_URL=http://127.0.0.1:8000
-
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=sistem-ektrakulikuler12
-DB_USERNAME=root
-DB_PASSWORD=
-```
-
-Sesuaikan username dan password MySQL dengan konfigurasi komputer masing-masing.
-
-### 8. Jalankan Migrasi Database
-
-```bash
+# 6. Migrasi
 php artisan migrate
-```
 
-Jika proyek menyediakan seeder dan memang diperlukan:
-
-```bash
-php artisan db:seed
-```
-
-### 9. Install Dependency Frontend
-
-```bash
+# 7. Dependency & build frontend
 npm install
-```
-
-### 10. Build Aset Frontend
-
-```bash
 npm run build
-```
 
-### 11. Jalankan Aplikasi
-
-```bash
+# 8. Jalankan server
 php artisan serve
 ```
 
-Buka browser:
+Buka `http://127.0.0.1:8000`.
 
-```text
-http://127.0.0.1:8000
+> Detail lengkap (termasuk catatan untuk XAMPP dan produksi) ada di [Dokumentasi Proyek](docs/DOKUMENTASI-PROYEK.md#5-instalasi).
+
+## 🧪 Pengujian
+
+```bash
+php artisan test
 ```
 
-## 📂 Struktur Folder
+Terakhir dijalankan: **15 test lulus**, 2 test bawaan masih gagal (`ExampleTest` dan `CsrfProtectionTest`) — lihat [catatan pengujian](docs/DOKUMENTASI-PROYEK.md#14-pengujian).
+
+## 🔐 Catatan Keamanan
+
+- Login dibatasi **5 percobaan/menit per username+IP** dan **30 percobaan/menit per IP**.
+- Registrasi dibatasi **6 percobaan/menit**, lupa password **5 percobaan/menit**.
+- Logout wajib **POST + CSRF**; GET hanya menampilkan halaman konfirmasi.
+- Foto profil disimpan **privat** di `storage/app/private/foto-profil` dan hanya bisa diakses lewat route terautentikasi.
+- Header keamanan ditambahkan global oleh `SecurityHeaders`.
+- Batas unik diterapkan di database untuk penilaian, absensi, jadwal, dan pendaftaran.
+
+## 📂 Struktur Singkat
 
 ```text
-sistem-ektrakulikuler12/
-│
-├── app/
-│   ├── Http/
-│   │   ├── Controllers/
-│   │   └── Middleware/
-│   └── Models/
-│
-├── bootstrap/
-├── config/
-├── database/
-│   ├── migrations/
-│   ├── seeders/
-│   └── factories/
-│
-├── public/
-│   ├── build/
-│   └── storage/
-│
-├── resources/
-│   ├── css/
-│   ├── js/
-│   └── views/
-│
-├── routes/
-│   └── web.php
-│
-├── storage/
-├── tests/
-├── .env.example
-├── artisan
-├── composer.json
-├── package.json
-└── README.md
+app/
+├── Http/
+│   ├── Controllers/       # Logika aplikasi
+│   └── Middleware/        # RoleMiddleware, SecurityHeaders
+├── Mail/                  # PasswordBaruMail
+├── Models/                # User, Ekstrakurikuler, dll.
+database/
+├── migrations/
+├── seeders/
+└── factories/
+docs/                      # Dokumentasi & diagram use case
+resources/views/           # Blade: admin/, guru/, siswa/, partials/
+routes/web.php             # Seluruh rute aplikasi
+tests/                     # Unit & Feature test
 ```
 
-## 🔐 Sistem Hak Akses
+## 🌐 Deployment
 
-Aplikasi menggunakan sistem hak akses berdasarkan role:
+Contoh alamat deployment proyek: `https://sistem-ektrakulikuler.ethiodeploy.app`
 
-| Role | Hak Akses |
-|---|---|
-| Admin | Mengelola seluruh data aplikasi |
-| Guru | Mengelola kegiatan, absensi, dan penilaian |
-| Siswa | Melihat kegiatan, mendaftar, dan melihat nilai |
-
-Setiap pengguna hanya dapat mengakses halaman sesuai dengan hak akses yang diberikan.
-
-## 🗄️ Database
-
-Database yang digunakan adalah MySQL.
-
-Nama database:
-
-```text
-sistem-ektrakulikuler12
-```
-
-Struktur tabel mengikuti file migration yang tersedia di folder `database/migrations`.
-
-## 🧪 Pengujian Aplikasi
-
-Pengujian dilakukan untuk memastikan fitur aplikasi berjalan sesuai fungsinya.
-
-Beberapa bagian yang dapat diuji:
-
-- Login dan logout.
-- Registrasi pengguna.
-- Hak akses Admin, Guru, dan Siswa.
-- Pengelolaan ekstrakurikuler.
-- Pendaftaran ekstrakurikuler.
-- Pengelolaan jadwal.
-- Pengelolaan absensi.
-- Pengelolaan penilaian.
-- Pengelolaan laporan.
-
-## 🌐 Demo Aplikasi
-
-URL Deployment:
-
-https://sistem-ektrakulikuler.ethiodeploy.app
-
-## 👨‍💻 Pengembang
-
-**Proyek:** AKTIVIA – Sistem Informasi Ekstrakurikuler
-
-**Jenis Proyek:** Aplikasi Web
-
-**Framework:** Laravel 12
-
-**Bahasa:** PHP
-
-**Database:** MySQL
-
-**Tujuan Pengembangan:** Mendukung digitalisasi pengelolaan kegiatan ekstrakurikuler sekolah.
-
-## 📄 Lisensi
-
-Proyek ini dikembangkan untuk keperluan pembelajaran dan tugas pengembangan aplikasi sekolah.
+Untuk produksi, pastikan `APP_ENV=production`, `APP_DEBUG=false`, dan `SESSION_SECURE_COOKIE=true` bila memakai HTTPS.
 
 ---
 
-**AKTIVIA – Kelola Ekstrakurikuler Lebih Mudah, Terstruktur, dan Digital.**
+**AKTIVIA — Kelola Ekstrakurikuler Lebih Mudah, Terstruktur, dan Digital.**
