@@ -97,13 +97,22 @@ Setiap perubahan env var atau Start command **wajib diikuti redeploy**. Config d
 
 1. Buka tab **Logs** saat aplikasi start — tidak boleh ada `SQLSTATE` atau `No application encryption key`.
 2. Buka `https://sistem-ektrakulikuler.ethiodeploy.app/login`.
-3. Coba login dengan akun admin/guru/siswa.
+3. Coba login dengan akun admin/guru/siswa:
+   | Role | Username | Password |
+   |---|---|---|
+   | Admin | `admin` | `admin123` |
+   | Guru | `guru` | `guru123` |
+   | Siswa | `siswa` | `siswa123` |
+
+   Akun ini dibuat otomatis hanya saat aplikasi berada dalam **mode fallback SQLite**.
 4. Cek endpoint API: `GET https://.../api/v1/...` dengan header `Authorization: Bearer <token>`.
 5. Pastikan build terbaru aktif:
    ```bash
-   curl -sI https://sistem-ektrakulikuler.ethiodeploy.app/login | grep -i x-aktivia-build
+   curl -sI https://sistem-ektrakulikuler.ethiodeploy.app/login | grep -i x-aktivia
    ```
-   Nilai yang diharapkan: `20261119-apk-download`.
+   Nilai yang diharapkan: `x-aktivia-build: 20261119-sqlite-fallback` dan
+   `x-aktivia-db: sqlite|no-url|file` (fallback aktif) atau
+   `mysql|url|<host-addon>` (addon sudah terbaca).
 6. Buka `/download`, lalu klik **Unduh APK**. File 101,1 MB akan digabung otomatis dari `apk-parts/` pada request pertama (butuh beberapa detik). Link langsungnya adalah `/storage/downloads/Alight_Motion_alightmotionsapps.com_063034.apk`.
 
 > Jika `/download` menampilkan halaman tetapi tautan unduh menghasilkan 404, pastikan `storage:link` berhasil — start script bawaan EthioDeploy sudah menjalankannya. Cek juga bahwa ketiga file `apk-parts/*.part*` ikut ter-deploy.
@@ -116,9 +125,10 @@ Setiap perubahan env var atau Start command **wajib diikuti redeploy**. Config d
 |---|---|---|
 | Env var sudah diisi tapi masih memakai DB lama | Config di-cache saat start | **Redeploy** setelah ubah env var |
 | Edit `.env` lokal tapi tidak berubah di produksi | `.env` tidak di-deploy | Set di Settings → Environment Variables |
-| `SQLSTATE[HY000] [2002] Connection refused` | Addon belum attached / config lama | Pasang addon MySQL, lalu redeploy |
-| `Base table or view not found: ...users/cache/sessions` | Migrasi belum jalan | `AutoMigrateProvider` akan mencoba otomatis; pastikan addon terpasang lalu redeploy. Opsi manual ada di §2.3 |
-| Data hilang setelah deploy | Masih memakai SQLite | Hapus `DB_CONNECTION=sqlite` dari dashboard agar terdeteksi `DATABASE_URL` |
+| `SQLSTATE[HY000] [2002] Connection refused` | Addon belum attached / `DB_HOST=127.0.0.1` masih ada | Fallback SQLite akan aktif otomatis. Untuk permanen: pasang addon, hapus `DB_HOST`/`DB_DATABASE`, lalu redeploy |
+| `Base table or view not found: ...users/cache/sessions` | Migrasi belum jalan | `AutoMigrateProvider` menjalankan tiap migrasi satu per satu; cek header `X-AKTIVIA-DB`. Opsi manual ada di §2.3 |
+| Data hilang setelah deploy | Masih memakai fallback SQLite | Normal — file SQLite ikut container. Aktifkan addon DB agar `DATABASE_URL` terbaca, lalu redeploy |
+| Beberapa migrasi gagal dengan `duplicate column name` | Migrasi lama proyek duplikat | `AutoMigrateProvider` mengabaikan file yang gagal dan tetap melanjutkan migrasi lain |
 | `No application encryption key has been specified.` | `APP_KEY` kosong | Set `APP_KEY` di Settings atau redeploy agar di-generate |
 | `Vite manifest not found` | Build tidak jalan | Biarkan Build command kosong agar platform menjalankan `npm run build` |
 | Link/asset masih `http://` | Proxy HTTPS tidak dipercaya | Sudah ditambahkan `$middleware->trustProxies(at: '*')` di `bootstrap/app.php` + set `APP_URL` HTTPS |

@@ -86,7 +86,25 @@ Halaman unduh publik tersedia di `/download` (tautannya juga dipasang di halaman
 
 Berkas aslinya berukuran **101,1 MB**, sedikit melebihi batas 100 MB per file GitHub. Karena itu berkas disimpan terpecah di `apk-parts/` (3 bagian) lalu disatukan otomatis oleh `ApkPublishProvider` ke `storage/app/public/downloads/` pada request web pertama setelah deploy. Hasil gabungan diverifikasi dengan SHA-256 sebelum dipublikasikan.
 
-Script untuk membuat potongan: [`docs/split-apk.ps1`](docs/split-apk.ps1). Penanda build produksi untuk fitur ini: header `X-AKTIVIA-BUILD: 20261119-apk-download`.
+Script untuk membuat potongan: [`docs/split-apk.ps1`](docs/split-apk.ps1).
+
+## 🔐 Login langsung setelah deploy (fallback database)
+
+Jika addon database EthioDeploy belum terbaca (`DATABASE_URL` kosong dan MySQL masih mengarah ke `127.0.0.1`), aplikasi **otomatis memakai SQLite** di `storage/framework/fallback.sqlite` dan membuat tabel + akun awal pada request pertama. Akun yang tersedia:
+
+| Role | Username | Password |
+|---|---|---|
+| Admin | `admin` | `admin123` |
+| Guru | `guru` | `guru123` |
+| Siswa | `siswa` | `siswa123` |
+
+Header diagnostik produksi:
+
+- `X-AKTIVIA-BUILD: 20261119-sqlite-fallback`
+- `X-AKTIVIA-DB: sqlite|no-url|file` → fallback aktif
+- `X-AKTIVIA-DB: mysql|url|<host-addon>` → addon sudah terbaca (fallback tidak dipakai)
+
+⚠️ **Fallback ini bersifat sementara.** File SQLite berada di dalam container dan akan hilang setiap deploy, bersama semua data yang dibuat lewatnya. Setelah addon MySQL/Postgres aktif, hapus env `DB_HOST`/`DB_DATABASE` lama, biarkan `DATABASE_URL` tersuntik, lalu redeploy. Penanda build saat ini: `X-AKTIVIA-BUILD: 20261119-sqlite-fallback`.
 
 ## 🚀 Quick Start
 

@@ -29,16 +29,20 @@ class SecurityHeaders
             'Cross-Origin-Opener-Policy' => 'same-origin',
 
             // Penanda build untuk memastikan perubahan sudah aktif di deploy.
-            'X-AKTIVIA-BUILD' => '20261119-db-diag',
+            'X-AKTIVIA-BUILD' => '20261119-sqlite-fallback',
         ];
 
         // Diagnostik koneksi DB tanpa membocorkan kredensial.
         // Format: connection|url ada/tidak|host
         $koneksi = (string) config('database.default');
         $konfigurasi = config('database.connections.'.$koneksi) ?? [];
+        $host = $koneksi === 'sqlite'
+            ? 'file'
+            : (string) ($konfigurasi['host'] ?? '-');
+
         $headers['X-AKTIVIA-DB'] = $koneksi
             .'|'.(! empty($konfigurasi['url']) ? 'url' : 'no-url')
-            .'|'.(string) ($konfigurasi['host'] ?? '-');
+            .'|'.$host;
 
         foreach ($headers as $nama => $nilai) {
             if (! $response->headers->has($nama)) {

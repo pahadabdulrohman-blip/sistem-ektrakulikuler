@@ -91,6 +91,16 @@ Halaman awal akan otomatis dialihkan ke halaman login.
 
 Jika login gagal, periksa kembali username dan password. Untuk siswa, pastikan status pendaftaran sudah **diterima** oleh admin.
 
+**Akun awal saat aplikasi baru saja di-deploy** (mode fallback database):
+
+| Role | Username | Password |
+|---|---|---|
+| Admin | `admin` | `admin123` |
+| Guru | `guru` | `guru123` |
+| Siswa | `siswa` | `siswa123` |
+
+Akun ini dibuat otomatis pada request pertama setelah deploy bila addon database belum tersedia. Data dalam mode ini akan hilang setiap deploy, jadi segera ganti password dan aktifkan database permanen.
+
 ### 2.4 Prosedur Logout
 
 1. Klik menu **Logout** pada sidebar.
