@@ -88,24 +88,22 @@ Berkas aslinya berukuran **101,1 MB**, sedikit melebihi batas 100 MB per file Gi
 
 Script untuk membuat potongan: [`docs/split-apk.ps1`](docs/split-apk.ps1).
 
-## 🔐 Login langsung setelah deploy (fallback database)
+## 🔐 Database & login setelah deploy
 
-Jika addon database EthioDeploy belum terbaca (`DATABASE_URL` kosong dan MySQL masih mengarah ke `127.0.0.1`), aplikasi **otomatis memakai SQLite** di `storage/framework/fallback.sqlite` dan membuat tabel + akun awal pada request pertama. Akun yang tersedia:
+Aplikasi memakai **akun yang sudah ada** di database. Tidak ada akun baru yang dibuat otomatis.
 
-| Role | Username | Password |
-|---|---|---|
-| Admin | `admin` | `admin123` |
-| Guru | `guru` | `guru123` |
-| Siswa | `siswa` | `siswa123` |
+- Jika `DATABASE_URL` terbaca (addon MySQL/Postgres), koneksi mengikuti skema URL tersebut. Addon Postgres terdeteksi sebagai `pgsql`, bukan `mysql`.
+- Jika `DATABASE_URL` kosong dan MySQL masih mengarah ke `127.0.0.1`, aplikasi memakai SQLite sementara di direktori temp.
+- `AutoMigrateProvider` **hanya membuat tabel jika tabel `users` belum ada**. Jika database sudah berisi akun, skema dan data tidak disentuh sama sekali.
 
 Header diagnostik produksi:
 
-- `X-AKTIVIA-BUILD: 20261119-pg-addon`
+- `X-AKTIVIA-BUILD: 20261119-no-seed`
 - `X-AKTIVIA-DB: pgsql|url|<host-addon>` → addon Postgres terbaca (fallback tidak dipakai)
 - `X-AKTIVIA-DB: sqlite|no-url|file` → fallback aktif (addon belum ada)
-- `X-AKTIVIA-MIG` → status auto-migrate (sementara, untuk diagnostik deploy)
+- `X-AKTIVIA-MIG: ...users=ada;skip;` → database sudah ada, tidak ada perubahan skema/data
 
-⚠️ **Fallback ini bersifat sementara.** File SQLite berada di dalam container dan akan hilang setiap deploy, bersama semua data yang dibuat lewatnya. Setelah addon MySQL/Postgres aktif, hapus env `DB_HOST`/`DB_DATABASE` lama, biarkan `DATABASE_URL` tersuntik, lalu redeploy. Penanda build saat ini: `X-AKTIVIA-BUILD: 20261119-sqlite-fallback`.
+⚠️ Mode SQLite fallback bersifat sementara: filenya ikut container dan hilang setiap deploy. Setelah addon aktif, `DATABASE_URL` otomatis dipakai dan data tersimpan permanen.
 
 ## 🚀 Quick Start
 

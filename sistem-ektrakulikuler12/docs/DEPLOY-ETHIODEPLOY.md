@@ -97,20 +97,13 @@ Setiap perubahan env var atau Start command **wajib diikuti redeploy**. Config d
 
 1. Buka tab **Logs** saat aplikasi start — tidak boleh ada `SQLSTATE` atau `No application encryption key`.
 2. Buka `https://sistem-ektrakulikuler.ethiodeploy.app/login`.
-3. Coba login dengan akun admin/guru/siswa:
-   | Role | Username | Password |
-   |---|---|---|
-   | Admin | `admin` | `admin123` |
-   | Guru | `guru` | `guru123` |
-   | Siswa | `siswa` | `siswa123` |
-
-   Akun ini dibuat otomatis hanya saat aplikasi berada dalam **mode fallback SQLite**.
+3. Coba login dengan **akun yang sudah ada** di database (admin/guru/siswa). Aplikasi tidak membuat akun baru dan tidak mengubah data yang sudah ada.
 4. Cek endpoint API: `GET https://.../api/v1/...` dengan header `Authorization: Bearer <token>`.
 5. Pastikan build terbaru aktif:
    ```bash
    curl -sI https://sistem-ektrakulikuler.ethiodeploy.app/login | grep -i x-aktivia
    ```
-   Nilai yang diharapkan: `x-aktivia-build: 20261119-pg-addon` dan
+   Nilai yang diharapkan: `x-aktivia-build: 20261119-no-seed` dan
    `x-aktivia-db: pgsql|url|<host-addon>` (addon Postgres terbaca) atau
    `mysql|url|<host-addon>` / `sqlite|no-url|file` (fallback). Header `x-aktivia-mig`
    menampilkan status auto-migrate; jika ada `users=tidak`, cek baris `err=`.
