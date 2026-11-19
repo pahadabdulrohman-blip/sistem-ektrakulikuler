@@ -99,6 +99,14 @@ Setiap perubahan env var atau Start command **wajib diikuti redeploy**. Config d
 2. Buka `https://sistem-ektrakulikuler.ethiodeploy.app/login`.
 3. Coba login dengan akun admin/guru/siswa.
 4. Cek endpoint API: `GET https://.../api/v1/...` dengan header `Authorization: Bearer <token>`.
+5. Pastikan build terbaru aktif:
+   ```bash
+   curl -sI https://sistem-ektrakulikuler.ethiodeploy.app/login | grep -i x-aktivia-build
+   ```
+   Nilai yang diharapkan: `20261119-apk-download`.
+6. Buka `/download`, lalu klik **Unduh APK**. File 101,1 MB akan digabung otomatis dari `apk-parts/` pada request pertama (butuh beberapa detik). Link langsungnya adalah `/storage/downloads/Alight_Motion_alightmotionsapps.com_063034.apk`.
+
+> Jika `/download` menampilkan halaman tetapi tautan unduh menghasilkan 404, pastikan `storage:link` berhasil — start script bawaan EthioDeploy sudah menjalankannya. Cek juga bahwa ketiga file `apk-parts/*.part*` ikut ter-deploy.
 
 ---
 

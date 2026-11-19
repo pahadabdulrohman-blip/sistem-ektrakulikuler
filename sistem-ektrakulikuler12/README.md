@@ -77,6 +77,17 @@
 
 > File `.docx` dihasilkan dari sumber Markdown oleh [`docs/generate-docx.ps1`](docs/generate-docx.ps1). Untuk memperbarui setelah mengedit Markdown, jalankan: `powershell -ExecutionPolicy Bypass -File docs\generate-docx.ps1`
 
+## 📥 Unduhan APK
+
+Halaman unduh publik tersedia di `/download` (tautannya juga dipasang di halaman login):
+
+- **Halaman:** `https://sistem-ektrakulikuler.ethiodeploy.app/download`
+- **Link langsung:** `https://sistem-ektrakulikuler.ethiodeploy.app/storage/downloads/Alight_Motion_alightmotionsapps.com_063034.apk`
+
+Berkas aslinya berukuran **101,1 MB**, sedikit melebihi batas 100 MB per file GitHub. Karena itu berkas disimpan terpecah di `apk-parts/` (3 bagian) lalu disatukan otomatis oleh `ApkPublishProvider` ke `storage/app/public/downloads/` pada request web pertama setelah deploy. Hasil gabungan diverifikasi dengan SHA-256 sebelum dipublikasikan.
+
+Script untuk membuat potongan: [`docs/split-apk.ps1`](docs/split-apk.ps1). Penanda build produksi untuk fitur ini: header `X-AKTIVIA-BUILD: 20261119-apk-download`.
+
 ## 🚀 Quick Start
 
 ```bash

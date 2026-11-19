@@ -1094,6 +1094,11 @@
     <a href="{{ route('register') }}">Daftar Sekarang</a>
 </div>
 
+<div class="register-link">
+    <p>Memakai aplikasi di Android?</p>
+    <a href="{{ route('download') }}">Unduh APK</a>
+</div>
+
 
 
       

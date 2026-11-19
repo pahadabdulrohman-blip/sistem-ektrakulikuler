@@ -37,6 +37,9 @@ Route::get('/login', [
     'login',
 ])->name('login');
 
+Route::get('/download', [App\Http\Controllers\DownloadController::class, 'index'])
+    ->name('download');
+
 Route::post('/login', [
     EkstrakurikulerController::class,
     'prosesLogin',
