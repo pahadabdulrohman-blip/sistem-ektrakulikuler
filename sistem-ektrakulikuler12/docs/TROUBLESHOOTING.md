@@ -255,4 +255,91 @@ Pastikan tidak ada file temporary (`temp_*.php`) atau file uji di `public/` yang
 
 ---
 
+## 12. Error 500 Saat Login Setelah Deploy
+
+### Gejala
+
+- Halaman `GET /login` **tampil normal**, tetapi menekan tombol Login menghasilkan HTTP 500.
+- Di lokal tidak pernah terjadi, hanya di server deploy.
+
+### Kenapa Bisa Begitu
+
+Halaman login adalah view statis, jadi tidak menyentuh database. Saat tombol Login ditekan, `EkstrakurikulerController@prosesLogin` melakukan empat hal yang bergantung pada konfigurasi server:
+
+1. `RateLimiter::tooManyAttempts()` → menulis/reads **tabel `cache`** (karena `CACHE_STORE=database`).
+2. `User::where('username', ...)` → membaca **tabel `users`**.
+3. `$request->session()->regenerate()` → menulis **tabel `sessions`** (karena `SESSION_DRIVER=database`). Tabel ini dibuat di dalam migrasi `0001_01_01_000000_create_users_table.php`.
+4. Cookie/token CSRF dienkripsi memakai **`APP_KEY`**.
+
+Jika salah satu dari itu belum siap di server, hasilnya 500. Di lokal tidak muncul karena `.env` lokal sudah berisi `APP_KEY`, koneksi DB aktif, dan migrasi sudah dijalankan.
+
+> `.env` **tidak ikut ter-commit** (ada di `.gitignore`). Jika deploy hanya meng-upload file dari Git, `.env` pasti kosong di server — ini penyebab paling sering.
+
+### Langkah 1 — Baca Log di Server (paling cepat)
+
+```bash
+tail -n 50 storage/logs/laravel.log
+```
+
+Atau buka `storage/logs/laravel.log` lewat File Manager hosting. Baris `local.ERROR:` / `production.ERROR:` pertama di bawah error 500 adalah petunjuk pastinya.
+
+| Potongan error di log | Penyebab | Solusi |
+|---|---|---|
+| `No application encryption key has been specified.` | `APP_KEY` kosong / `.env` tidak ada | `cp .env.example .env` lalu `php artisan key:generate` |
+| `Database file at path [...] database.sqlite does not exist` | File SQLite belum dibuat | `touch database/database.sqlite` (Linux) atau `New-Item database\database.sqlite` (Windows), lalu `php artisan migrate --force` |
+| `no such table: users` / `cache` / `sessions` atau `Base table or view not found` | Migrasi belum dijalankan | `php artisan migrate --force` |
+| `SQLSTATE[HY000] [1045] Access denied for user` | `DB_USERNAME` / `DB_PASSWORD` salah | Perbaiki `DB_*` di `.env`, lalu `php artisan config:clear` |
+| `could not be opened: ... storage/logs` | Izin folder | Beri write permission ke `storage/` dan `bootstrap/cache/` |
+| `Target class [App\Http\Middleware\...] does not exist` | File middleware belum ikut ter-upload | Upload ulang `app/Http/Middleware/`, lalu `php artisan optimize:clear` |
+
+### Langkah 2 — Perbaikan Standar (jalankan di folder aplikasi di server)
+
+```bash
+# 1. Pastikan .env ada dan kuncinya terisi
+cp .env.example .env
+php artisan key:generate
+
+# 2. Jika memakai SQLite, pastikan file database ada
+touch database/database.sqlite        # Linux/cPanel
+# New-Item database\database.sqlite   # Windows/PowerShell
+
+# 3. Sesuaikan DB_* di .env, lalu jalankan migrasi
+php artisan migrate --force
+
+# 4. Bersihkan cache lama (penting setelah mengubah .env)
+php artisan optimize:clear
+php artisan storage:link
+```
+
+Untuk MySQL, isi `.env` seperti ini sebelum `migrate`:
+
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=nama_database
+DB_USERNAME=user_database
+DB_PASSWORD=password_database
+```
+
+Pastikan **database sudah dibuat** di hosting sebelum menjalankan migrasi.
+
+### Langkah 3 — Verifikasi
+
+```bash
+php artisan migrate:status
+php artisan about
+php artisan route:list --path=api | Measure-Object   # harus 45 rute
+```
+
+Lalu coba login lagi. Jika masih 500, set `APP_DEBUG=true` **sementara**, jalankan `php artisan config:clear`, reproduksi error, lalu kirim 20 baris terakhir `storage/logs/laravel.log`. Jangan lupa kembalikan `APP_DEBUG=false` setelah selesai.
+
+### Catatan Tambahan
+
+- Document root web server harus mengarah ke folder **`public/`**, bukan root proyek.
+- Setelah mengubah `.env` jangan lupa `php artisan config:clear` apabila pernah menjalankan `config:cache`.
+- Untuk HTTPS, set `SESSION_SECURE_COOKIE=true`, jika tidak cookie login tidak terkirim.
+
+---
+
 Lihat juga [Dokumentasi Proyek](DOKUMENTASI-PROYEK.md) dan [Panduan Penggunaan](PANDUAN-PENGGUNAAN.md).

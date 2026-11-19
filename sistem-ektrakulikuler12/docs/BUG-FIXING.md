@@ -5,7 +5,7 @@
 | Field | Keterangan |
 |---|---|
 | Dokumen | Bug Fixing Log |
-| Versi | 1.0 (final) |
+| Versi | 1.1 (final + catatan deploy) |
 | Status | Semua test lulus: **25 passed, 145 assertions** |
 | Perintah verifikasi | `php artisan test` |
 
@@ -176,4 +176,22 @@ php -l <file yang diubah>             # tidak ada syntax error
 
 ---
 
-*AKTIVIA — Bug Fixing Log v1.0*
+## 6. Catatan Deploy: Error 500 Saat Login
+
+Laporan: aplikasi normal di lokal, tetapi menghasilkan 500 saat tombol Login ditekan di server deploy.
+
+Ini **bukan bug kode** melainkan konfigurasi server. `GET /login` hanya merender view, sedangkan `POST /login` menyentuh tabel `cache` (RateLimiter), tabel `users`, tabel `sessions`, dan enkripsi cookie dengan `APP_KEY`. Penyebab paling umum:
+
+| Penyebab | Perbaikan |
+|---|---|
+| `.env` tidak ikut ter-upload (file ini di-`.gitignore`), sehingga `APP_KEY` kosong | `cp .env.example .env && php artisan key:generate` |
+| File `database/database.sqlite` belum ada | `touch database/database.sqlite`, lalu `php artisan migrate --force` |
+| Migrasi belum dijalankan → tabel `users` / `cache` / `sessions` tidak ada | `php artisan migrate --force` |
+| Kredensial MySQL salah | Perbaiki `DB_*`, lalu `php artisan config:clear` |
+| `storage/` atau `bootstrap/cache/` tidak writable | Beri izin tulis untuk web server |
+
+Checklist deploy sudah diperbarui di `docs/TECH-DOCS.md` §15 dan `docs/DOKUMENTASI-PROYEK.md` §5.4. Tata cara membaca log dan verifikasi ada di [`TROUBLESHOOTING.md`](TROUBLESHOOTING.md#12-error-500-saat-login-setelah-deploy).
+
+---
+
+*AKTIVIA — Bug Fixing Log v1.1*

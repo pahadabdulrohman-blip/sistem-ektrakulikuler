@@ -174,10 +174,15 @@ APP_URL=https://domain-anda
 SESSION_SECURE_COOKIE=true
 ```
 
+- Salin `.env.example` menjadi `.env` (file `.env` tidak ikut di Git), lalu jalankan `php artisan key:generate`.
+- Untuk SQLite, buat file `database/database.sqlite` terlebih dahulu. Untuk MySQL, buat database dan isi `DB_*`.
+- Jalankan `php artisan migrate --force` — ini membuat tabel `users`, `cache`, dan `sessions` (tabel `sessions` dibuat di dalam migrasi `create_users_table`).
 - Jalankan `php artisan storage:link` agar foto kegiatan bisa diakses.
-- Jalankan `php artisan config:cache && php artisan route:cache && php artisan view:cache`.
+- Jalankan `php artisan optimize:clear` setelah mengubah `.env`, baru `php artisan config:cache && php artisan route:cache && php artisan view:cache`.
 - Pastikan folder `storage/` dan `bootstrap/cache/` dapat ditulis oleh web server.
+- Document root mengarah ke folder `public/`.
 - Gunakan HTTPS karena `SESSION_SECURE_COOKIE` wajib aktif pada produksi.
+- Jika login menghasilkan 500, lihat [TROUBLESHOOTING.md §12](TROUBLESHOOTING.md#12-error-500-saat-login-setelah-deploy).
 
 ---
 

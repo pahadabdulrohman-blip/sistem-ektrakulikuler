@@ -575,12 +575,27 @@ Detail perbaikan ada di [`BUG-FIXING.md`](BUG-FIXING.md).
 ```bash
 composer install --optimize-autoloader --no-dev
 npm install && npm run build
+
+# .env TIDAK ikut di Git — buat dan isi dulu di server
+cp .env.example .env
+php artisan key:generate
+
+# SQLite: pastikan file database ada sebelum migrate
+touch database/database.sqlite      # Linux/cPanel
+# New-Item database\database.sqlite # Windows/PowerShell
+
+# MySQL: buat database dulu, lalu isi DB_* di .env
 php artisan migrate --force
 php artisan storage:link
+
+# Bersihkan cache lama sebelum membuat cache produksi
+php artisan optimize:clear
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 ```
+
+> **Penting:** jalankan `key:generate` dan `migrate --force` **sebelum** login pertama kali. Jika tidak, POST `/login` akan menghasilkan 500 karena `APP_KEY` kosong atau tabel `users`/`cache`/`sessions` belum ada.
 
 ### 15.2 Environment Produksi
 
@@ -590,6 +605,8 @@ APP_DEBUG=false
 APP_URL=https://domain-anda
 SESSION_SECURE_COOKIE=true
 ```
+
+Document root harus mengarah ke folder `public/`. Folder `storage/` dan `bootstrap/cache/` harus writable.
 
 ### 15.3 Izin Folder
 
