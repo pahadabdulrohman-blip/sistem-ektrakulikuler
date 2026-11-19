@@ -98,9 +98,20 @@ Aplikasi memakai **akun yang sudah ada** di database. Tidak ada akun baru yang d
 
 Header diagnostik produksi:
 
-- `X-AKTIVIA-BUILD: 20261119-no-seed`
-- `X-AKTIVIA-DB: pgsql|url|<host-addon>` → addon Postgres terbaca (fallback tidak dipakai)
+- `X-AKTIVIA-BUILD: 20261119-mysql-url`
+- `X-AKTIVIA-DB: pgsql|url|<host-addon>` → addon Postgres terbaca (default)
+- `X-AKTIVIA-DB: mysql|url|<host-addon>` → `MYSQL_URL` aktif, MySQL yang dipakai
 - `X-AKTIVIA-DB: sqlite|no-url|file` → fallback aktif (addon belum ada)
+
+### Memaksa pakai MySQL
+
+Jika Anda sudah punya database MySQL dan ingin memakainya walaupun platform menyuntik `DATABASE_URL` Postgres, tambahkan satu Environment Variable di dashboard:
+
+```env
+MYSQL_URL=mysql://user:password@host:3306/nama_database
+```
+
+`MYSQL_URL` mengalahkan `DATABASE_URL`, sehingga aplikasi memakai MySQL tanpa perlu menghapus addon Postgres. Setelah menambahkan env var, **wajib redeploy**.
 - `X-AKTIVIA-MIG: ...users=ada;skip;` → database sudah ada, tidak ada perubahan skema/data
 
 ⚠️ Mode SQLite fallback bersifat sementara: filenya ikut container dan hilang setiap deploy. Setelah addon aktif, `DATABASE_URL` otomatis dipakai dan data tersimpan permanen.

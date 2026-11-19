@@ -2,6 +2,30 @@
 
 use Illuminate\Support\Str;
 
+/*
+ * Prioritas koneksi database:
+ * 1. MYSQL_URL / DB_MYSQL_URL -> dipakai bila ingin memaksa MySQL walaupun
+ *    platform menyuntik DATABASE_URL Postgres.
+ * 2. DATABASE_URL -> connection string addon yang disuntik otomatis.
+ */
+$mysqlUrl = (string) env('MYSQL_URL', env('DB_MYSQL_URL', ''));
+$databaseUrl = (string) env('DATABASE_URL', '');
+$urlAktif = $mysqlUrl !== '' ? $mysqlUrl : $databaseUrl;
+$skemaAktif = $urlAktif !== '' ? (string) parse_url($urlAktif, PHP_URL_SCHEME) : '';
+
+$koneksiDefault = env('DB_CONNECTION') ?: 'sqlite';
+
+if ($mysqlUrl !== '') {
+    $koneksiDefault = 'mysql';
+} elseif ($skemaAktif !== '') {
+    $koneksiDefault = match ($skemaAktif) {
+        'postgres', 'postgresql', 'pgsql' => 'pgsql',
+        'mariadb' => 'mariadb',
+        'mysql' => 'mysql',
+        default => $koneksiDefault,
+    };
+}
+
 return [
 
     /*
@@ -16,23 +40,7 @@ return [
     |
     */
 
-    // Platform deploy menyuntik DATABASE_URL untuk addon MySQL/Postgres.
-    // Skema URL harus menang: addon Postgres tidak bisa dipaksa jadi mysql.
-    'default' => (function () {
-        $url = (string) env('DATABASE_URL', '');
-        $skema = $url !== '' ? (string) parse_url($url, PHP_URL_SCHEME) : '';
-
-        if ($skema !== '') {
-            return match ($skema) {
-                'postgres', 'postgresql', 'pgsql' => 'pgsql',
-                'mariadb' => 'mariadb',
-                'mysql' => 'mysql',
-                default => env('DB_CONNECTION') ?: 'sqlite',
-            };
-        }
-
-        return env('DB_CONNECTION') ?: 'sqlite';
-    })(),
+    'default' => $koneksiDefault,
 
     /*
     |--------------------------------------------------------------------------
@@ -60,7 +68,9 @@ return [
 
         'mysql' => [
             'driver' => 'mysql',
-            'url' => env('DATABASE_URL', env('DB_URL')),
+            'url' => $mysqlUrl !== ''
+                ? $mysqlUrl
+                : (str_starts_with($databaseUrl, 'mysql') ? $databaseUrl : (string) env('DB_URL', '')),
             'host' => env('DB_HOST', '127.0.0.1'),
             'port' => env('DB_PORT', '3306'),
             'database' => env('DB_DATABASE', 'laravel'),
@@ -100,7 +110,9 @@ return [
 
         'pgsql' => [
             'driver' => 'pgsql',
-            'url' => env('DATABASE_URL', env('DB_URL')),
+            'url' => $mysqlUrl === ''
+                ? ($databaseUrl !== '' ? $databaseUrl : (string) env('DB_URL', ''))
+                : '',
             'host' => env('DB_HOST', '127.0.0.1'),
             'port' => env('DB_PORT', '5432'),
             'database' => env('DB_DATABASE', 'laravel'),

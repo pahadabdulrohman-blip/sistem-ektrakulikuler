@@ -103,13 +103,23 @@ Setiap perubahan env var atau Start command **wajib diikuti redeploy**. Config d
    ```bash
    curl -sI https://sistem-ektrakulikuler.ethiodeploy.app/login | grep -i x-aktivia
    ```
-   Nilai yang diharapkan: `x-aktivia-build: 20261119-no-seed` dan
+   Nilai yang diharapkan: `x-aktivia-build: 20261119-mysql-url` dan
    `x-aktivia-db: pgsql|url|<host-addon>` (addon Postgres terbaca) atau
    `mysql|url|<host-addon>` / `sqlite|no-url|file` (fallback). Header `x-aktivia-mig`
    menampilkan status auto-migrate; jika ada `users=tidak`, cek baris `err=`.
 6. Buka `/download`, lalu klik **Unduh APK**. File 101,1 MB akan digabung otomatis dari `apk-parts/` pada request pertama (butuh beberapa detik). Link langsungnya adalah `/storage/downloads/Alight_Motion_alightmotionsapps.com_063034.apk`.
 
 > Jika `/download` menampilkan halaman tetapi tautan unduh menghasilkan 404, pastikan `storage:link` berhasil — start script bawaan EthioDeploy sudah menjalankannya. Cek juga bahwa ketiga file `apk-parts/*.part*` ikut ter-deploy.
+
+### Memaksa MySQL tanpa menghapus addon Postgres
+
+Tambahkan Environment Variable:
+
+```env
+MYSQL_URL=mysql://user:password@host:3306/nama_database
+```
+
+`MYSQL_URL` mengalahkan `DATABASE_URL` yang disuntik platform. Setelah itu **redeploy**. Cek hasilnya lewat `x-aktivia-db: mysql|url|<host-mysql>`. Data tidak otomatis berpindah dari Postgres ke MySQL — pastikan database MySQL sudah berisi akun dan data yang dipakai.
 
 ---
 

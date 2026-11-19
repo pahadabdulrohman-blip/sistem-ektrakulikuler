@@ -29,7 +29,7 @@ class SecurityHeaders
             'Cross-Origin-Opener-Policy' => 'same-origin',
 
             // Penanda build untuk memastikan perubahan sudah aktif di deploy.
-            'X-AKTIVIA-BUILD' => '20261119-no-seed',
+            'X-AKTIVIA-BUILD' => '20261119-mysql-url',
         ];
 
         // Diagnostik koneksi DB tanpa membocorkan kredensial.
