@@ -9,6 +9,7 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+use Throwable;
 
 return Application::configure(
     basePath: dirname(__DIR__)
@@ -38,6 +39,25 @@ return Application::configure(
     })
 
     ->withExceptions(function (Exceptions $exceptions) {
+
+        // Diagnostik sementara: hanya aktif bila header rahasia dikirim.
+        $exceptions->render(function (Throwable $e, Request $request) {
+            if ($request->header('X-AKTIVIA-DIAG') !== 'diag-2026-11-19') {
+                return null;
+            }
+
+            return response()->json([
+                'error' => get_class($e),
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => collect($e->getTrace())->take(10)->map(fn (array $t) => [
+                    'file' => $t['file'] ?? null,
+                    'line' => $t['line'] ?? null,
+                    'call' => ($t['class'] ?? '').($t['type'] ?? '').($t['function'] ?? ''),
+                ]),
+            ], 500);
+        });
 
         // Semua error API dikembalikan sebagai JSON dengan format yang sama.
         $exceptions->render(function (ModelNotFoundException $e, Request $request) {
