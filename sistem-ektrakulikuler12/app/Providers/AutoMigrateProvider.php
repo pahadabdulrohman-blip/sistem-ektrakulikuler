@@ -40,6 +40,7 @@ class AutoMigrateProvider extends ServiceProvider
         try {
             $perluMigrasi = ! Schema::hasTable('users')
                 || ! Schema::hasTable('cache')
+                || ! Schema::hasTable('cache_locks')
                 || ! Schema::hasTable('sessions');
 
             if ($perluMigrasi) {
@@ -49,7 +50,7 @@ class AutoMigrateProvider extends ServiceProvider
                 ]);
             }
 
-            if (Schema::hasTable('users') && Schema::hasTable('cache')) {
+            if (Schema::hasTable('users') && Schema::hasTable('sessions')) {
                 @file_put_contents($penanda, date('c'));
             }
         } catch (Throwable $e) {

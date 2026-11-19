@@ -27,6 +27,9 @@ class SecurityHeaders
             'Referrer-Policy' => 'strict-origin-when-cross-origin',
             'Permissions-Policy' => 'camera=(), microphone=(), geolocation=()',
             'Cross-Origin-Opener-Policy' => 'same-origin',
+
+            // Penanda build untuk memastikan perubahan sudah aktif di deploy.
+            'X-AKTIVIA-BUILD' => '20261119-fix-cache',
         ];
 
         foreach ($headers as $nama => $nilai) {

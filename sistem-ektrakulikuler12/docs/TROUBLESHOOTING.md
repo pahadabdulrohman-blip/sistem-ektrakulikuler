@@ -275,6 +275,8 @@ Halaman login adalah view statis, jadi tidak menyentuh database. Saat tombol Log
 
 Jika salah satu dari itu belum siap di server, hasilnya 500. Di lokal tidak muncul karena `.env` lokal sudah berisi `APP_KEY`, koneksi DB aktif, dan migrasi sudah dijalankan.
 
+> **Kasus EthioDeploy, 19 Nov 2026 — sudah dipastikan penyebabnya.** Reproduksi lokal dengan sengaja menghapus tabel `cache` menghasilkan `Illuminate\Database\QueryException: SQLSTATE[HY000]: no such table: cache` tepat dari `RateLimiter::tooManyAttempts()`. Itu menjelaskan pola `GET /login 200` + `POST /login 500`: session database normal, tetapi throttle gagal. Perbaikannya sudah masuk kode: `CACHE_STORE` kini defaultnya `file` (tanpa tabel), dan `AppServiceProvider` otomatis fallback ke driver `array` jika dashboard tetap memaksa `CACHE_STORE=database` sementara tabel `cache`/`cache_locks` belum ada. Header respons `X-AKTIVIA-BUILD: 20261119-fix-cache` dipakai untuk memastikan build ini sudah aktif.
+
 > `.env` **tidak ikut ter-commit** (ada di `.gitignore`). Jika deploy hanya meng-upload file dari Git, `.env` pasti kosong di server — ini penyebab paling sering.
 
 ### Langkah 1 — Baca Log di Server (paling cepat)

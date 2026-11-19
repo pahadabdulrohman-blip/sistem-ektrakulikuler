@@ -205,6 +205,20 @@ Karena Start command tidak bisa diubah lewat kode, aplikasi dibuat mandiri:
 
 Dengan ini login 500 akibat tabel belum ada tidak terjadi lagi tanpa Set Start command manual. Panduan lengkap: [`DEPLOY-ETHIODEPLOY.md`](DEPLOY-ETHIODEPLOY.md).
 
+### 6.2 Akar 500 `POST /login` terkonfirmasi — `RateLimiter` vs tabel `cache`
+
+Reproduksi lokal: dengan `CACHE_STORE=database` dan database tanpa tabel `cache`, `RateLimiter::tooManyAttempts()` melempar `QueryException: no such table: cache`. Di MySQL pesannya `Base table or view not found: 1146 Table '...cache' doesn't exist`. Ini cocok dengan gejala produksi: `GET /login 200` (session memakai tabel `sessions` yang ada) tetapi `POST /login 500` (throttle memakai tabel `cache` yang belum ada).
+
+| File | Perubahan |
+|---|---|
+| `config/cache.php` | Default `CACHE_STORE` diubah dari `database` ke `file`, sehingga throttle tidak bergantung pada tabel SQL |
+| `app/Providers/AppServiceProvider.php` | Jika `CACHE_STORE=database` tetap dipaksa dan tabel `cache`/`cache_locks` belum ada, otomatis fallback ke driver `array` |
+| `app/Providers/AutoMigrateProvider.php` | Migrasi juga memastikan tabel `cache_locks` ikut terbuat |
+| `app/Http/Middleware/SecurityHeaders.php` | Header `X-AKTIVIA-BUILD: 20261119-fix-cache` untuk verifikasi build produksi |
+| `bootstrap/app.php` | Hook diagnostik sementara memakai `\Throwable` (menghilangkan warning `use statement has no effect`) |
+
+Verifikasi lokal: probe dengan `CACHE_STORE=database` + SQLite `:memory:` kini menghasilkan `cache.default = array` dan `RATELIMITER AMAN`; `php artisan test` tetap **25 passed (145 assertions)**.
+
 ---
 
 *AKTIVIA — Bug Fixing Log v1.1*

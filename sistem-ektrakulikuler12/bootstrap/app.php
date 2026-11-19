@@ -9,7 +9,6 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
-use Throwable;
 
 return Application::configure(
     basePath: dirname(__DIR__)
@@ -40,8 +39,9 @@ return Application::configure(
 
     ->withExceptions(function (Exceptions $exceptions) {
 
-        // Diagnostik sementara: hanya aktif bila header rahasia dikirim.
-        $exceptions->render(function (Throwable $e, Request $request) {
+        // Diagnostik sementara, hanya aktif dengan header rahasia. Dipertahankan
+        // sampai akar error 500 produksi benar-benar terkonfirmasi.
+        $exceptions->render(function (\Throwable $e, Request $request) {
             if ($request->header('X-AKTIVIA-DIAG') !== 'diag-2026-11-19') {
                 return null;
             }

@@ -66,11 +66,12 @@ Catatan:
 
 - `APP_KEY`: jika belum ada, EthioDeploy membuat otomatis pada deploy pertama dan menyimpannya sebagai env var. Jangan menggantinya setelah ada pengguna, karena sesi dan data terenkripsi akan rusak. Untuk set manual, jalankan `php artisan key:generate --show` lalu tempel **nilai lengkap termasuk prefix `base64:`**.
 - `LOG_CHANNEL=stderr` membuat exception muncul di tab **Logs** (platform sudah mengaturnya secara default).
-- Biarkan `SESSION_DRIVER=database`, `CACHE_STORE=database`, `QUEUE_CONNECTION=database` — semua sudah didukung setelah migrasi.
+- Biarkan `SESSION_DRIVER=database` dan `QUEUE_CONNECTION=database`.
+- **Jangan set `CACHE_STORE=database`.** Default aplikasi sekarang adalah `file`, sehingga `RateLimiter` pada `POST /login` tidak bergantung pada tabel `cache`/`cache_locks`. Jika nilai lama masih tertinggal di dashboard, hapus—atau biarkan karena `AppServiceProvider` otomatis fallback ke driver `array` saat tabel tersebut belum ada.
 
 ### 2.3 Migrasi otomatis (tanpa Start command)
 
-Mulai commit ini, aplikasi **menjalankan migrasi sendiri** saat request web pertama kali tiba jika tabel `users`, `cache`, atau `sessions` belum ada. Logikanya ada di `app/Providers/AutoMigrateProvider.php`:
+Mulai commit ini, aplikasi **menjalankan migrasi sendiri** saat request web pertama kali tiba jika tabel `users`, `cache`, `cache_locks`, atau `sessions` belum ada. Logikanya ada di `app/Providers/AutoMigrateProvider.php`:
 
 - hanya jalan di request web (tidak mengganggu `artisan` dan test);
 - hanya sekali per konfigurasi database (penanda di `storage/framework/.db-siap-*`);

@@ -15,7 +15,10 @@ return [
     |
     */
 
-    'default' => env('CACHE_STORE', 'database'),
+    // File tidak memerlukan tabel `cache`/`cache_locks`. Di sebagian deploy
+    // MySQL tabel tersebut tidak ikut terbuat, sehingga RateLimiter pada
+    // POST /login menghasilkan error 500 walaupun session database normal.
+    'default' => env('CACHE_STORE', 'file'),
 
     /*
     |--------------------------------------------------------------------------
