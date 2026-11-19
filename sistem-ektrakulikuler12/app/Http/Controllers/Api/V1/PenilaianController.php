@@ -39,7 +39,7 @@ class PenilaianController extends ApiController
                 return [
                     'id' => $item->id,
                     'nama' => data_get($pengguna, 'name', $item->username),
-                    'kelas' => data_get($pengguna, 'kelas_saat_i', '-'),
+                    'kelas' => data_get($pengguna, 'kelas_saat_ini', '-'),
                     'kegiatan' => $item->nama_kegiatan ?: '-',
                     'nilai' => Penilaian::formatNilai($item->nilai),
                     'predikat' => Penilaian::predikatDariNilai($item->nilai),

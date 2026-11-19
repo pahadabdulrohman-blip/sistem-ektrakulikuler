@@ -2,26 +2,34 @@
 
 namespace Tests\Feature;
 
+use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
 use Tests\TestCase;
 
 class CsrfProtectionTest extends TestCase
 {
+    /**
+     * Laravel sengaja melewati pengecekan CSRF saat berjalan di test.
+     * Middleware dipaksa aktif di sini agar perilakunya sama seperti produksi.
+     */
     public function test_post_without_csrf_token_is_rejected(): void
     {
-        // Login sebagai admin melalui session
+        $this->app->instance(ValidateCsrfToken::class, new class($this->app, $this->app['encrypter']) extends ValidateCsrfToken
+        {
+            protected function runningUnitTests(): bool
+            {
+                return false;
+            }
+        });
+
         $this->withSession([
             'login' => true,
+            'username' => 'admin',
             'role' => 'admin',
         ]);
 
-        // Kirim POST tanpa token CSRF
-        $response = $this->withMiddleware()
-            ->post('/admin/ekstrakurikuler', [
-                'nama' => 'Badminton',
-                'deskripsi' => 'Kegiatan olahraga badminton',
-            ]);
-
-        // Harus ditolak oleh perlindungan CSRF
-        $response->assertStatus(419);
+        $this->post('/admin/ekstrakurikuler', [
+            'nama' => 'Badminton CSRF Test '.uniqid(),
+            'deskripsi' => 'Uji perlindungan CSRF.',
+        ])->assertStatus(419);
     }
 }

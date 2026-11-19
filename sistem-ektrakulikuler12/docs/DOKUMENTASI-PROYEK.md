@@ -559,22 +559,22 @@ php artisan test
 | `tests/Feature/KeamananDasarTest.php` | Header keamanan, rate limit register, foto profil butuh login, dan `routes/web.php` harus diawali `<?php` |
 | `tests/Feature/FotoKegiatanTest.php` | Upload banyak foto, penolakan file bukan gambar, hapus file + DB, isolasi antar ekskul, larangan siswa upload, galeri tampil di halaman siswa/admin/guru |
 | `tests/Feature/Api/V1ApiTest.php` | Login/token, logout, role, CRUD ekskul, pilihan ekskul, jadwal, absensi, penilaian, penerimaan siswa, laporan, profil |
-| `tests/Feature/ExampleTest.php` | Test bawaan Laravel (belum disesuaikan) |
+| `tests/Feature/ExampleTest.php` | Redirect tamu ke `/login` dan halaman login dapat diakses |
 | `tests/Feature/CsrfProtectionTest.php` | Uji penolakan request tanpa CSRF |
 
 ### 14.2 Hasil Terakhir
 
 ```text
-Tests: 22 passed, 2 failed (139 assertions)
-Tests: 7 passed, 74 assertions   (php artisan test --filter=V1ApiTest)
+Tests: 25 passed, 0 failed (145 assertions)
+Tests: 8 passed, 78 assertions   (php artisan test --filter=V1ApiTest)
 ```
 
-Dua test yang gagal bersifat **bawaan/belum disesuaikan**:
+Dua test yang dulu gagal sudah diperbaiki pada sesi final:
 
-- `ExampleTest`: mengharapkan `GET /` status 200, padahal rute `/` memang me-redirect ke login (302).
-- `CsrfProtectionTest`: skenario penolakan CSRF belum menghasilkan 419 sesuai ekspektasi.
+- `ExampleTest`: kini memeriksa bahwa `GET /` me-redirect ke `/login` (302), lalu halaman login mengembalikan 200.
+- `CsrfProtectionTest`: kini memaksa middleware `ValidateCsrfToken` aktif di mode test, sehingga POST tanpa token benar-benar menghasilkan 419.
 
-Keduanya tidak berkaitan dengan fitur foto, login, atau galeri.
+Detail lengkap ada di [`BUG-FIXING.md`](BUG-FIXING.md).
 
 ---
 
@@ -588,7 +588,8 @@ Keduanya tidak berkaitan dengan fitur foto, login, atau galeri.
 | 2026-11-18 | **Perbaikan kritis:** baris kosong sebelum `<?php` di `routes/web.php` dihapus. Baris tersebut menyisipkan byte newline ke semua respons dan membuat gambar rusak di browser |
 | 2026-11-18 | Tes regresi ditambahkan untuk memastikan `routes/web.php` diawali `<?php` |
 | 2026-11-19 | **Perbaikan kritis:** `RoleMiddleware.php` dan `SecurityHeaders.php` dikembalikan ke `app/Http/Middleware/` setelah sempat berada di folder yang salah, menyebabkan error 500 |
-| 2026-11-19 | Penambahan REST API v1 (`routes/api.php`, 45 endpoint), migrasi `users.api_token`, middleware `api.token`/`api.role`, 11 controller di `Api/V1/`, 7 test API, dan dokumentasi `docs/API-DOCS.md` |
+| 2026-11-19 | Penambahan REST API v1 (`routes/api.php`, 45 endpoint), migrasi `users.api_token`, middleware `api.token`/`api.role`, 11 controller di `Api/V1/`, 8 test API, dan dokumentasi `docs/API-DOCS.md` |
+| 2026-11-19 | Bug fixing final: typo `kelas_saat_i` → `kelas_saat_ini` di 5 file API, perbaikan `ExampleTest` & `CsrfProtectionTest`, test regresi, dan `docs/BUG-FIXING.md` |
 
 ---
 
@@ -608,6 +609,7 @@ Keduanya tidak berkaitan dengan fitur foto, login, atau galeri.
 
 - `README.md` — ringkasan dan quick start.
 - `docs/API-DOCS.md` — referensi lengkap REST API v1.
+- `docs/BUG-FIXING.md` — catatan perbaikan bug dan test regresi.
 - `docs/TECH-DOCS.md` — dokumentasi teknis.
 - `docs/PANDUAN-PENGGUNAAN.md` — panduan end-user.
 - `docs/TROUBLESHOOTING.md` — solusi masalah umum.

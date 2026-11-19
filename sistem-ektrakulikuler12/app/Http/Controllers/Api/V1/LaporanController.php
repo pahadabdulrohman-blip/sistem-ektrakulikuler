@@ -31,7 +31,7 @@ class LaporanController extends ApiController
 
                 return [
                     'nama' => data_get($pengguna, 'name', $item->username),
-                    'kelas' => data_get($pengguna, 'kelas_saat_i', '-'),
+                    'kelas' => data_get($pengguna, 'kelas_saat_ini', '-'),
                     'kegiatan' => $item->nama_kegiatan ?: '-',
                     'nilai' => Penilaian::formatNilai($item->nilai),
                     'predikat' => Penilaian::predikatDariNilai($item->nilai),
@@ -118,7 +118,7 @@ class LaporanController extends ApiController
 
             return [
                 'nama' => $siswa->name,
-                'kelas' => data_get($siswa, 'kelas_saat_i') ?: ($siswa->kelas ?: '-'),
+                'kelas' => data_get($siswa, 'kelas_saat_ini') ?: ($siswa->kelas ?: '-'),
                 'ekstrakurikuler' => $siswa->pendaftaranEkstrakurikuler
                     ->pluck('ekstrakurikuler.nama_ekstrakurikuler')->filter()->implode(', ') ?: '-',
                 'nilai' => $nilaiRata !== null ? Penilaian::formatNilai($nilaiRata) : '-',

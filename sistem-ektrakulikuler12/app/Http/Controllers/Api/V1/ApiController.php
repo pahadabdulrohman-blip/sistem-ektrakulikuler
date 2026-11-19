@@ -50,7 +50,7 @@ abstract class ApiController extends Controller
             'role' => $user->role,
             'status_pendaftaran' => $user->status_pendaftaran,
             'kelas' => $user->kelas,
-            'kelas_saat_ini' => data_get($user, 'kelas_saat_i', '-'),
+            'kelas_saat_ini' => data_get($user, 'kelas_saat_ini', '-'),
             'tahun_masuk' => $user->tahun_masuk,
             'nama_sekolah' => $user->nama_sekolah,
         ];

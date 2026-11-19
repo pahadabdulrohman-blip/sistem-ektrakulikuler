@@ -35,7 +35,7 @@ class PenggunaController extends ApiController
         $siswa = User::where('role', 'siswa')->orderBy('name')->get();
 
         $jumlahPerKelas = $siswa
-            ->countBy(fn ($item) => data_get($item, 'kelas_saat_i') ?: 'Belum diisi')
+            ->countBy(fn ($item) => data_get($item, 'kelas_saat_ini') ?: 'Belum diisi')
             ->sortKeys();
 
         return $this->sukses([

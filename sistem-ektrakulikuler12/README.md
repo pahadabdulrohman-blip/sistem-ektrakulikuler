@@ -66,6 +66,8 @@
 | [REST API Docs](docs/API-DOCS.md) | Markdown | Sumber referensi API: autentikasi, 45 endpoint, contoh request/respons, error, rate limit |
 | [User Manual](docs/MANUAL.md) | Markdown | Sumber manual: prosedur Admin, Guru, Siswa, pengelolaan foto, glosarium |
 | [Technical Docs](docs/TECH-DOCS.md) | Markdown | Sumber tech docs: arsitektur, database, model, controller, middleware, rute, REST API, keamanan, deployment |
+| [Bug Fixing Log](docs/AKTIVIA-Bug-Fixing.docx) | **Word (.docx)** | Catatan perbaikan bug akhir beserta test regresi (4 halaman) |
+| [Bug Fixing Log](docs/BUG-FIXING.md) | Markdown | Sumber catatan perbaikan bug dan hasil verifikasi |
 | [Dokumentasi Proyek](docs/DOKUMENTASI-PROYEK.md) | Markdown | Dokumentasi lengkap gabungan (arsitektur, fitur, rute, database, pengujian) |
 | [Panduan Penggunaan](docs/PANDUAN-PENGGUNAAN.md) | Markdown | Panduan ringkas cara pakai aplikasi |
 | [Troubleshooting](docs/TROUBLESHOOTING.md) | Markdown | Masalah umum dan solusinya |
@@ -116,7 +118,7 @@ php artisan test
 php artisan test --filter=V1ApiTest   # khusus REST API
 ```
 
-Terakhir dijalankan: **22 test lulus** (termasuk 7 test REST API), 2 test bawaan masih gagal (`ExampleTest` dan `CsrfProtectionTest`) — lihat [catatan pengujian](docs/DOKUMENTASI-PROYEK.md#14-pengujian).
+Terakhir dijalankan: **25 test lulus, 0 gagal** (termasuk 8 test REST API). Dua test lama yang dulu gagal (`ExampleTest` dan `CsrfProtectionTest`) sudah diperbaiki — lihat [Bug Fixing Log](docs/BUG-FIXING.md).
 
 ## 🔐 Catatan Keamanan
 

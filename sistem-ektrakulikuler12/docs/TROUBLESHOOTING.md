@@ -185,14 +185,14 @@ Token CSRF habis karena halaman terlalu lama dibuka atau cookie session berganti
 
 ## 8. Test Gagal
 
-### Dua Test Bawaan yang Memang Gagal
+### Test Bawaan yang Dulu Gagal (Sudah Diperbaiki)
 
-| Test | Alasan |
-|---|---|
-| `Feature\ExampleTest` | Mengharapkan `GET /` = 200, tetapi rute `/` memang redirect ke login (302) |
-| `Feature\CsrfProtectionTest` | Skenario uji CSRF belum menghasilkan 419 sesuai ekspektasi |
+| Test | Masalah lama | Perbaikan |
+|---|---|---|
+| `Feature\ExampleTest` | Mengharapkan `GET /` = 200, padahal rute `/` redirect ke login (302) | Test kini memeriksa redirect ke `/login`, lalu halaman login 200 |
+| `Feature\CsrfProtectionTest` | Laravel melewati CSRF saat mode test, sehingga tidak pernah 419 | Middleware `ValidateCsrfToken` dipaksa aktif di test |
 
-Keduanya belum diperbaiki karena tidak berkaitan dengan fitur utama. Test fitur foto dan keamanan lain lolos:
+Sekarang seluruh test lulus: `Tests: 25 passed (145 assertions)`. Detail ada di [`BUG-FIXING.md`](BUG-FIXING.md). Test fitur foto dan keamanan juga lolos:
 
 ```bash
 php artisan test --filter=FotoKegiatan

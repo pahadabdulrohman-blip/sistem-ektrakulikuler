@@ -547,20 +547,22 @@ php artisan test --filter=KeamananDasarTest
 | `tests/Feature/KeamananDasarTest.php` | Header, rate limit, foto privat, penjaga newline `routes/web.php` |
 | `tests/Feature/FotoKegiatanTest.php` | Upload, validasi, hapus, isolasi ekskul, akses siswa, tampilan galeri |
 | `tests/Feature/Api/V1ApiTest.php` | Login/token, role, CRUD ekskul, pilihan ekskul, jadwal, absensi, penilaian, penerimaan, laporan, profil, logout |
-| `tests/Feature/ExampleTest.php` | Test bawaan (belum disesuaikan) |
+| `tests/Feature/ExampleTest.php` | Redirect tamu ke `/login` dan halaman login dapat diakses |
 | `tests/Feature/CsrfProtectionTest.php` | Uji CSRF (belum sesuai ekspektasi) |
 
 ### 14.3 Hasil Terakhir
 
 ```text
-Tests: 22 passed, 2 failed (139 assertions)
-Tests: 7 passed, 74 assertions   (php artisan test --filter=V1ApiTest)
+Tests: 25 passed, 0 failed (145 assertions)
+Tests: 8 passed, 78 assertions   (php artisan test --filter=V1ApiTest)
 ```
 
-Dua kegagalan bersifat bawaan:
+Dua test yang dulu gagal sudah diperbaiki pada sesi final:
 
-- `ExampleTest`: `GET /` menghasilkan 302, bukan 200.
-- `CsrfProtectionTest`: tidak menghasilkan 419 seperti yang diharapkan.
+- `ExampleTest`: kini memverifikasi redirect `GET /` → `/login` (302), sesuai perilaku aplikasi.
+- `CsrfProtectionTest`: kini memaksa middleware `ValidateCsrfToken` aktif di mode test sehingga 419 benar-benar teruji.
+
+Detail perbaikan ada di [`BUG-FIXING.md`](BUG-FIXING.md).
 
 > `phpunit.xml` saat ini tidak mengaktifkan `sqlite :memory:`, sehingga test memakai database dari `.env`.
 
@@ -635,7 +637,8 @@ Pastikan writable:
 | 2026-11-18 | Tes regresi penjaga awalan file route ditambahkan |
 | 2026-11-19 | Perbaikan kritis: middleware dikembalikan ke `app/Http/Middleware/` setelah sempat salah folder (error 500) |
 | 2026-11-19 | Penyusunan `MANUAL.md` dan `TECH-DOCS.md` |
-| 2026-11-19 | Penambahan REST API v1: 45 rute di `routes/api.php`, 11 controller di `Api/V1/`, middleware `api.token` & `api.role`, migrasi `users.api_token`, 7 test API, serta `docs/API-DOCS.md` |
+| 2026-11-19 | Penambahan REST API v1: 45 rute di `routes/api.php`, 11 controller di `Api/V1/`, middleware `api.token` & `api.role`, migrasi `users.api_token`, 8 test API, serta `docs/API-DOCS.md` |
+| 2026-11-19 | Bug fixing final: typo `kelas_saat_i` → `kelas_saat_ini` di 5 file API, perbaikan `ExampleTest` & `CsrfProtectionTest`, test regresi, dan `docs/BUG-FIXING.md` |
 
 ---
 
@@ -657,6 +660,7 @@ Pastikan writable:
 |---|---|
 | User Manual | [`MANUAL.md`](MANUAL.md) |
 | REST API Reference | [`API-DOCS.md`](API-DOCS.md) |
+| Bug Fixing Log | [`BUG-FIXING.md`](BUG-FIXING.md) |
 | Dokumentasi Proyek | [`DOKUMENTASI-PROYEK.md`](DOKUMENTASI-PROYEK.md) |
 | Panduan Penggunaan | [`PANDUAN-PENGGUNAAN.md`](PANDUAN-PENGGUNAAN.md) |
 | Troubleshooting | [`TROUBLESHOOTING.md`](TROUBLESHOOTING.md) |

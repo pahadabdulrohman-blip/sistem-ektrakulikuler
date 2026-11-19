@@ -129,6 +129,15 @@ class V1ApiTest extends TestCase
         ])->assertStatus(401)->assertJsonPath('success', false);
     }
 
+    public function test_kelas_saat_ini_dihitung_benar(): void
+    {
+        $this->withHeaders($this->header('siswa'))
+            ->getJson('/api/v1/me')
+            ->assertOk()
+            ->assertJsonPath('data.kelas', 'X')
+            ->assertJsonPath('data.kelas_saat_ini', 'X');
+    }
+
     public function test_logout_mencabut_token(): void
     {
         $header = $this->header('guru');

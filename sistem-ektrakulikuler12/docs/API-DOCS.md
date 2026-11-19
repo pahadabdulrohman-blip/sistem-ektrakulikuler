@@ -470,7 +470,7 @@ Saat batas terlampaui, respons HTTP 429 disertai pesan estimasi waktu tunggu dal
 | Controller | `app/Http/Controllers/Api/V1/` | 11 controller sesuai grup fitur |
 | Kolom token | `database/migrations/2026_11_19_000001_add_api_token_to_users_table.php` | `users.api_token` |
 | Model | `app/Models/User.php` | `api_token` disembunyikan dari serialisasi |
-| Test | `tests/Feature/Api/V1ApiTest.php` | 7 test API |
+| Test | `tests/Feature/Api/V1ApiTest.php` | 8 test API |
 
 Detail teknis:
 
@@ -496,6 +496,7 @@ Cakupan `tests/Feature/Api/V1ApiTest.php`:
 | Test | Yang diverifikasi |
 |---|---|
 | `login me dan token tidak valid` | Login, struktur token, `/me`, token salah, token tidak ada, password salah |
+| `kelas saat ini dihitung benar` | Field `kelas_saat_ini` pada `/me` sesuai accessor model (test regresi bug typo) |
 | `logout mencabut token` | Token tidak berlaku setelah logout |
 | `pembatasan role` | Admin boleh akses admin; guru & siswa ditolak 403 |
 | `ekstrakurikuler dan validasi` | List, detail, create, update, validasi 422, delete |
@@ -503,7 +504,7 @@ Cakupan `tests/Feature/Api/V1ApiTest.php`:
 | `guru jadwal absensi dan penilaian` | Create jadwal, absensi, penilaian, update, hapus |
 | `admin penerimaan laporan dan profil` | Penerimaan siswa, laporan, profil, validasi upload |
 
-Hasil terakhir: **7 test lulus (74 assertions)**.
+Hasil terakhir: **8 test lulus (78 assertions)**.
 
 ### 10.2 Uji Manual Cepat
 
