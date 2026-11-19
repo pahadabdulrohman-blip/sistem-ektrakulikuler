@@ -567,7 +567,7 @@
 
                 <p class="description">
                     Pilih foto profil baru untuk memperbarui tampilan akun siswa.
-                    Format JPG, JPEG, PNG, atau WEBP. Maksimal 2 MB.
+                    Format JPG, JPEG, PNG, atau WEBP. Maksimal 10 MB.
                 </p>
 
                 <form action="{{ route('profil.foto.upload') }}"

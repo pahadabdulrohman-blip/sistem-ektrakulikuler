@@ -43,7 +43,7 @@
     <p class="fk-hint">
         @if($bisaKelola)
             Unggah dokumentasi kegiatan ekstrakurikuler. Bisa beberapa foto sekaligus
-            (maksimal 10 foto, masing-masing maksimal 2 MB, format JPG/PNG/WEBP).
+            (maksimal 10 foto, masing-masing maksimal 10 MB, format JPG/PNG/WEBP).
         @else
             Dokumentasi kegiatan ekstrakurikuler.
         @endif
@@ -147,7 +147,7 @@
                 </button>
 
                 <span class="fk-catatan">
-                    Maks. 10 foto &middot; 2 MB per foto
+                    Maks. 10 foto &middot; 10 MB per foto
                 </span>
             </div>
         </form>

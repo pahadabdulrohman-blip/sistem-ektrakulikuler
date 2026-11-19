@@ -19,55 +19,72 @@
             background: #f1f5f9;
         }
 
+        /* Samakan dengan dashboard siswa: biru, bukan hitam seperti admin. */
         .sidebar {
             position: fixed;
             left: 0;
             top: 0;
-            width: 250px;
+            width: 260px;
             height: 100vh;
-            background: #111827;
-            padding: 30px 20px;
+            background: linear-gradient(180deg, #0785bb, #08658c);
+            padding: 25px 15px;
             color: white;
+            z-index: 1000;
         }
 
-        .sidebar h2 {
+        .logo {
             text-align: center;
+            margin-bottom: 12px;
+        }
+
+        .logo i {
+            font-size: 40px;
+            margin-bottom: 8px;
+        }
+
+        .logo h2 {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: 1px;
             margin: 0;
         }
 
         .sidebar p {
             text-align: center;
-            color: #94a3b8;
-            margin-bottom: 40px;
+            color: rgba(255,255,255,.75);
+            margin-bottom: 30px;
         }
 
         .menu {
-            display: block;
+            display: flex;
+            align-items: center;
+            gap: 12px;
             color: white;
             text-decoration: none;
-            padding: 14px;
+            padding: 13px 16px;
             margin-bottom: 8px;
-            border-radius: 10px;
+            border-radius: 12px;
+            font-weight: 500;
+            transition: .3s;
         }
 
         .menu i {
-            width: 18px;
-            margin-right: 8px;
+            width: 22px;
             text-align: center;
         }
 
         .menu:hover {
-            background: #2563eb;
+            background: rgba(255,255,255,.20);
         }
 
         .content {
-            margin-left: 250px;
+            margin-left: 260px;
             padding: 45px;
         }
 
         .back {
             display: inline-block;
-            background: #111827;
+            background: #0785bb;
             color: white;
             text-decoration: none;
             padding: 12px 20px;
@@ -157,7 +174,10 @@
 
     <aside class="sidebar">
 
-        <h2>ADMIN PANEL</h2>
+        <div class="logo">
+            <i class="fa-solid fa-graduation-cap"></i>
+            <h2>SISWA</h2>
+        </div>
 
         <p>Sistem Ekstrakurikuler</p>
 
@@ -174,12 +194,18 @@
         </a>
 
         <a href="{{ route('penilaian') }}" class="menu">
-            <i class="fa-solid fa-star"></i>Penilaian
+            <i class="fa-solid fa-star"></i>Nilai Saya
         </a>
 
         <a href="{{ route('profil') }}" class="menu">
             <i class="fa-solid fa-user"></i>Profil
         </a>
+
+        <a href="{{ route('logout.confirm') }}" class="menu" data-logout>
+            <i class="fa-solid fa-right-from-bracket"></i>Logout
+        </a>
+
+        @include('partials.logout-form')
 
     </aside>
 
@@ -189,6 +215,13 @@
         <a href="{{ route('ekstrakurikuler') }}" class="back">
             <i class="fa-solid fa-arrow-left"></i> Kembali
         </a>
+
+        <div style="display:inline-block;background:#dcfce7;color:#166534;
+                    padding:8px 14px;border-radius:999px;font-weight:bold;
+                    font-size:13px;margin-bottom:16px;">
+            <i class="fa-solid fa-user-graduate"></i>
+            Tampilan Siswa — hanya melihat foto kegiatan
+        </div>
 
         <div class="card">
 

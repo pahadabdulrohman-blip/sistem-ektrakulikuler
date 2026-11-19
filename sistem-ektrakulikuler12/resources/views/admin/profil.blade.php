@@ -324,7 +324,7 @@
 <div style="margin: 20px 0;">
     @if ($fotoProfil)
         <img
-            src="{{ $fotoProfil->url }}"
+            src="{{ $fotoProfil->url }}?v={{ $fotoProfil->updated_at?->timestamp ?? time() }}"
             alt="Foto Profil"
             style="width:130px;height:130px;object-fit:cover;border-radius:50%;"
         >

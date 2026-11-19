@@ -47,4 +47,12 @@ class KeamananDasarTest extends TestCase
         ])->get(route('profil.foto', 'uji.jpg'))
             ->assertOk();
     }
+
+    public function test_file_route_tidak_menghasilkan_byte_diwilangan_foto(): void
+    {
+        // Baris kosong sebelum <?php akan ikut tercetak dan merusak gambar.
+        $isi = file_get_contents(base_path('routes/web.php'));
+
+        $this->assertStringStartsWith('<?php', $isi);
+    }
 }

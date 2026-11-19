@@ -11,12 +11,12 @@ class ProfilePhotoController extends Controller
     public function upload(Request $request)
     {
         $request->validate([
-            'foto' => 'required|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'foto' => 'required|image|mimes:jpg,jpeg,png,webp|max:10240',
         ], [
             'foto.required' => 'Silakan pilih foto terlebih dahulu.',
             'foto.image' => 'File harus berupa gambar.',
             'foto.mimes' => 'Format foto harus JPG, JPEG, PNG, atau WEBP.',
-            'foto.max' => 'Ukuran foto maksimal 2 MB.',
+            'foto.max' => 'Ukuran foto maksimal 10 MB.',
         ]);
 
         $username = session('username', session('name'));

@@ -183,6 +183,14 @@ class FotoKegiatanTest extends TestCase
         $response->assertSee('Foto Kegiatan');
         $response->assertSee('Dokumentasi uji');
         $response->assertSee($ekskul->nama_ekstrakurikuler);
+        $response->assertSee('<h2>SISWA</h2>', false);
+        $response->assertSee('Tampilan Siswa');
+        $response->assertDontSee('ADMIN PANEL');
+        $response->assertDontSee('Unggah Foto');
+        $response->assertDontSee('dashboard-admin');
+        $response->assertDontSee('/admin/');
+        $response->assertDontSee('Data Guru');
+        $response->assertDontSee('Penerimaan Siswa');
     }
 
     public function test_halaman_admin_dan_guru_menampilkan_galeri(): void

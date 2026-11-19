@@ -448,7 +448,7 @@
             <div class="avatar">
                 @if ($fotoProfil && $fotoProfil->photo_path)
                     <img
-                        src="{{ $fotoProfil->url }}"
+                        src="{{ $fotoProfil->url }}?v={{ $fotoProfil->updated_at?->timestamp ?? time() }}"
                         alt="Foto Profil Guru"
                     >
                 @else

@@ -30,7 +30,7 @@ class FotoKegiatanController extends Controller
 
         $request->validate([
             'foto' => 'required|array|max:10',
-            'foto.*' => 'required|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'foto.*' => 'required|image|mimes:jpg,jpeg,png,webp|max:10240',
             'keterangan' => 'nullable|string|max:150',
         ], [
             'foto.required' => 'Silakan pilih minimal satu foto kegiatan.',
@@ -39,7 +39,7 @@ class FotoKegiatanController extends Controller
             'foto.*.required' => 'Ada file foto yang kosong. Silakan pilih ulang.',
             'foto.*.image' => 'Setiap file harus berupa gambar.',
             'foto.*.mimes' => 'Format foto harus JPG, JPEG, PNG, atau WEBP.',
-            'foto.*.max' => 'Ukuran setiap foto maksimal 2 MB.',
+            'foto.*.max' => 'Ukuran setiap foto maksimal 10 MB.',
             'keterangan.max' => 'Keterangan maksimal 150 karakter.',
         ]);
 

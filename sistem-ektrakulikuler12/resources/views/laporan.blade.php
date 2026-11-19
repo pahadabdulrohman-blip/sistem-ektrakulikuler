@@ -634,7 +634,7 @@
             <div class="profile-icon">
                 @if ($fotoGuru && $fotoGuru->photo_path)
                     <img
-                        src="{{ $fotoGuru->url }}"
+                        src="{{ $fotoGuru->url }}?v={{ $fotoGuru->updated_at?->timestamp ?? time() }}"
                         alt="Foto Profil {{ $namaGuru }}"
                     >
                 @else
