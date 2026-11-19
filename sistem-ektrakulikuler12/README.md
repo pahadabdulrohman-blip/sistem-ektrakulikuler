@@ -66,11 +66,11 @@
 | [REST API Docs](docs/API-DOCS.md) | Markdown | Sumber referensi API: autentikasi, 45 endpoint, contoh request/respons, error, rate limit |
 | [User Manual](docs/MANUAL.md) | Markdown | Sumber manual: prosedur Admin, Guru, Siswa, pengelolaan foto, glosarium |
 | [Technical Docs](docs/TECH-DOCS.md) | Markdown | Sumber tech docs: arsitektur, database, model, controller, middleware, rute, REST API, keamanan, deployment |
-| [Bug Fixing Log](docs/AKTIVIA-Bug-Fixing.docx) | **Word (.docx)** | Catatan perbaikan bug akhir beserta test regresi (4 halaman) |
+| [Bug Fixing Log](docs/AKTIVIA-Bug-Fixing.docx) | **Word (.docx)** | Catatan perbaikan bug akhir beserta test regresi (5 halaman) |
 | [Bug Fixing Log](docs/BUG-FIXING.md) | Markdown | Sumber catatan perbaikan bug dan hasil verifikasi |
 | [Dokumentasi Proyek](docs/DOKUMENTASI-PROYEK.md) | Markdown | Dokumentasi lengkap gabungan (arsitektur, fitur, rute, database, pengujian) |
 | [Panduan Penggunaan](docs/PANDUAN-PENGGUNAAN.md) | Markdown | Panduan ringkas cara pakai aplikasi |
-| [Panduan Deploy EthioDeploy](docs/AKTIVIA-Deploy-EthioDeploy.docx) | **Word (.docx)** | Langkah deploy produksi, env var, addon DB, dan Start command |
+| [Panduan Deploy EthioDeploy](docs/AKTIVIA-Deploy-EthioDeploy.docx) | **Word (.docx)** | Langkah deploy produksi, env var, addon DB, migrasi otomatis (4 halaman) |
 | [Panduan Deploy EthioDeploy](docs/DEPLOY-ETHIODEPLOY.md) | Markdown | Sumber panduan deploy ke `ethiodeploy.app` |
 | [Troubleshooting](docs/TROUBLESHOOTING.md) | Markdown | Masalah umum dan solusinya |
 | [Diagram Use Case](docs/use-case-diagram.png) | Gambar | Diagram use case sistem (versi HTML: `docs/use-case-diagram.html`) |

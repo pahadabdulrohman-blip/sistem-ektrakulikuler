@@ -192,6 +192,19 @@ Ini **bukan bug kode** melainkan konfigurasi server. `GET /login` hanya merender
 
 Checklist deploy sudah diperbarui di `docs/TECH-DOCS.md` §15 dan `docs/DOKUMENTASI-PROYEK.md` §5.4. Tata cara membaca log dan verifikasi ada di [`TROUBLESHOOTING.md`](TROUBLESHOOTING.md#12-error-500-saat-login-setelah-deploy).
 
+### 6.1 Perbaikan tambahan (commit `c8cc1d0+`)
+
+Karena Start command tidak bisa diubah lewat kode, aplikasi dibuat mandiri:
+
+| File | Perubahan |
+|---|---|
+| `config/database.php` | Default connection otomatis `mysql` saat `DATABASE_URL` (addon EthioDeploy) tersedia dan `DB_CONNECTION` tidak diset |
+| `app/Providers/AutoMigrateProvider.php` | Menjalankan `migrate --force` pada request web pertama bila tabel `users`/`cache`/`sessions` belum ada; hanya sekali per konfigurasi DB, gagalnya dicatat di log |
+| `bootstrap/providers.php` | Mendaftarkan provider tersebut |
+| `bootstrap/app.php` | `trustProxies(at: '*')` agar URL/asset tetap HTTPS di balik proxy |
+
+Dengan ini login 500 akibat tabel belum ada tidak terjadi lagi tanpa Set Start command manual. Panduan lengkap: [`DEPLOY-ETHIODEPLOY.md`](DEPLOY-ETHIODEPLOY.md).
+
 ---
 
 *AKTIVIA — Bug Fixing Log v1.1*

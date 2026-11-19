@@ -13,13 +13,18 @@ EthioDeploy **tidak membaca file `.env` dari repository**. File `.env` memang ma
 | Environment variable diset lewat **Settings → Environment Variables** dan di-inject saat deploy | Mengedit `.env` di komputer/local tidak ada efek di produksi |
 | `config:cache` dijalankan **saat container start**, setelah env var dimuat | Setelah mengubah env var, **harus redeploy** agar nilai baru dipakai |
 | SQLite dibuat ulang dan **dihapus setiap deploy** | Jangan pakai SQLite untuk data produksi — data login dan ekskul akan hilang |
-| Migrasi **tidak dijalankan otomatis** untuk MySQL/Postgres | Tabel `users`/`cache`/`sessions` tidak ada → login 500 |
+| Start script bawaan hanya menjalankan `migrate` untuk SQLite | Untuk MySQL/Postgres tabel `users`/`cache`/`sessions` bisa tidak ada → login 500 |
 
-Jadi tiga kesalahan paling umum:
+Sejak commit ini, dua hal sudah diperbaiki di kode:
 
-1. Mengubah `.env` lokal lalu `git push`, bukan mengubah di dashboard EthioDeploy.
-2. Mengubah env var di dashboard tapi **tidak redeploy**.
-3. `DB_CONNECTION` masih `sqlite` (default `.env.example`), sehingga pengaturan MySQL diabaikan dan data hilang tiap deploy.
+- `config/database.php` otomatis memakai `mysql` ketika `DATABASE_URL` dari addon tersedia.
+- `AutoMigrateProvider` membuat tabel otomatis pada request web pertama bila belum ada.
+
+Yang masih perlu diperhatikan:
+
+1. Mengubah `.env` lokal lalu `git push` tetap tidak berpengaruh — env var harus diset di dashboard.
+2. Setelah mengubah env var di dashboard, **tetap wajib redeploy** karena config di-cache saat start.
+3. Jangan memaksa `DB_CONNECTION=sqlite` di produksi — datanya hilang tiap deploy.
 
 ---
 
@@ -40,9 +45,9 @@ Jadi tiga kesalahan paling umum:
 ],
 ```
 
-Jadi **tidak perlu** mengisi `DB_HOST`, `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD` manual. Cukup `DB_CONNECTION=mysql`.
+Jadi **tidak perlu** mengisi `DB_HOST`, `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD` manual. Bahkan `DB_CONNECTION` juga bisa dikosongkan: `config/database.php` sudah otomatis memilih `mysql` saat `DATABASE_URL` tersedia.
 
-> Untuk Postgres, tambahkan fallback `env('DATABASE_URL')` pada blok `pgsql` di `config/database.php` kemudian set `DB_CONNECTION=pgsql`.
+> Untuk Postgres, tambahkan fallback `env('DATABASE_URL')` pada blok `pgsql` di `config/database.php` lalu set `DB_CONNECTION=pgsql`.
 
 ### 2.2 Isi Environment Variables di Settings
 
@@ -51,10 +56,11 @@ APP_NAME=AKTIVIA
 APP_ENV=production
 APP_DEBUG=false
 APP_URL=https://sistem-ektrakulikuler.ethiodeploy.app
-DB_CONNECTION=mysql
 SESSION_SECURE_COOKIE=true
 LOG_CHANNEL=stderr
 ```
+
+`DB_CONNECTION` tidak wajib diisi — aplikasi otomatis memakai `mysql` saat addon menyuntik `DATABASE_URL`.
 
 Catatan:
 
@@ -62,15 +68,21 @@ Catatan:
 - `LOG_CHANNEL=stderr` membuat exception muncul di tab **Logs** (platform sudah mengaturnya secara default).
 - Biarkan `SESSION_DRIVER=database`, `CACHE_STORE=database`, `QUEUE_CONNECTION=database` — semua sudah didukung setelah migrasi.
 
-### 2.3 Set Start command
+### 2.3 Migrasi otomatis (tanpa Start command)
 
-Di **Settings → Start command**, isi:
+Mulai commit ini, aplikasi **menjalankan migrasi sendiri** saat request web pertama kali tiba jika tabel `users`, `cache`, atau `sessions` belum ada. Logikanya ada di `app/Providers/AutoMigrateProvider.php`:
+
+- hanya jalan di request web (tidak mengganggu `artisan` dan test);
+- hanya sekali per konfigurasi database (penanda di `storage/framework/.db-siap-*`);
+- gagalnya migrasi tidak menggantikan error aplikasi, hanya dicatat di log.
+
+Jadi Start command bawaan EthioDeploy bisa dibiarkan kosong. Tetap disarankan mengisi:
 
 ```bash
 php artisan migrate --force && ethiodeploy-start
 ```
 
-`ethiodeploy-start` adalah skrip platform yang menjalankan `storage:link`, `config:cache`, `route:cache`, `view:cache`, lalu nginx + PHP-FPM. **Jangan dihapus** dari urutan tersebut.
+sebagai Lapisan tambahan, tetapi **tidak lagi wajib**.
 
 Biarkan **Build command** kosong — platform otomatis menjalankan `composer install --no-dev --optimize-autoloader` dan `npm run build`.
 
@@ -96,8 +108,8 @@ Setiap perubahan env var atau Start command **wajib diikuti redeploy**. Config d
 | Env var sudah diisi tapi masih memakai DB lama | Config di-cache saat start | **Redeploy** setelah ubah env var |
 | Edit `.env` lokal tapi tidak berubah di produksi | `.env` tidak di-deploy | Set di Settings → Environment Variables |
 | `SQLSTATE[HY000] [2002] Connection refused` | Addon belum attached / config lama | Pasang addon MySQL, lalu redeploy |
-| `Base table or view not found: ...users/cache/sessions` | Migrasi belum jalan | Set Start command seperti §2.3, lalu redeploy |
-| Data hilang setelah deploy | Masih memakai SQLite | Ganti ke `DB_CONNECTION=mysql` + addon |
+| `Base table or view not found: ...users/cache/sessions` | Migrasi belum jalan | `AutoMigrateProvider` akan mencoba otomatis; pastikan addon terpasang lalu redeploy. Opsi manual ada di §2.3 |
+| Data hilang setelah deploy | Masih memakai SQLite | Hapus `DB_CONNECTION=sqlite` dari dashboard agar terdeteksi `DATABASE_URL` |
 | `No application encryption key has been specified.` | `APP_KEY` kosong | Set `APP_KEY` di Settings atau redeploy agar di-generate |
 | `Vite manifest not found` | Build tidak jalan | Biarkan Build command kosong agar platform menjalankan `npm run build` |
 | Link/asset masih `http://` | Proxy HTTPS tidak dipercaya | Sudah ditambahkan `$middleware->trustProxies(at: '*')` di `bootstrap/app.php` + set `APP_URL` HTTPS |

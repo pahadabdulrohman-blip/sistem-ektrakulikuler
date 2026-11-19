@@ -16,7 +16,9 @@ return [
     |
     */
 
-    'default' => env('DB_CONNECTION', 'sqlite'),
+    // Jika platform deploy menyuntik DATABASE_URL (addon MySQL/Postgres)
+    // tetapi DB_CONNECTION belum diset, pakai koneksi itu otomatis.
+    'default' => env('DB_CONNECTION') ?: (env('DATABASE_URL') ? 'mysql' : 'sqlite'),
 
     /*
     |--------------------------------------------------------------------------
