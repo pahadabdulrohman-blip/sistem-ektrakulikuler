@@ -12,7 +12,8 @@
 | Database | MySQL (aktif), SQLite didukung via `.env.example` |
 | Frontend | Blade, CSS, JavaScript, Vite, Tailwind CSS 4 |
 | Arsitektur | MVC dengan middleware berbasis role |
-| Mode autentikasi | Session login (`session('login')`, `username`, `role`) |
+| Mode autentikasi | Web: session login (`session('login')`, `username`, `role`); API: bearer token |
+| REST API | `/api/v1` — 45 endpoint JSON, cermin lengkap fitur web |
 | Alamat lokal | `http://127.0.0.1:8000` |
 
 ## 🎯 Tujuan
@@ -49,14 +50,22 @@
 - Lihat jadwal kegiatan dan nilai.
 - Profil dan foto profil.
 
+### REST API v1
+- 45 endpoint JSON untuk seluruh fitur di atas (prefix `/api/v1`).
+- Login bearer token sederhana; token dicabut saat logout.
+- Hak akses per role mengikuti aplikasi web (`admin`, `guru`, `siswa`).
+- Format respons konsisten: `success`, `message`, `data`, `errors`.
+
 ## 📚 Dokumentasi
 
 | Dokumen | Format | Isi |
 |---|---|---|
 | [AKTIVIA User Manual](docs/AKTIVIA-User-Manual.docx) | **Word (.docx)** | Manual pengguna akhir — siap dibuka di Microsoft Word dan dicetak (9 halaman) |
-| [AKTIVIA Technical Documentation](docs/AKTIVIA-Technical-Documentation.docx) | **Word (.docx)** | Dokumentasi teknis lengkap — siap dibuka di Word (14 halaman) |
+| [AKTIVIA Technical Documentation](docs/AKTIVIA-Technical-Documentation.docx) | **Word (.docx)** | Dokumentasi teknis lengkap — siap dibuka di Word (17 halaman) |
+| [AKTIVIA REST API](docs/AKTIVIA-REST-API.docx) | **Word (.docx)** | Referensi REST API v1 — siap dibuka di Word (12 halaman) |
+| [REST API Docs](docs/API-DOCS.md) | Markdown | Sumber referensi API: autentikasi, 45 endpoint, contoh request/respons, error, rate limit |
 | [User Manual](docs/MANUAL.md) | Markdown | Sumber manual: prosedur Admin, Guru, Siswa, pengelolaan foto, glosarium |
-| [Technical Docs](docs/TECH-DOCS.md) | Markdown | Sumber tech docs: arsitektur, database, model, controller, middleware, rute, keamanan, deployment |
+| [Technical Docs](docs/TECH-DOCS.md) | Markdown | Sumber tech docs: arsitektur, database, model, controller, middleware, rute, REST API, keamanan, deployment |
 | [Dokumentasi Proyek](docs/DOKUMENTASI-PROYEK.md) | Markdown | Dokumentasi lengkap gabungan (arsitektur, fitur, rute, database, pengujian) |
 | [Panduan Penggunaan](docs/PANDUAN-PENGGUNAAN.md) | Markdown | Panduan ringkas cara pakai aplikasi |
 | [Troubleshooting](docs/TROUBLESHOOTING.md) | Markdown | Masalah umum dan solusinya |
@@ -94,7 +103,9 @@ npm run build
 php artisan serve
 ```
 
-Buka `http://127.0.0.1:8000`.
+Buka `http://127.0.0.1:8000` untuk aplikasi web, atau `http://127.0.0.1:8000/api/v1` untuk REST API.
+
+> Migrasi `add_api_token_to_users_table` ikut berjalan dalam `php artisan migrate` dan diperlukan agar login API bisa menerbitkan token.
 
 > Detail lengkap (termasuk catatan untuk XAMPP dan produksi) ada di [Dokumentasi Proyek](docs/DOKUMENTASI-PROYEK.md#5-instalasi).
 
@@ -102,9 +113,10 @@ Buka `http://127.0.0.1:8000`.
 
 ```bash
 php artisan test
+php artisan test --filter=V1ApiTest   # khusus REST API
 ```
 
-Terakhir dijalankan: **15 test lulus**, 2 test bawaan masih gagal (`ExampleTest` dan `CsrfProtectionTest`) — lihat [catatan pengujian](docs/DOKUMENTASI-PROYEK.md#14-pengujian).
+Terakhir dijalankan: **22 test lulus** (termasuk 7 test REST API), 2 test bawaan masih gagal (`ExampleTest` dan `CsrfProtectionTest`) — lihat [catatan pengujian](docs/DOKUMENTASI-PROYEK.md#14-pengujian).
 
 ## 🔐 Catatan Keamanan
 
@@ -114,14 +126,16 @@ Terakhir dijalankan: **15 test lulus**, 2 test bawaan masih gagal (`ExampleTest`
 - Foto profil disimpan **privat** di `storage/app/private/foto-profil` dan hanya bisa diakses lewat route terautentikasi.
 - Header keamanan ditambahkan global oleh `SecurityHeaders`.
 - Batas unik diterapkan di database untuk penilaian, absensi, jadwal, dan pendaftaran.
+- Token API disimpan sebagai hash SHA-256 di `users.api_token`; token plain hanya muncul sekali saat login.
+- Endpoint API dilindungi middleware `api.token` dan `api.role`; error API dirender JSON (bukan halaman web).
 
 ## 📂 Struktur Singkat
 
 ```text
 app/
 ├── Http/
-│   ├── Controllers/       # Logika aplikasi
-│   └── Middleware/        # RoleMiddleware, SecurityHeaders
+│   ├── Controllers/       # Controller web + Api/V1/ (REST API)
+│   └── Middleware/        # RoleMiddleware, SecurityHeaders, ApiTokenAuth, ApiRole
 ├── Mail/                  # PasswordBaruMail
 ├── Models/                # User, Ekstrakurikuler, dll.
 database/
@@ -130,8 +144,13 @@ database/
 └── factories/
 docs/                      # Dokumentasi & diagram use case
 resources/views/           # Blade: admin/, guru/, siswa/, partials/
-routes/web.php             # Seluruh rute aplikasi
-tests/                     # Unit & Feature test
+routes/
+├── web.php                # Rute aplikasi web (Blade)
+└── api.php                # 45 rute REST API v1
+tests/
+├── Unit/
+└── Feature/
+    └── Api/               # V1ApiTest.php
 ```
 
 ## 🌐 Deployment

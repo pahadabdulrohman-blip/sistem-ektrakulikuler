@@ -261,3 +261,4 @@ function New-Docx([string]$mdPath, [string]$docxPath, [string]$judul) {
 
 New-Docx (Join-Path $Folder 'MANUAL.md') (Join-Path $Folder 'AKTIVIA-User-Manual.docx') 'AKTIVIA - User Manual'
 New-Docx (Join-Path $Folder 'TECH-DOCS.md') (Join-Path $Folder 'AKTIVIA-Technical-Documentation.docx') 'AKTIVIA - Technical Documentation'
+New-Docx (Join-Path $Folder 'API-DOCS.md') (Join-Path $Folder 'AKTIVIA-REST-API.docx') 'AKTIVIA - REST API v1'

@@ -11,7 +11,8 @@
 | Database | MySQL (`.env` aktif), SQLite didukung oleh `.env.example` |
 | Frontend | Blade, HTML5, CSS3, JavaScript, Vite 6, Tailwind CSS 4 |
 | Pola arsitektur | Model–View–Controller (MVC) |
-| Autentikasi | Session-based login dengan role `admin`, `guru`, `siswa` |
+| Autentikasi | Web: session-based login; API: bearer token dengan role `admin`, `guru`, `siswa` |
+| REST API | `/api/v1` — 45 endpoint JSON (lihat [API-DOCS.md](API-DOCS.md)) |
 | Akses lokal | `http://127.0.0.1:8000` |
 | Diagram | [use-case-diagram.png](use-case-diagram.png) / [use-case-diagram.html](use-case-diagram.html) |
 
@@ -329,6 +330,15 @@ Route::middleware('role:admin,guru')->group(function () { ... });
 - `POST /logout` → invalidate session + regenerate CSRF token.
 - Form logout memakai `@csrf` melalui partial `partials/logout-form.blade.php`.
 
+### 9.4 Autentikasi REST API
+
+- `POST /api/v1/login` menerbitkan token plain yang hanya tampil sekali.
+- Database menyimpan `hash('sha256', token)` pada kolom `users.api_token`.
+- Header yang diterima: `Authorization: Bearer <token>` atau `X-API-Token: <token>`.
+- Middleware `api.token` memvalidasi token dan status siswa; `api.role` membatasi role.
+- `POST /api/v1/logout` mencabut token yang sedang dipakai.
+- Token tidak memakai cookie/session sehingga tidak memerlukan CSRF.
+
 ---
 
 ## 10. Daftar Rute
@@ -430,6 +440,25 @@ Route::middleware('role:admin,guru')->group(function () { ... });
 | DELETE | `/ekstrakurikuler/{id}/foto/{foto}` | `ekstrakurikuler.foto.hapus` | `role:admin,guru` | Hapus foto galeri |
 | GET | `/jadwal-ekstrakurikuler` | `jadwal.ekstrakurikuler` | Cek manual di controller | Jadwal wajib/gabungan |
 
+### 10.6 REST API v1 — `/api/v1`
+
+Seluruh rute API didefinisikan di `routes/api.php` (45 rute). Autentikasi memakai `api.token`, pembatasan role memakai `api.role`. Respons JSON seragam: `success`, `message`, `data`, `errors`.
+
+| Grup | Method & URI ringkas | Role |
+|---|---|---|
+| Publik | `POST /register`, `POST /login`, `POST /forgot-password` | Publik |
+| Akun | `POST /logout`, `GET /me`, `GET /dashboard`, `GET /profil`, `GET|POST /profil/foto` | Semua |
+| Ekskul | `GET /ekstrakurikuler`, `GET /ekstrakurikuler/{id}`, `POST|PUT|DELETE /ekstrakurikuler/{id}` | Semua (tulis: admin,guru) |
+| Galeri | `POST /ekstrakurikuler/{id}/foto`, `DELETE /ekstrakurikuler/{id}/foto/{foto}` | Admin, Guru |
+| Pilihan | `GET|POST|DELETE /pilihan-ekstrakurikuler` (+ alias `/ekstrakurikuler/pilih`, `/ekstrakurikuler/batal`) | Siswa |
+| Jadwal | `GET /jadwal`, `POST|PUT|DELETE /jadwal/{id}` | Semua (tulis: guru) |
+| Absensi | `GET|POST /absensi` | Admin, Guru |
+| Penilaian | `GET /penilaian`, `GET /penilaian/{id}`, `POST|PUT|DELETE /penilaian/{id}` | Semua (tulis: guru) |
+| Laporan | `GET /laporan` | Semua |
+| Admin | `/admin/data-guru`, `/admin/data-siswa`, `/admin/penerimaan-siswa`, `/admin/guru`, `/admin/password-requests` | Admin |
+
+Daftar lengkap beserta contoh request/respons ada di [`API-DOCS.md`](API-DOCS.md).
+
 ---
 
 ## 11. Alur Fitur Utama
@@ -502,7 +531,8 @@ Jalankan `php artisan storage:link` bila symlink belum ada.
 |---|---|
 | CSRF | Semua form POST/PUT/DELETE memakai `@csrf`; logout juga POST + CSRF |
 | Rate limit | Login 5/menit per username+IP & 30/menit per IP; register 6/menit; lupa password 5/menit |
-| Role access | `RoleMiddleware` + pengecekan status siswa |
+| Role access | Web: `RoleMiddleware`; API: `ApiTokenAuth` + `ApiRole` + pengecekan status siswa |
+| Token API | Hash SHA-256 di `users.api_token`, dikirim via Bearer, dicabut saat logout |
 | Header keamanan | `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy`, `Cross-Origin-Opener-Policy`, HSTS saat HTTPS |
 | Path traversal | `basename()` pada nama file foto profil |
 | Duplikat data | Index unik di database + validasi controller |
@@ -528,13 +558,15 @@ php artisan test
 | `tests/Feature/LoginRouteTest.php` | Halaman login tersedia & rute POST login ada |
 | `tests/Feature/KeamananDasarTest.php` | Header keamanan, rate limit register, foto profil butuh login, dan `routes/web.php` harus diawali `<?php` |
 | `tests/Feature/FotoKegiatanTest.php` | Upload banyak foto, penolakan file bukan gambar, hapus file + DB, isolasi antar ekskul, larangan siswa upload, galeri tampil di halaman siswa/admin/guru |
+| `tests/Feature/Api/V1ApiTest.php` | Login/token, logout, role, CRUD ekskul, pilihan ekskul, jadwal, absensi, penilaian, penerimaan siswa, laporan, profil |
 | `tests/Feature/ExampleTest.php` | Test bawaan Laravel (belum disesuaikan) |
 | `tests/Feature/CsrfProtectionTest.php` | Uji penolakan request tanpa CSRF |
 
 ### 14.2 Hasil Terakhir
 
 ```text
-Tests: 15 passed, 2 failed (65 assertions)
+Tests: 22 passed, 2 failed (139 assertions)
+Tests: 7 passed, 74 assertions   (php artisan test --filter=V1ApiTest)
 ```
 
 Dua test yang gagal bersifat **bawaan/belum disesuaikan**:
@@ -556,6 +588,7 @@ Keduanya tidak berkaitan dengan fitur foto, login, atau galeri.
 | 2026-11-18 | **Perbaikan kritis:** baris kosong sebelum `<?php` di `routes/web.php` dihapus. Baris tersebut menyisipkan byte newline ke semua respons dan membuat gambar rusak di browser |
 | 2026-11-18 | Tes regresi ditambahkan untuk memastikan `routes/web.php` diawali `<?php` |
 | 2026-11-19 | **Perbaikan kritis:** `RoleMiddleware.php` dan `SecurityHeaders.php` dikembalikan ke `app/Http/Middleware/` setelah sempat berada di folder yang salah, menyebabkan error 500 |
+| 2026-11-19 | Penambahan REST API v1 (`routes/api.php`, 45 endpoint), migrasi `users.api_token`, middleware `api.token`/`api.role`, 11 controller di `Api/V1/`, 7 test API, dan dokumentasi `docs/API-DOCS.md` |
 
 ---
 
@@ -574,11 +607,14 @@ Keduanya tidak berkaitan dengan fitur foto, login, atau galeri.
 ## 17. Referensi
 
 - `README.md` — ringkasan dan quick start.
+- `docs/API-DOCS.md` — referensi lengkap REST API v1.
+- `docs/TECH-DOCS.md` — dokumentasi teknis.
 - `docs/PANDUAN-PENGGUNAAN.md` — panduan end-user.
 - `docs/TROUBLESHOOTING.md` — solusi masalah umum.
 - `docs/use-case-diagram.png` — diagram use case sistem.
 - `docs/use-case-diagram.html` — versi diagram interactif.
-- `routes/web.php` — sumber kebenaran daftar rute.
+- `routes/web.php` — sumber kebenaran daftar rute web.
+- `routes/api.php` — sumber kebenaran daftar rute REST API.
 - `database/migrations/` — sumber kebenaran struktur database.
 
 ---

@@ -19,6 +19,7 @@
 | Versi | Tanggal | Keterangan | Penulis |
 |---|---|---|---|
 | 1.0 | 19 November 2026 | Penyusunan dokumentasi teknis sistem | Tim Pengembang |
+| 1.1 | 19 November 2026 | Penambahan REST API v1 (45 endpoint) dan dokumentasinya | Tim Pengembang |
 
 ---
 
@@ -33,7 +34,7 @@
 7. [Model dan Relasi](#7-model-dan-relasi)
 8. [Controller](#8-controller)
 9. [Middleware dan Otorisasi](#9-middleware-dan-otorisasi)
-10. [Rute Aplikasi](#10-rute-aplikasi)
+10. [Rute Aplikasi & REST API](#10-rute-aplikasi)
 11. [Manajemen File dan Storage](#11-manajemen-file-dan-storage)
 12. [Keamanan](#12-keamanan)
 13. [Penanganan Error dan Logging](#13-penanganan-error-dan-logging)
@@ -63,8 +64,9 @@ AKTIVIA adalah aplikasi web berbasis Laravel 12 yang digunakan untuk mengelola k
 
 ### 1.2 Fitur Teknis Utama
 
-- Autentikasi berbasis session dengan tiga role.
-- Middleware `role` untuk pembatasan akses.
+- Autentikasi berbasis session dengan tiga role (web) dan bearer token (REST API).
+- Middleware `role` untuk web; `api.token` dan `api.role` untuk REST API.
+- REST API v1: 45 endpoint JSON yang cermin penuh fitur web.
 - Rate limiting pada login, registrasi, dan permintaan password.
 - Upload foto profil ke storage privat.
 - Galeri foto ekskul ke storage publik dengan symlink.
@@ -162,8 +164,8 @@ Diperlukan agar foto kegiatan pada disk `public` dapat diakses melalui URL `/sto
 ```text
 app/
 ├── Http/
-│   ├── Controllers/       # Logika bisnis aplikasi
-│   └── Middleware/        # RoleMiddleware, SecurityHeaders
+│   ├── Controllers/       # Controller web + Api/V1/ (REST API)
+│   └── Middleware/        # RoleMiddleware, SecurityHeaders, ApiTokenAuth, ApiRole
 ├── Mail/                  # PasswordBaruMail
 ├── Models/                # Model Eloquent
 ├── Providers/
@@ -178,6 +180,7 @@ database/
 docs/
 ├── MANUAL.md              # User manual
 ├── TECH-DOCS.md           # Dokumen ini
+├── API-DOCS.md            # Referensi REST API v1
 ├── DOKUMENTASI-PROYEK.md
 ├── PANDUAN-PENGGUNAAN.md
 ├── TROUBLESHOOTING.md
@@ -197,7 +200,8 @@ resources/
     ├── partials/
     └── ...
 routes/
-├── web.php
+├── web.php                # Rute aplikasi web
+├── api.php                # 45 rute REST API v1
 └── console.php
 storage/
 ├── app/
@@ -208,6 +212,7 @@ storage/
 tests/
 ├── Unit/
 └── Feature/
+    └── Api/               # V1ApiTest.php
 ```
 
 ---
@@ -219,15 +224,15 @@ tests/
 ```text
 Request (HTTP)
     ↓
-routes/web.php
-    ↓
-Middleware (SecurityHeaders → role)
-    ↓
-Controller
-    ↓
-Model (Eloquent)  ←→  Database
-    ↓
-View (Blade)
+routes/web.php                     routes/api.php
+    ↓                                   ↓
+Middleware (SecurityHeaders → role)  Middleware (api.token → api.role)
+    ↓                                   ↓
+Controller web                      Controller Api\V1\*
+    ↓                                   ↓
+Model (Eloquent)  ←→  Database  ←──────┘
+    ↓                                   ↓
+View (Blade)                        JSON response
     ↓
 Response (HTML / redirect / file)
 ```
@@ -235,11 +240,12 @@ Response (HTML / redirect / file)
 ### 5.2 Alur Request
 
 1. Request masuk melalui `public/index.php`.
-2. `bootstrap/app.php` memuat aplikasi dan middleware.
+2. `bootstrap/app.php` memuat aplikasi dan middleware, termasuk prefix `api`.
 3. `SecurityHeaders` ditambahkan ke semua respons.
-4. `RoleMiddleware` memeriksa login dan role bila rute memakai alias `role`.
-5. Controller memproses input, memanggil model, dan mengembalikan view/redirect.
-6. View Blade dirender dengan data dari controller.
+4. Jalur web: `RoleMiddleware` memeriksa login dan role bila rute memakai alias `role`.
+5. Jalur API: `ApiTokenAuth` memverifikasi header Bearer, lalu `ApiRole` memeriksa role.
+6. Controller memproses input, memanggil model, dan mengembalikan view/redirect (web) atau JSON (API).
+7. View Blade dirender dengan data dari controller.
 
 ### 5.3 Session
 
@@ -338,6 +344,22 @@ Trait `App\Models\Concerns\RapikanNama` digunakan untuk menormalkan spasi, NBSP,
 
 > `sistemekstrakulikulerControler.php` adalah file legacy yang mendeklarasikan ulang class `EkstrakurikulerController` dengan data hard-coded. Tidak dipakai rute aktif.
 
+### 8.1 Controller REST API (`app/Http/Controllers/Api/V1/`)
+
+| Controller | Tanggung jawab |
+|---|---|
+| `ApiController` | Base controller; helper `sukses()` dan `gagal()` untuk wrapper JSON |
+| `AuthController` | Register, login, logout, me, dashboard, forgot-password |
+| `ProfilController` | Profil pengguna + info foto profil |
+| `FotoController` | Stream/upload foto profil, upload/hapus galeri kegiatan |
+| `EkstrakurikulerController` | List, detail, CRUD ekskul |
+| `PilihanController` | Pilihan ekskul siswa (maksimal 2) |
+| `JadwalController` | CRUD jadwal kegiatan |
+| `AbsensiController` | Rekap & simpan absensi |
+| `PenilaianController` | Penilaian sesuai role + pembatasan kepemilikan guru |
+| `LaporanController` | Rekap laporan + detail nilai untuk admin |
+| `PenggunaController` | Data guru/siswa, penerimaan, akun guru, password request |
+
 ---
 
 ## 9. Middleware dan Otorisasi
@@ -349,7 +371,9 @@ Trait `App\Models\Concerns\RapikanNama` digunakan untuk menormalkan spasi, NBSP,
     $middleware->append(\App\Http\Middleware\SecurityHeaders::class);
 
     $middleware->alias([
-        'role' => \App\Http\Middleware\RoleMiddleware::class,
+        'role'     => \App\Http\Middleware\RoleMiddleware::class,
+        'api.token' => \App\Http\Middleware\ApiTokenAuth::class,
+        'api.role'  => \App\Http\Middleware\ApiRole::class,
     ]);
 })
 ```
@@ -361,7 +385,20 @@ Trait `App\Models\Concerns\RapikanNama` digunakan untuk menormalkan spasi, NBSP,
 - Untuk siswa: memastikan `User` ada dan `status_pendaftaran === 'diterima'`.
 - Jika role tidak sesuai → redirect ke dashboard role yang bersangkutan.
 
-### 9.3 SecurityHeaders
+### 9.3 ApiTokenAuth
+
+- Membaca `Authorization: Bearer <token>` atau header `X-API-Token`.
+- Membandingkan `hash('sha256', token)` dengan kolom `users.api_token`.
+- Mengembalikan JSON 401 bila token tidak ada/tidak valid.
+- Untuk siswa, status pendaftaran harus `diterima` (sama seperti web).
+- Menyimpan akun di request sehingga controller bisa memanggil `$request->user()`.
+
+### 9.4 ApiRole
+
+- Dipakai sebagai `api.role:admin,guru`.
+- Mengembalikan JSON 403 bila role pengguna tidak termasuk daftar yang diizinkan.
+
+### 9.5 SecurityHeaders
 
 Menambahkan header:
 
@@ -388,6 +425,7 @@ Menambahkan header:
 | Siswa | — | `role:siswa` | 8 |
 | Foto | — | `role:...` | 4 |
 | Utilitas | — | — | 2 |
+| REST API | `/api/v1` | `api.token`, `api.role` | 45 |
 
 ### 10.2 Rute Penting
 
@@ -403,7 +441,38 @@ Menambahkan header:
 | POST | `/ekstrakurikuler/pilih` | `ekstrakurikuler.simpan` | Simpan pilihan siswa |
 | POST | `/logout` | `logout` | Logout (CSRF) |
 
-Daftar lengkap 72 rute ada di [`DOKUMENTASI-PROYEK.md`](DOKUMENTASI-PROYEK.md#10-daftar-rute) dan sumber kebenarannya adalah `routes/web.php`.
+Daftar lengkap rute web ada di [`DOKUMENTASI-PROYEK.md`](DOKUMENTASI-PROYEK.md#10-daftar-rute) dan sumber kebenarannya adalah `routes/web.php`.
+
+### 10.3 REST API v1
+
+REST API tersedia di prefix `/api/v1` dan merupakan cermin lengkap fitur web. Sumber kebenaran adalah `routes/api.php`; referensi detail ada di [`API-DOCS.md`](API-DOCS.md).
+
+```text
+PUBLIK       POST /register            POST /login           POST /forgot-password
+TOKEN        POST /logout  GET /me  GET /dashboard
+             GET /profil   GET /profil/foto   POST /profil/foto
+EKSKUL       GET /ekstrakurikuler  GET /ekstrakurikuler/{id}
+             POST/PUT/DELETE /ekstrakurikuler/{id}       (admin,guru)
+             POST/DELETE /ekstrakurikuler/{id}/foto      (admin,guru)
+SISWA        GET/POST/DELETE /pilihan-ekstrakurikuler
+JADWAL       GET /jadwal; POST/PUT/DELETE /jadwal        (guru)
+ABSENSI      GET/POST /absensi                           (admin,guru)
+PENILAIAN    GET /penilaian; POST/PUT/DELETE /penilaian  (guru)
+LAPORAN      GET /laporan
+ADMIN        /admin/data-guru, /admin/data-siswa,
+             /admin/penerimaan-siswa, /admin/guru,
+             /admin/password-requests
+```
+
+| Aspek | Implementasi |
+|---|---|
+| Format | `{ "success": bool, "message": string, "data": any, "errors": object/null }` |
+| Autentikasi | `Authorization: Bearer <token>` atau `X-API-Token` |
+| Token | Diterbitkan `/login`, disimpan sebagai hash SHA-256 di `users.api_token`, dicabut `/logout` |
+| Role | `admin`, `guru`, `siswa` via middleware `api.role` |
+| Upload | `multipart/form-data`; foto profil 10 MB, galeri 10 file × 10 MB |
+| Error | 401 token invalid, 403 role ditolak, 404 tidak ditemukan, 422 validasi, 429 rate limit |
+| Rate limit | Login 5/menit per username+IP dan 30/menit per IP; register 6/menit; forgot-password 5/menit |
 
 ---
 
@@ -452,6 +521,7 @@ Daftar lengkap 72 rute ada di [`DOKUMENTASI-PROYEK.md`](DOKUMENTASI-PROYEK.md#10
 
 - Log aplikasi: `storage/logs/laravel.log`.
 - Halaman error khusus: `resources/views/errors/403.blade.php`, `404.blade.php`, `500.blade.php`.
+- Untuk URI `api/*`, `bootstrap/app.php` merender exception sebagai JSON memakai wrapper `success`/`message`/`data`, termasuk 404 saat model tidak ditemukan dan 422 saat validasi gagal.
 - `APP_DEBUG=true` menampilkan detail error di lokal; matikan di produksi.
 - Route `/tes-error-500` tersedia hanya di lokal untuk menguji halaman 500.
 
@@ -463,6 +533,7 @@ Daftar lengkap 72 rute ada di [`DOKUMENTASI-PROYEK.md`](DOKUMENTASI-PROYEK.md#10
 
 ```bash
 php artisan test
+php artisan test --filter=V1ApiTest
 php artisan test --filter=FotoKegiatan
 php artisan test --filter=KeamananDasarTest
 ```
@@ -475,13 +546,15 @@ php artisan test --filter=KeamananDasarTest
 | `tests/Feature/LoginRouteTest.php` | Rute login |
 | `tests/Feature/KeamananDasarTest.php` | Header, rate limit, foto privat, penjaga newline `routes/web.php` |
 | `tests/Feature/FotoKegiatanTest.php` | Upload, validasi, hapus, isolasi ekskul, akses siswa, tampilan galeri |
+| `tests/Feature/Api/V1ApiTest.php` | Login/token, role, CRUD ekskul, pilihan ekskul, jadwal, absensi, penilaian, penerimaan, laporan, profil, logout |
 | `tests/Feature/ExampleTest.php` | Test bawaan (belum disesuaikan) |
 | `tests/Feature/CsrfProtectionTest.php` | Uji CSRF (belum sesuai ekspektasi) |
 
 ### 14.3 Hasil Terakhir
 
 ```text
-Tests: 15 passed, 2 failed (65 assertions)
+Tests: 22 passed, 2 failed (139 assertions)
+Tests: 7 passed, 74 assertions   (php artisan test --filter=V1ApiTest)
 ```
 
 Dua kegagalan bersifat bawaan:
@@ -562,6 +635,7 @@ Pastikan writable:
 | 2026-11-18 | Tes regresi penjaga awalan file route ditambahkan |
 | 2026-11-19 | Perbaikan kritis: middleware dikembalikan ke `app/Http/Middleware/` setelah sempat salah folder (error 500) |
 | 2026-11-19 | Penyusunan `MANUAL.md` dan `TECH-DOCS.md` |
+| 2026-11-19 | Penambahan REST API v1: 45 rute di `routes/api.php`, 11 controller di `Api/V1/`, middleware `api.token` & `api.role`, migrasi `users.api_token`, 7 test API, serta `docs/API-DOCS.md` |
 
 ---
 
@@ -582,12 +656,14 @@ Pastikan writable:
 | Dokumen | Path |
 |---|---|
 | User Manual | [`MANUAL.md`](MANUAL.md) |
+| REST API Reference | [`API-DOCS.md`](API-DOCS.md) |
 | Dokumentasi Proyek | [`DOKUMENTASI-PROYEK.md`](DOKUMENTASI-PROYEK.md) |
 | Panduan Penggunaan | [`PANDUAN-PENGGUNAAN.md`](PANDUAN-PENGGUNAAN.md) |
 | Troubleshooting | [`TROUBLESHOOTING.md`](TROUBLESHOOTING.md) |
 | Diagram Use Case (PNG) | [`use-case-diagram.png`](use-case-diagram.png) |
 | Diagram Use Case (HTML) | [`use-case-diagram.html`](use-case-diagram.html) |
-| Sumber kebenaran rute | `routes/web.php` |
+| Sumber kebenaran rute web | `routes/web.php` |
+| Sumber kebenaran rute API | `routes/api.php` |
 | Sumber kebenaran schema | `database/migrations/` |
 
 ---
