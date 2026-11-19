@@ -22,9 +22,18 @@ class AutoMigrateProvider extends ServiceProvider
 {
     public function boot(): void
     {
-        if ($this->app->runningInConsole()) {
+        // Test memakai database sendiri. Untuk web, jangan hanya mengandalkan
+        // runningInConsole(): runtime FrankenPHP/Octane bisa melaporkan console
+        // walaupun ini request HTTP. REQUEST_URI menjadi penanda request web.
+        if ($this->app->runningUnitTests()) {
             return;
         }
+
+        if ($this->app->runningInConsole() && empty($_SERVER['REQUEST_URI'])) {
+            return;
+        }
+
+        config(['app.diag_migrasi' => 'boot;']);
 
         $koneksi = (string) config('database.default');
 
@@ -37,12 +46,19 @@ class AutoMigrateProvider extends ServiceProvider
             $koneksi.'|'.(string) config('database.connections.'.$koneksi.'.database')
         );
 
+        config(['app.diag_migrasi' => config('app.diag_migrasi').'koneksi='.$koneksi.';']);
+
         if (is_file($penanda)) {
+            config(['app.diag_migrasi' => config('app.diag_migrasi').'marker=ada;']);
+
             return;
         }
 
         try {
             $this->jalankanMigrasiSatuPerSatu();
+
+            config(['app.diag_migrasi' => config('app.diag_migrasi')
+                .'users='.(Schema::hasTable('users') ? 'ada' : 'tidak').';']);
 
             if (config('database.default') === 'sqlite') {
                 $this->seedAkunDefault();
@@ -52,6 +68,9 @@ class AutoMigrateProvider extends ServiceProvider
                 @file_put_contents($penanda, date('c'));
             }
         } catch (Throwable $e) {
+            config(['app.diag_migrasi' => config('app.diag_migrasi')
+                .'err='.str_replace(["\n", "\r", '|'], ' ', $e->getMessage()).';']);
+
             // Jangan sampai error migrasi menggantikan error aplikasi.
             // Sengaja tidak memanggil Log::*: storage/logs bisa tidak writable
             // oleh PHP-FPM di container dan akan memicu fatal error baru.
@@ -73,6 +92,9 @@ class AutoMigrateProvider extends ServiceProvider
             } catch (Throwable $e) {
                 // Migrasi duplikat lama diabaikan; kolomnya sudah dibuat
                 // oleh migrasi sebelumnya.
+                config(['app.diag_migrasi' => config('app.diag_migrasi')
+                    .'gagal='.basename($file).':'
+                    .str_replace(["\n", "\r", '|', ';'], ' ', $e->getMessage()).';']);
                 continue;
             }
         }

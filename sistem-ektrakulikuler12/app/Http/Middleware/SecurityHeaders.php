@@ -29,7 +29,7 @@ class SecurityHeaders
             'Cross-Origin-Opener-Policy' => 'same-origin',
 
             // Penanda build untuk memastikan perubahan sudah aktif di deploy.
-            'X-AKTIVIA-BUILD' => '20261119-sqlite-fallback',
+            'X-AKTIVIA-BUILD' => '20261119-mig-diag',
         ];
 
         // Diagnostik koneksi DB tanpa membocorkan kredensial.
@@ -43,6 +43,11 @@ class SecurityHeaders
         $headers['X-AKTIVIA-DB'] = $koneksi
             .'|'.(! empty($konfigurasi['url']) ? 'url' : 'no-url')
             .'|'.$host;
+
+        $diag = (string) config('app.diag_migrasi', '');
+        if ($diag !== '') {
+            $headers['X-AKTIVIA-MIG'] = substr($diag, 0, 500);
+        }
 
         foreach ($headers as $nama => $nilai) {
             if (! $response->headers->has($nama)) {
