@@ -29,8 +29,16 @@ class SecurityHeaders
             'Cross-Origin-Opener-Policy' => 'same-origin',
 
             // Penanda build untuk memastikan perubahan sudah aktif di deploy.
-            'X-AKTIVIA-BUILD' => '20261119-apk-download',
+            'X-AKTIVIA-BUILD' => '20261119-db-diag',
         ];
+
+        // Diagnostik koneksi DB tanpa membocorkan kredensial.
+        // Format: connection|url ada/tidak|host
+        $koneksi = (string) config('database.default');
+        $konfigurasi = config('database.connections.'.$koneksi) ?? [];
+        $headers['X-AKTIVIA-DB'] = $koneksi
+            .'|'.(! empty($konfigurasi['url']) ? 'url' : 'no-url')
+            .'|'.(string) ($konfigurasi['host'] ?? '-');
 
         foreach ($headers as $nama => $nilai) {
             if (! $response->headers->has($nama)) {
