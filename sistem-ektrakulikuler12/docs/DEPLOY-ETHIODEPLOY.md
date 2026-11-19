@@ -110,9 +110,9 @@ Setiap perubahan env var atau Start command **wajib diikuti redeploy**. Config d
    ```bash
    curl -sI https://sistem-ektrakulikuler.ethiodeploy.app/login | grep -i x-aktivia
    ```
-   Nilai yang diharapkan: `x-aktivia-build: 20261119-sqlite-tmp` dan
-   `x-aktivia-db: sqlite|no-url|file` (fallback aktif) atau
-   `mysql|url|<host-addon>` (addon sudah terbaca). Header `x-aktivia-mig`
+   Nilai yang diharapkan: `x-aktivia-build: 20261119-pg-addon` dan
+   `x-aktivia-db: pgsql|url|<host-addon>` (addon Postgres terbaca) atau
+   `mysql|url|<host-addon>` / `sqlite|no-url|file` (fallback). Header `x-aktivia-mig`
    menampilkan status auto-migrate; jika ada `users=tidak`, cek baris `err=`.
 6. Buka `/download`, lalu klik **Unduh APK**. File 101,1 MB akan digabung otomatis dari `apk-parts/` pada request pertama (butuh beberapa detik). Link langsungnya adalah `/storage/downloads/Alight_Motion_alightmotionsapps.com_063034.apk`.
 

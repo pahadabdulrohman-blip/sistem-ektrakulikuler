@@ -59,9 +59,7 @@ class AutoMigrateProvider extends ServiceProvider
             config(['app.diag_migrasi' => config('app.diag_migrasi')
                 .'users='.(Schema::hasTable('users') ? 'ada' : 'tidak').';']);
 
-            if (config('database.default') === 'sqlite') {
-                $this->seedAkunDefault();
-            }
+            $this->seedAkunDefault();
 
             if (Schema::hasTable('users') && Schema::hasTable('sessions')) {
                 @file_put_contents($penanda, date('c'));
@@ -100,7 +98,9 @@ class AutoMigrateProvider extends ServiceProvider
     }
 
     /**
-     * Akun demo untuk fallback SQLite (data hilang setiap deploy).
+     * Akun awal untuk database baru (SQLite fallback maupun addon Postgres/
+     * MySQL). Hanya dibuat jika username belum ada, jadi tidak menimpa akun
+     * yang sudah ada.
      */
     private function seedAkunDefault(): void
     {

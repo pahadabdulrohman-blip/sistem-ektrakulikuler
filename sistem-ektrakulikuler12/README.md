@@ -100,9 +100,9 @@ Jika addon database EthioDeploy belum terbaca (`DATABASE_URL` kosong dan MySQL m
 
 Header diagnostik produksi:
 
-- `X-AKTIVIA-BUILD: 20261119-sqlite-tmp`
-- `X-AKTIVIA-DB: sqlite|no-url|file` → fallback aktif
-- `X-AKTIVIA-DB: mysql|url|<host-addon>` → addon sudah terbaca (fallback tidak dipakai)
+- `X-AKTIVIA-BUILD: 20261119-pg-addon`
+- `X-AKTIVIA-DB: pgsql|url|<host-addon>` → addon Postgres terbaca (fallback tidak dipakai)
+- `X-AKTIVIA-DB: sqlite|no-url|file` → fallback aktif (addon belum ada)
 - `X-AKTIVIA-MIG` → status auto-migrate (sementara, untuk diagnostik deploy)
 
 ⚠️ **Fallback ini bersifat sementara.** File SQLite berada di dalam container dan akan hilang setiap deploy, bersama semua data yang dibuat lewatnya. Setelah addon MySQL/Postgres aktif, hapus env `DB_HOST`/`DB_DATABASE` lama, biarkan `DATABASE_URL` tersuntik, lalu redeploy. Penanda build saat ini: `X-AKTIVIA-BUILD: 20261119-sqlite-fallback`.

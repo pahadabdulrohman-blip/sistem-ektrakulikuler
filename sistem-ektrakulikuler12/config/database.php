@@ -16,9 +16,23 @@ return [
     |
     */
 
-    // Jika platform deploy menyuntik DATABASE_URL (addon MySQL/Postgres)
-    // tetapi DB_CONNECTION belum diset, pakai koneksi itu otomatis.
-    'default' => env('DB_CONNECTION') ?: (env('DATABASE_URL') ? 'mysql' : 'sqlite'),
+    // Platform deploy menyuntik DATABASE_URL untuk addon MySQL/Postgres.
+    // Skema URL harus menang: addon Postgres tidak bisa dipaksa jadi mysql.
+    'default' => (function () {
+        $url = (string) env('DATABASE_URL', '');
+        $skema = $url !== '' ? (string) parse_url($url, PHP_URL_SCHEME) : '';
+
+        if ($skema !== '') {
+            return match ($skema) {
+                'postgres', 'postgresql', 'pgsql' => 'pgsql',
+                'mariadb' => 'mariadb',
+                'mysql' => 'mysql',
+                default => env('DB_CONNECTION') ?: 'sqlite',
+            };
+        }
+
+        return env('DB_CONNECTION') ?: 'sqlite';
+    })(),
 
     /*
     |--------------------------------------------------------------------------
@@ -86,13 +100,14 @@ return [
 
         'pgsql' => [
             'driver' => 'pgsql',
-            'url' => env('DB_URL'),
+            'url' => env('DATABASE_URL', env('DB_URL')),
             'host' => env('DB_HOST', '127.0.0.1'),
             'port' => env('DB_PORT', '5432'),
             'database' => env('DB_DATABASE', 'laravel'),
             'username' => env('DB_USERNAME', 'root'),
             'password' => env('DB_PASSWORD', ''),
-            'charset' => env('DB_CHARSET', 'utf8'),
+            // Postgres menolak "utf8mb4" sebagai client_encoding.
+            'charset' => 'utf8',
             'prefix' => '',
             'prefix_indexes' => true,
             'search_path' => 'public',
