@@ -3,7 +3,6 @@
 namespace App\Providers;
 
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 use Throwable;
@@ -54,9 +53,9 @@ class AutoMigrateProvider extends ServiceProvider
                 @file_put_contents($penanda, date('c'));
             }
         } catch (Throwable $e) {
-            // Jangan sampai error migrasi menggantikan error as aplikasi.
-            // Error tetap tercatat di log untuk diagnosis.
-            Log::warning('Auto migrate gagal: '.$e->getMessage());
+            // Jangan sampai error migrasi menggantikan error aplikasi.
+            // Sengaja tidak memanggil Log::*: storage/logs bisa tidak writable
+            // oleh PHP-FPM di container dan akan memicu fatal error baru.
         }
     }
 }

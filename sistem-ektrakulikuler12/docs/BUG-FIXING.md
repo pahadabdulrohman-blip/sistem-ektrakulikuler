@@ -219,6 +219,22 @@ Reproduksi lokal: dengan `CACHE_STORE=database` dan database tanpa tabel `cache`
 
 Verifikasi lokal: probe dengan `CACHE_STORE=database` + SQLite `:memory:` kini menghasilkan `cache.default = array` dan `RATELIMITER AMAN`; `php artisan test` tetap **25 passed (145 assertions)**.
 
+### 6.3 Deploy `b77bf24` gagal health check — rantai error tersembunyi
+
+Log container baru menunjukkan `GET /` 500, health check timeout, lalu rollback. Exception aslinya tertutup oleh dua masalah berantai:
+
+1. `AppServiceProvider` memanggil `Log::warning()` saat fallback cache. Di container, CLI berjalan sebagai `root` sehingga `route:cache` sukses, tetapi PHP-FPM berjalan sebagai `www-data` dan **tidak bisa membuka `/app/storage/logs/laravel.log`** → `UnexpectedValueException`.
+2. Saat Laravel merender halaman 500, `resources/views/errors/500.blade.php` memanggil `route('login')`. Bila route cache belum siap, ini melempar `Route [login] not defined` → fatal → `GET /` 500 → health check gagal.
+
+| File | Perubahan |
+|---|---|
+| `app/Providers/AppServiceProvider.php` | Fallback cache tetap ada, tetapi **tidak memanggil `Log::*`** |
+| `app/Providers/AutoMigrateProvider.php` | Blok `catch` tidak menulis log file |
+| `config/logging.php` | Default `LOG_CHANNEL` → **`stderr`**, menghilangkan ketergantungan pada izin `storage/logs` |
+| `resources/views/errors/500.blade.php` | `route('login')` → **`url('/login')`** agar halaman error tidak ikut fatal |
+
+Dengan ini exception asli tidak lagi tertutup, dan health check `GET /` kembali 302 seperti semula.
+
 ---
 
 *AKTIVIA — Bug Fixing Log v1.1*

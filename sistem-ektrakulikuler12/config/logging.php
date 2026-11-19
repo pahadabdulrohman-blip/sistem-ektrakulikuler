@@ -18,7 +18,9 @@ return [
     |
     */
 
-    'default' => env('LOG_CHANNEL', 'stack'),
+    // Container deploy sering membuat storage/logs tidak writable oleh PHP-FPM.
+    // stderr selalu tersedia dan ditangkap platform (tab Logs).
+    'default' => env('LOG_CHANNEL', 'stderr'),
 
     /*
     |--------------------------------------------------------------------------

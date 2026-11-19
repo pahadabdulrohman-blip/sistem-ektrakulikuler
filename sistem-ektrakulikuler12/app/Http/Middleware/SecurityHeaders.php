@@ -29,7 +29,7 @@ class SecurityHeaders
             'Cross-Origin-Opener-Policy' => 'same-origin',
 
             // Penanda build untuk memastikan perubahan sudah aktif di deploy.
-            'X-AKTIVIA-BUILD' => '20261119-fix-cache',
+            'X-AKTIVIA-BUILD' => '20261119-fix-logging',
         ];
 
         foreach ($headers as $nama => $nilai) {

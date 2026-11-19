@@ -293,7 +293,8 @@ Atau buka `storage/logs/laravel.log` lewat File Manager hosting. Baris `local.ER
 | `Database file at path [...] database.sqlite does not exist` | File SQLite belum dibuat | `touch database/database.sqlite` (Linux) atau `New-Item database\database.sqlite` (Windows), lalu `php artisan migrate --force` |
 | `no such table: users` / `cache` / `sessions` atau `Base table or view not found` | Migrasi belum dijalankan | `php artisan migrate --force` |
 | `SQLSTATE[HY000] [1045] Access denied for user` | `DB_USERNAME` / `DB_PASSWORD` salah | Perbaiki `DB_*` di `.env`, lalu `php artisan config:clear` |
-| `could not be opened: ... storage/logs` | Izin folder | Beri write permission ke `storage/` dan `bootstrap/cache/` |
+| `could not be opened: ... storage/logs` / `Permission denied` saat logging | PHP-FPM tidak bisa menulis file log | Set `LOG_CHANNEL=stderr` (sekarang sudah menjadi default), atau beri write permission ke `storage/logs/` |
+| `Route [login] not defined` dari `errors/500.blade.php` | Halaman error ikut fatal saat route cache bermasalah | Gunakan `url('/login')` di view error; sudah diperbaiki |
 | `Target class [App\Http\Middleware\...] does not exist` | File middleware belum ikut ter-upload | Upload ulang `app/Http/Middleware/`, lalu `php artisan optimize:clear` |
 
 ### Langkah 2 — Perbaikan Standar (jalankan di folder aplikasi di server)

@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 
@@ -36,8 +35,9 @@ class AppServiceProvider extends ServiceProvider
         }
 
         if (! $lengkap) {
+            // Sengaja tidak menulis log: storage/logs bisa tidak writable oleh
+            // PHP-FPM di container, yang akan mengubah fallback ini jadi 500.
             config(['cache.default' => 'array']);
-            Log::warning('Tabel cache/cache_locks tidak tersedia; RateLimiter memakai driver array.');
         }
     }
 }

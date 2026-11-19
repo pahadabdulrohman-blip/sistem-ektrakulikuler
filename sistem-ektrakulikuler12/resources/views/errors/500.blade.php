@@ -48,7 +48,7 @@
         <h1>500</h1>
         <h2>Terjadi Kesalahan Server</h2>
         <p>Maaf, sistem sedang mengalami gangguan. Silakan coba kembali nanti.</p>
-        <a href="{{ route('login') }}">Kembali ke Login</a>
+        <a href="{{ url('/login') }}">Kembali ke Login</a>
     </div>
     <script src="{{ asset('js/mobile.js') }}"></script>
 </body>
